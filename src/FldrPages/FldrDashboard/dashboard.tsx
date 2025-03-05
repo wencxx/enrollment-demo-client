@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 function Dashboard() {
     const cardData = [
         {
-            title: 'Enrolled Students',
+            title: 'Enrolled students',
             icon: UserCheck,
             data: 3000
         },
@@ -14,12 +14,12 @@ function Dashboard() {
             data: 1000
         },
         {
-            title: 'Regular',
+            title: 'Regular students',
             icon: User,
             data: 2500
         },
         {
-            title: 'Irregular',
+            title: 'Irregular students',
             icon: User,
             data: 500
         }
@@ -27,12 +27,12 @@ function Dashboard() {
 
     return ( 
         <>
-            <div className="flex flex-col gap-4 p-4">
+            <div className="flex flex-col gap-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-4">
                     {cardData.map((card, index) => (
                         <Card key={index} className="h-fit rounded-xl p-5">
                             <div className="flex items-center justify-between">
-                                <span className="font-semibold">{ card.title }</span>
+                                <span className="font-semibold capitalize">{ card.title }</span>
                                 <card.icon />
                             </div>
                             <div>

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   SidebarInset,
   SidebarProvider,
@@ -6,24 +7,32 @@ import {
 import { AppSidebar } from "@/components/app-sidebar"
 import { Outlet } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { Sun } from 'lucide-react'
+import { Sun, Moon } from 'lucide-react'
 
 function Layout() {
+  const [theme, setTheme] = useState(localStorage.getItem('theme'))
 
   // toggle mode
   const toggleMode = () => {
     const htmlElement = document.documentElement;
 
     if (htmlElement.classList.contains('dark')) {
-  
       htmlElement.classList.remove('dark');
-  
+      localStorage.setItem('theme', 'light');
+      setTheme('light')
     } else {
-  
       htmlElement.classList.add('dark');
-  
+      localStorage.setItem('theme', 'dark');
+      setTheme('dark')
     }
   }
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
 
   return (
     <SidebarProvider  >
@@ -33,7 +42,7 @@ function Layout() {
           <div className="flex items-center justify-between gap-2 px-4 w-full">
             <SidebarTrigger className="-ml-1" />
             <Button size='sm' variant='ghost' onClick={toggleMode}>
-              <Sun />
+              {theme === 'dark' ? <Sun /> : <Moon />}
             </Button>
           </div>
         </header>
