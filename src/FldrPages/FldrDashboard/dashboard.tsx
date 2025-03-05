@@ -46,7 +46,6 @@ function Dashboard() {
                     <Card className="h-[60dvh] rounded-xl md:min-h-min" />
                     <Card className="h-[60dvh] rounded-xl md:min-h-min" />
                 </div>
-                
             </div>
         </>
      );

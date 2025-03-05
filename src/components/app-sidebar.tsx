@@ -37,7 +37,6 @@ const data = {
       title: "Entry",
       url: "#",
       icon: FileInput,
-      isActive: false,
       items: [
         {
           title: "Course",
@@ -94,7 +93,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <MenuDashboard dashboard={data.menuDashboard} />
         <MenuMain items={data.menuMain} />
-        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
