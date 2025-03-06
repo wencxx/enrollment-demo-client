@@ -2,6 +2,8 @@ import { UserCheck, UserPen, User } from "lucide-react";
 import { Card } from "@/components/ui/card"
 import { ChartMain } from "@/components/Fldrcharts/chart-main";
 
+// interface cardData = 
+
 function Dashboard() {
     const cardData = [
         {

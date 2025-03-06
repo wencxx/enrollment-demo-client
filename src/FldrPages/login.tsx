@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 
-import { plsConnect } from "@/FldrClass/PlsConnect"
+import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import { useState } from "react"
 
 function Login({
@@ -46,10 +46,9 @@ function Login({
             password: "",
         },
     })
-
-    const [loggingIn, setLoggingIn] = useState<boolean>(false)
-
+    
     const navigate = useNavigate()
+    const [loggingIn, setLoggingIn] = useState<boolean>(false)
 
     const handleLogin = async (values: z.infer<typeof loginSchema>) => {
         try {

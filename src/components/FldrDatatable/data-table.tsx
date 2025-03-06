@@ -42,12 +42,12 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
     columns,
     data,
-    options
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
+    const [globalFilter, setGlobalFilter] = React.useState("")
 
     const table = useReactTable({
         data,
@@ -65,18 +65,19 @@ export function DataTable<TData, TValue>({
             columnFilters,
             columnVisibility,
             rowSelection,
+            globalFilter,
         },
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: 'includesString',
     })
 
     return (
         <div>
             <div className="flex items-center mb-4 gap-x-5 md:gap-x-0">
                 <Input
-                    placeholder={`Filter ${options?.filterBy || 'email'}...`}
-                    value={(table.getColumn(options?.filterBy || 'email')?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn(options?.filterBy || 'email')?.setFilterValue(event.target.value)
-                    }
+                    placeholder="Search"
+                    value={globalFilter}
+                    onChange={(event) => setGlobalFilter(event.target.value)}
                     className="max-w-sm"
                 />
                 <DropdownMenu>
@@ -144,7 +145,7 @@ export function DataTable<TData, TValue>({
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
+                                <TableCell colSpan={columns.length} className="h-12 text-center">
                                     No results.
                                 </TableCell>
                             </TableRow>
