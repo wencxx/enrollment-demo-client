@@ -11,11 +11,11 @@ function App() {
     <div className="font-inter">
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/dean" element={<Layout />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
-            <Route path="course" element={<Course />} />
-            <Route path="rate" element={<Rate />} />
+            <Route path="entry/course" element={<Course />} />
+            <Route path="entry/rate" element={<Rate />} />
           </Route>
         </Routes>
       </Router>

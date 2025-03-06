@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StudentsCount } from "@/FldrTypes/students-count"
 import LineChartComponent from "./line";
 import BarChartComponent from "./bar";
+import AreaChartComponent from "./area";
 import {
   Select,
   SelectContent,
@@ -26,11 +27,15 @@ const chartType = [
   {
     type: "bar",
     label: "Bar Chart",
+  },
+  {
+    type: "area",
+    label: "Area Chart",
   }
 ];
 
-export function ChartMain({ chartData }: { chartData: StudentsCount[] }) {
-  const [selectedChartType, setSelectedChartType] = useState(chartType[0].type);
+export function ChartMain({ chartData, defaultChart }: { chartData: StudentsCount[], defaultChart?: String }) {
+  const [selectedChartType, setSelectedChartType] = useState(defaultChart || chartType[0].type);
 
   const handleChartTypeChange = (type: string) => {
     setSelectedChartType(type);
@@ -42,8 +47,8 @@ export function ChartMain({ chartData }: { chartData: StudentsCount[] }) {
         <CardTitle className="flex justify-between items-center">
           <span>Number of students</span>
           <Select onValueChange={handleChartTypeChange}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Chart Type" />
+            <SelectTrigger className="w-[170px]">
+              <SelectValue placeholder="Select Chart Type" />
             </SelectTrigger>
             <SelectContent>
               {chartType.map((chart, index) => (
@@ -55,11 +60,13 @@ export function ChartMain({ chartData }: { chartData: StudentsCount[] }) {
         {/* <CardDescription>January - June 2024</CardDescription> */}
       </CardHeader>
       <CardContent>
-          {selectedChartType === "line" ? (
-            <LineChartComponent dataChart={chartData} />
-          ) : (
-            <BarChartComponent dataChart={chartData} />
-          )}
+      {selectedChartType === "line" ? (
+        <LineChartComponent dataChart={chartData} />
+      ) : selectedChartType === "bar" ? (
+        <BarChartComponent dataChart={chartData} />
+      ) : (
+        <AreaChartComponent dataChart={chartData} />
+      )}
       </CardContent>
       <CardFooter>
         <div className="flex w-full items-start gap-2 text-sm">

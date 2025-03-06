@@ -5,7 +5,7 @@ import { ChartMain } from "@/components/Fldrcharts/chart-main";
 function Dashboard() {
     const cardData = [
         {
-            title: 'Applicant',
+            title: 'Applicants',
             icon: UserPen,
             data: 1000
         },
@@ -56,7 +56,7 @@ function Dashboard() {
                         <ChartMain chartData={studentsCount} />
                     </Card>
                     <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
-                        <ChartMain chartData={studentsCount} />
+                        <ChartMain chartData={studentsCount} defaultChart={'bar'} />
                     </Card>
                 </div>
             </div>
