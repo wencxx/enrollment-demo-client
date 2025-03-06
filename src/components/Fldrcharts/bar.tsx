@@ -32,13 +32,13 @@ export default function BarChartComponent({ dataChart }: { dataChart: StudentsCo
                   <Bar
                     dataKey="regular"
                     type="monotone"
-                    stroke="var(--color-desktop)"
+                    stroke="var(--color-regular)"
                     strokeWidth={2}
                   />
                   <Bar
                     dataKey="irregular"
                     type="monotone"
-                    stroke="var(--color-mobile)"
+                    stroke="var(--color-irregular)"
                     strokeWidth={2}
                   />
                 </BarChart>

@@ -4,12 +4,12 @@ import {
 
 
 export const lineConfig = {
-    desktop: {
-      label: "Desktop",
+    regular: {
+      label: "Regular",
       color: "hsl(var(--chart-1))",
     },
-    mobile: {
-      label: "Mobile",
+    irregular: {
+      label: "Regular",
       color: "hsl(var(--chart-2))",
     },
-  } satisfies ChartConfig
+} satisfies ChartConfig

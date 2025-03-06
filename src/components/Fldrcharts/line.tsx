@@ -32,14 +32,14 @@ export default function LineChartComponent({ dataChart }: { dataChart: StudentsC
                 <Line
                     dataKey="regular"
                     type="monotone"
-                    stroke="var(--color-desktop)"
+                    stroke="var(--color-regular)"
                     strokeWidth={2}
                     dot={false}
                 />
                 <Line
                     dataKey="irregular"
                     type="monotone"
-                    stroke="var(--color-mobile)"
+                    stroke="var(--color-irregular)"
                     strokeWidth={2}
                     dot={false}
                 />

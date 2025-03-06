@@ -10,10 +10,14 @@ export default function Course() {
             email: "m@example.com",
           },
     ]
+    
+    const options = {
+      filterBy: 'status'
+    }
 
   return (
     <>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} options={options} />
     </>
   )
 }
