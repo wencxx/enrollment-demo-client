@@ -1,5 +1,6 @@
 import { UserCheck, UserPen, User } from "lucide-react";
 import { Card } from "@/components/ui/card"
+import { ChartMain } from "@/components/Fldrcharts/chart-main";
 
 function Dashboard() {
     const cardData = [
@@ -25,6 +26,14 @@ function Dashboard() {
         }
     ]
 
+    const studentsCount = [
+        { year: 2021, regular: 100, irregular: 150 },
+        { year: 2022, regular: 286, irregular: 100 },
+        { year: 2023, regular: 150, irregular: 200 },
+        { year: 2024, regular: 305, irregular: 200 },
+        { year: 2025, regular: 237, irregular: 120 },
+    ]
+
     return ( 
         <>
             <div className="flex flex-col gap-4">
@@ -43,8 +52,12 @@ function Dashboard() {
                     ))}
                 </div>
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2">
-                    <Card className="h-[60dvh] rounded-xl md:min-h-min" />
-                    <Card className="h-[60dvh] rounded-xl md:min-h-min" />
+                    <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
+                        <ChartMain chartData={studentsCount} />
+                    </Card>
+                    <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
+                        <ChartMain chartData={studentsCount} />
+                    </Card>
                 </div>
             </div>
         </>

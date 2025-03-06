@@ -1,4 +1,4 @@
-import { Payment, columns } from "@/components/FldrDatatable/columns"
+import { Payment, columns } from "@/components/FldrDatatable/course-columns"
 import { DataTable } from "@/components/FldrDatatable/data-table"
 
 export default function Course() {
