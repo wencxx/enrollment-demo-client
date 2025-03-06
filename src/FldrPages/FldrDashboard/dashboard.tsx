@@ -5,14 +5,14 @@ import { ChartMain } from "@/components/Fldrcharts/chart-main";
 function Dashboard() {
     const cardData = [
         {
-            title: 'Enrolled students',
-            icon: UserCheck,
-            data: 3000
-        },
-        {
             title: 'Applicant',
             icon: UserPen,
             data: 1000
+        },
+        {
+            title: 'Enrolled students',
+            icon: UserCheck,
+            data: 3000
         },
         {
             title: 'Regular students',
@@ -37,7 +37,7 @@ function Dashboard() {
     return ( 
         <>
             <div className="flex flex-col gap-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-4">
+                <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
                     {cardData.map((card, index) => (
                         <Card key={index} className="h-fit rounded-xl p-5">
                             <div className="flex items-center justify-between">
@@ -51,7 +51,7 @@ function Dashboard() {
                         </Card>
                     ))}
                 </div>
-                <div className="grid auto-rows-min gap-4 md:grid-cols-2">
+                <div className="grid auto-rows-min gap-4 lg:grid-cols-2">
                     <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
                         <ChartMain chartData={studentsCount} />
                     </Card>

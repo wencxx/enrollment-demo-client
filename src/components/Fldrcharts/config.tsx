@@ -9,7 +9,7 @@ export const lineConfig = {
       color: "hsl(var(--chart-1))",
     },
     irregular: {
-      label: "Regular",
+      label: "Irregular",
       color: "hsl(var(--chart-2))",
     },
 } satisfies ChartConfig
