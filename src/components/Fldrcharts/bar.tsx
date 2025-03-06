@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/chart"
 
 
-export default function BarChartComponent({ dataChart }: { dataChart: StudentsCount[] }){
+export default function BarChartComponent({ dataChart }: { dataChart: StudentsCount[] }) {
     return (
         <>
             <ChartContainer config={lineConfig}>
@@ -32,13 +32,13 @@ export default function BarChartComponent({ dataChart }: { dataChart: StudentsCo
                   <Bar
                     dataKey="regular"
                     type="monotone"
-                    stroke="var(--color-regular)"
+                    fill="var(--color-regular)"
                     strokeWidth={2}
                   />
                   <Bar
                     dataKey="irregular"
                     type="monotone"
-                    stroke="var(--color-irregular)"
+                    fill="var(--color-irregular)"
                     strokeWidth={2}
                   />
                 </BarChart>

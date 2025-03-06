@@ -89,8 +89,8 @@
   --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
   --sidebar-border: oklch(0.268 0.007 34.298);
   --sidebar-ring: oklch(0.553 0.013 58.071);
-  --chart-1: 221.2 83.2% 53.3% !important;
-  --chart-2: 212 95% 68% !important;
+  --chart-1: 221.2 83.2% 53.3%;
+  --chart-2: 212 95% 68%;
   --chart-3: 216 92% 60%;
   --chart-4: 210 98% 78%;
   --chart-5: 212 97% 87%;

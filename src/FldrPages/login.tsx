@@ -3,7 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { loginSchema } from '@/FldrSchema/userSchema'
+import { LoaderCircle } from 'lucide-react'
 import axios from 'axios'
+import { useNavigate } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -31,6 +33,7 @@ import {
 import { Input } from "@/components/ui/input"
 
 import { plsConnect } from "@/FldrClass/PlsConnect"
+import { useState } from "react"
 
 function Login({
     className,
@@ -44,16 +47,28 @@ function Login({
         },
     })
 
+    const [loggingIn, setLoggingIn] = useState<boolean>(false)
+
+    const navigate = useNavigate()
+
     const handleLogin = async (values: z.infer<typeof loginSchema>) => {
         try {
-            const res: any = await axios.get(`${plsConnect()}/API/WeBAPI/tblUserAll/GetLoginAllUserInfo?strUsername=${values.username}&strPassword=${values.password}`)
+            setLoggingIn(true)
+            const res: any = await axios.get(`${plsConnect()}/API/WebAPI/tblUserAll/GetLoginAllUserInfo?strUserName=${values.username}&strPassword=${values.username}`)
 
-            console.log(res)
+            const role = res.data.groupName
+
+            if(role === 'Admin'){
+                navigate('/')
+            }else{
+                console.log(res)
+            }
         } catch (error) {
             console.log(error)
+        } finally {
+            setLoggingIn(false)
         }
     }
-
 
     return (
         <div className="flex items-center justify-center h-screen w-screen">
@@ -92,7 +107,7 @@ function Login({
                                         </FormItem>
                                     )}
                                 />
-                                <Button type="submit" className="w-full">Login</Button>
+                                <Button type="submit" className={`w-full ${loggingIn && 'animate-pulse'}`} disabled={loggingIn}>{loggingIn ? <LoaderCircle className='animate-spin' /> : 'Login'}</Button>
                                 <div className="text-center text-sm">
                                     Don&apos;t have an account?{" "}
                                     <a href="#" className="underline underline-offset-4">
