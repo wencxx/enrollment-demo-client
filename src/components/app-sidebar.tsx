@@ -56,10 +56,6 @@ const data = {
           authorizeUsers: ['Dean']
         },
         {
-          title: "Enrollment1",
-          url: "entry/enrollment1",
-        },
-        {
           title: "Rate Type",
           url: "#",
           authorizeUsers: ['Student']
@@ -77,6 +73,11 @@ const data = {
         {
           title: "Year",
           url: "#",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Enrollment 1",
+          url: "entry/enrollment1",
           authorizeUsers: ['Admin']
         },
       ],
