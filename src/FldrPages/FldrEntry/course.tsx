@@ -27,9 +27,6 @@ export default function Course() {
       });
   }, []);
 
-  // const options = {
-  //   filterBy: 'status'
-  // }
   return (
     <>
     <Dialog>

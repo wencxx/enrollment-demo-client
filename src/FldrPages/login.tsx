@@ -4,9 +4,8 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { loginSchema } from '@/FldrSchema/userSchema'
 import { LoaderCircle } from 'lucide-react'
-import axios from 'axios'
-import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
+import { useNavigate, Navigate } from 'react-router-dom'
 
 import { Button } from "@/components/ui/button"
 import {
@@ -32,9 +31,8 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-
-import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import { useState } from "react"
+import useAuthStore from "@/FldrStore/auth"
 
 function Login({
     className,
@@ -47,28 +45,28 @@ function Login({
             password: "",
         },
     })
-    
+
     const navigate = useNavigate()
+    const store = useAuthStore()
+    const authenticated = store.auth
+
     const [loggingIn, setLoggingIn] = useState<boolean>(false)
+    const [err, setErr] = useState<string | null>(null)
 
     const handleLogin = async (values: z.infer<typeof loginSchema>) => {
         try {
             setLoggingIn(true)
-            const res: any = await axios.get(`${plsConnect()}/API/WebAPI/tblUserAll/GetLoginAllUserInfo?strUserName=${values.username}&strPassword=${values.username}`)
-
-            const role = res.data.groupName
-
-            if(role === 'Admin'){
-                navigate('/')
-            }else{
-                console.log(res)
+            await store.login(values, navigate)
+        } catch (error: unknown) {
+            if(error instanceof Error){
+                setErr(error.message)
             }
-        } catch (error) {
-            console.log(error)
         } finally {
             setLoggingIn(false)
         }
     }
+
+    if(authenticated) return <Navigate to='/' />
 
     return (
         <div className="flex items-center justify-center h-screen w-screen p-10">
@@ -80,6 +78,11 @@ function Login({
                     </CardHeader>
                     <CardContent>
                         <Form {...form}>
+                            {err && (
+                                <div className="border flex mb-1">
+                                    <span className="bg-red-500 pl-2 rounded w-full text-white">{ err }</span>
+                                </div>
+                            )}
                             <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-8">
                                 <FormField
                                     control={form.control}
