@@ -16,6 +16,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import useAuthStore from "@/FldrStore/auth"
 
 export function MenuMain({
   items,
@@ -25,12 +26,19 @@ export function MenuMain({
     url: string
     icon?: LucideIcon
     isActive?: boolean
+    authorizeUsers: string[]
     items?: {
       title: string
-      url: string
+      url: string,
+      authorizeUsers: string[]
     }[]
   }[]
 }) {
+
+  const store = useAuthStore()
+
+  const user = store.currentUser
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Main</SidebarGroupLabel>
@@ -40,7 +48,7 @@ export function MenuMain({
             key={item.title}
             asChild
             defaultOpen={item.isActive}
-            className="group/collapsible"
+            className={`group/collapsible ${user && !item.authorizeUsers.includes(user.groupName) && 'hidden' }`}
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -53,7 +61,7 @@ export function MenuMain({
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
+                    <SidebarMenuSubItem className={`${user && !subItem.authorizeUsers.includes(user.groupName) && 'hidden' }`} key={subItem.title}>
                       <SidebarMenuSubButton asChild>
                         <NavLink to={subItem.url}>
                           <span>{subItem.title}</span>
