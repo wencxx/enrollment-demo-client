@@ -49,20 +49,6 @@ export const columns: ColumnDef<StudentCol>[] = [
         enableHiding: false,
       },
     {
-        accessorKey: "studentCode",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Student Code
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    {
         accessorKey: "studentID",
         header: ({ column }) => {
             return (
