@@ -22,6 +22,7 @@ import {
   SidebarRail,
   SidebarMenuButton
 } from "@/components/ui/sidebar"
+import useAuthStore from "@/FldrStore/auth"
 
 // menu lists
 const data = {
@@ -29,7 +30,7 @@ const data = {
     {
       name: 'Dashboard',
       url: '/',
-      icon: ChartColumn
+      icon: ChartColumn,
     }
   ],
   menuMain: [
@@ -37,18 +38,22 @@ const data = {
       title: "Entry",
       url: "#",
       icon: FileInput,
+      authorizeUsers: ['Admin'],
       items: [
         {
-          title: "Students",
+          title: "Student",
           url: "entry/student",
+          authorizeUsers: ['Admin']
         },
         {
           title: "Course",
           url: "entry/course",
+          authorizeUsers: ['Admin']
         },
         {
           title: "Rate",
           url: "#",
+          authorizeUsers: ['Dean']
         },
         {
           title: "Enrollment1",
@@ -57,18 +62,22 @@ const data = {
         {
           title: "Rate Type",
           url: "#",
+          authorizeUsers: ['Student']
         },
         {
           title: "Enroll Status",
           url: "#",
+          authorizeUsers: ['Student', 'Admin']
         },
         {
           title: "Semester",
           url: "#",
+          authorizeUsers: ['Student']
         },
         {
           title: "Year",
           url: "#",
+          authorizeUsers: ['Admin']
         },
       ],
     },
@@ -76,6 +85,8 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const store = useAuthStore()
+  const user = store.currentUser
   
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -99,8 +110,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
-        <MenuDashboard dashboard={data.menuDashboard} />
-        <MenuMain items={data.menuMain} />
+        { (user && (user.groupName === 'Admin')) && <MenuDashboard dashboard={data.menuDashboard} /> }
+        { (user && (user.groupName === 'Admin'  || user.groupName === 'Student')) && <MenuMain items={data.menuMain} /> }
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
