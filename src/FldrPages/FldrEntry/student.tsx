@@ -7,11 +7,12 @@ import {
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { StudentCol, columns } from "@/components/FldrDatatable/student";
+import { columns } from "@/components/FldrDatatable/student-columns";
 import { DataTable } from "@/components/FldrDatatable/data-table";
 import { useState, useEffect } from "react";
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios";
+import { StudentCol } from "@/FldrTypes/students-col"
 
 
 export default function Student() {
