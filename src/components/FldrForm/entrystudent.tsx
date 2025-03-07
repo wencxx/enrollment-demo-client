@@ -48,17 +48,8 @@ export function StudentForm({ onSubmitSuccess }: StudentFormProps) {
   })
 
   const onSubmit = async (values: StudentFormData) => {
-    const formData = {
-        firstName: values.firstName,
-        middleName: values.middleName,
-        lastName: values.lastName,
-        address: values.address,
-        birthDate: values.birthDate,
-        enrollRemarks: values.enrollRemarks,
-    }
-
     try {
-      const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertStudent`, formData)
+      const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertStudent`, values)
 
       console.log("Data submitted successfully:", response.data)
       toast("New student registered successfully.")
@@ -66,13 +57,13 @@ export function StudentForm({ onSubmitSuccess }: StudentFormProps) {
       const newStudent: StudentCol = {
         studentCode: response.data.studentCode,
         studentID: response.data.studentID,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        middleName: formData.middleName,
-        birthDate: new Date(formData.birthDate || ""),
-        Address: formData.address,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        middleName: values.middleName,
+        birthDate: new Date(values.birthDate || ""),
+        Address: values.address,
         enrollStatusCode: response.data.enrollStatusCode,
-        enrollRemarks: formData.enrollRemarks,
+        enrollRemarks: values.enrollRemarks,
       }
 
       onSubmitSuccess(newStudent)

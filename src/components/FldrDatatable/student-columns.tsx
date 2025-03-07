@@ -14,41 +14,27 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export const columns: ColumnDef<StudentCol>[] = [
-        {
+    {
         id: "select",
         header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-          />
+            <Checkbox
+                checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                aria-label="Select all"
+            />
         ),
         cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+            />
         ),
         enableSorting: false,
         enableHiding: false,
-      },
-    {
-        accessorKey: "studentCode",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Student Code
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
     },
     {
         accessorKey: "studentID",
@@ -121,9 +107,9 @@ export const columns: ColumnDef<StudentCol>[] = [
         },
         cell: ({ row }) => {
             const birthDate = row.getValue("birthDate");
-        
+
             let dateObject: Date;
-        
+
             if (birthDate instanceof Date) {
                 dateObject = birthDate;
             } else if (typeof birthDate === "string" || typeof birthDate === "number") {
@@ -131,14 +117,14 @@ export const columns: ColumnDef<StudentCol>[] = [
             } else {
                 return "No birthdate";
             }
-        
+
             if (!isNaN(dateObject.getTime())) {
                 return format(dateObject, "yyyy-MM-dd");
             }
-        
+
             return "N/A";
         },
-        
+
     },
     {
         accessorKey: "address",
@@ -167,6 +153,30 @@ export const columns: ColumnDef<StudentCol>[] = [
                 </Button>
             )
         },
+        cell: ({ row }) => {
+            let statusClass = '';
+            let statusColor = '';
+            
+            const status = row.getValue("enrollStatusCode")
+  
+            // Apply color logic based on the status value
+            if (status === 'Active') {
+              statusClass = 'bg-green-500 text-white';
+              statusColor = 'Active';
+            } else if (status === 'Inactive') {
+              statusClass = 'bg-red-500 text-white';
+              statusColor = 'Inactive';
+            } else if (status === 'Pending') {
+              statusClass = 'bg-blue-500/60 text-white';
+              statusColor = 'Pending';
+            }
+  
+            return (
+              <span className={`px-2 py-1 rounded ${statusClass}`}>
+                {statusColor}
+              </span>
+            );
+          },
     },
     {
         accessorKey: "enrollRemarks",
@@ -182,7 +192,7 @@ export const columns: ColumnDef<StudentCol>[] = [
             )
         },
     },
-    
+
     {
         id: "actions",
         cell: ({ row }) => {

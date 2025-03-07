@@ -8,10 +8,12 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { Outlet } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Sun, Moon } from 'lucide-react'
+import useAuthStore from '@/FldrStore/auth';
+import { Navigate } from 'react-router-dom';
 
 function Layout() {
   const [theme, setTheme] = useState(localStorage.getItem('theme'))
-
+  
   // toggle mode
   const toggleMode = () => {
     const htmlElement = document.documentElement;
@@ -33,6 +35,12 @@ function Layout() {
       document.documentElement.classList.add('dark');
     }
   }, []);
+
+  // check if authenticated
+  const store = useAuthStore()
+  const authenticated = store.auth
+
+  if(!authenticated) return <Navigate to='/login' />
 
   return (
     <SidebarProvider  >
