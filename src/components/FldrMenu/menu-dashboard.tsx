@@ -6,7 +6,6 @@ import { NavLink } from "react-router-dom"
 
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -18,12 +17,11 @@ export function MenuDashboard({
   dashboard: {
     name: string
     url: string
-    icon: LucideIcon
+    icon: LucideIcon,
   }[]
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
       <SidebarMenu>
         {dashboard.map((item) => (
           <SidebarMenuItem key={item.name}>
