@@ -54,20 +54,8 @@ export const courseSchema = z.object({
 })
 
 export const enrollment1Schema = z.object({
-  firstName: z.string().min(2, {
-    message: "First name at least 2 characters.",
-  }),
-  middleName: z.string().min(2, {
-    message: "Middle name at least 2 characters.",
-  }),
-  lastName: z.string().min(2, {
-    message: "Last name at least 2 characters.",
-  }),
-  address: z.string().min(2, {
-    message: "Address invalid.",
-  }),
-  birthDate: z.union([z.string(), z.date()]).optional(),
-  enrollRemarks: z.string().min(2, {
-    message: "Make a remark.",
-  }),
+  yearCode: z.string()
+    .min(1, { message: "Select a year." }),
+  semCode: z.string()
+    .min(1, { message: "Select a semester." })
 })
