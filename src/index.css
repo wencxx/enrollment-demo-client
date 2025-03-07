@@ -143,3 +143,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* custom css for hiding scrollbar on modal */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; 
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none; 
+}

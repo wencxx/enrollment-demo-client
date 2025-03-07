@@ -44,6 +44,10 @@ const data = {
       icon: FileInput,
       items: [
         {
+          title: "Students",
+          url: "entry/student",
+        },
+        {
           title: "Course",
           url: "entry/course",
         },
@@ -53,10 +57,6 @@ const data = {
         },
         {
           title: "Rate Type",
-          url: "#",
-        },
-        {
-          title: "Students",
           url: "#",
         },
         {
