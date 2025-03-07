@@ -53,7 +53,7 @@ const data = {
         },
         {
           title: "Rate",
-          url: "entry/rate",
+          url: "#",
         },
         {
           title: "Rate Type",

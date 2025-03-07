@@ -27,14 +27,11 @@ export default function Course() {
       });
   }, []);
 
-  // const options = {
-  //   filterBy: 'status'
-  // }
   return (
     <>
     <Dialog>
-        <DialogTrigger>
-        <Button variant="outline">Add new course</Button>
+        <DialogTrigger asChild>
+         <Button variant="outline">Add new course</Button>
         </DialogTrigger>
         <DialogContent>
           <CourseForm />
