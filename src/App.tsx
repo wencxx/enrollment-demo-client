@@ -5,6 +5,7 @@ import Layout from '@/FldrPages/FldrLayout/layout'
 import Dashboard from "@/FldrPages/FldrDashboard/dashboard"
 import Course from "@/FldrPages/FldrEntry/course"
 import Student from "./FldrPages/FldrEntry/student"
+import Rate from "./FldrPages/FldrEntry/rate"
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="entry/course" element={<Course />} />
             <Route path="entry/student" element={<Student />} />
+            <Route path="entry/rate" element={<Rate />} />
           </Route>
         </Routes>
       </Router>

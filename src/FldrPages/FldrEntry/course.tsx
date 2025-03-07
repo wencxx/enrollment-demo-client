@@ -33,7 +33,7 @@ export default function Course() {
   return (
     <>
     <Dialog>
-        <DialogTrigger>
+        <DialogTrigger asChild>
         <Button variant="outline">Add new course</Button>
         </DialogTrigger>
         <DialogContent>
