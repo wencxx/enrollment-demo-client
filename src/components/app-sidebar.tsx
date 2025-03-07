@@ -25,11 +25,6 @@ import {
 
 // menu lists
 const data = {
-  user: {
-    name: "cbyte",
-    email: "cbyteprog@gmail.com",
-    avatar: "/cbytelogo.jpg",
-  },
   menuDashboard: [
     {
       name: 'Dashboard',
@@ -77,6 +72,7 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -92,7 +88,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                    Cbyte Programming
+                    Cbyte programming
                 </span>
                 <span className="truncate text-xs">Enterprise</span>
                 </div>
@@ -103,7 +99,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <MenuMain items={data.menuMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
