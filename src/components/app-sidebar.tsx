@@ -52,8 +52,8 @@ const data = {
         },
         {
           title: "Rate",
-          url: "#",
-          authorizeUsers: ['Dean']
+          url: "entry/rate",
+          authorizeUsers: ['Admin']
         },
         {
           title: "Rate Type",
