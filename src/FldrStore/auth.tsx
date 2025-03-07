@@ -3,16 +3,18 @@ import { z } from 'zod'
 import { loginSchema } from '@/FldrSchema/userSchema'
 import axios from 'axios'
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
+import { User } from '@/FldrTypes/user'
 
 interface AuthState {
-    currentUser: any | null
+    currentUser: User | null
     token: string | null
     auth: boolean | null
     login: (credentials: z.infer<typeof loginSchema>, navigate: any) => Promise<void>
+    logout: () => void
 }
 
 const useAuthStore = create<AuthState>((set) => ({
-    currentUser: localStorage.getItem('token') || null,
+    currentUser: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
     token: localStorage.getItem('token') || null,
     auth: !!localStorage.getItem('token'),
     login: async (credentials: z.infer<typeof loginSchema>, navigate) => {
