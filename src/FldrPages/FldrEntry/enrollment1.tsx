@@ -1,4 +1,4 @@
-import { StudentForm } from "@/components/FldrForm/entrystudent"
+import { Enrollment1Form } from "@/components/FldrForm/entryenrollment1"
 import {
     Dialog,
     DialogContent,
@@ -15,7 +15,7 @@ import axios from "axios";
 import { StudentCol } from "@/FldrTypes/students-col"
 
 
-export default function Student() {
+export default function Enrollment1() {
   const [data, setData] = useState<StudentCol[]>([]);
 
   useEffect(() => {
@@ -29,10 +29,6 @@ export default function Student() {
       });
   }, []);
 
-  const addNewStudent = (newStudent: StudentCol) => {
-    setData((prevData) => [...prevData, newStudent])
-  }
-
 
   return (
     <>
@@ -41,7 +37,8 @@ export default function Student() {
         <Button variant="outline">Add new student</Button>
         </DialogTrigger>
         <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-        <StudentForm onSubmitSuccess={addNewStudent} />
+        {/* <StudentForm onSubmitSuccess={addNewStudent} /> */}
+        <Enrollment1Form />
         </DialogContent>
     </Dialog>
     <ScrollArea className="mt-4 overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">

@@ -56,6 +56,10 @@ const data = {
           url: "#",
         },
         {
+          title: "Enrollment1",
+          url: "entry/enrollment1",
+        },
+        {
           title: "Rate Type",
           url: "#",
         },
