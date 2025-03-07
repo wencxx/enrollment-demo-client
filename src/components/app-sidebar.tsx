@@ -75,6 +75,11 @@ const data = {
           url: "#",
           authorizeUsers: ['Admin']
         },
+        {
+          title: "Enrollment 1",
+          url: "entry/enrollment1",
+          authorizeUsers: ['Admin']
+        },
       ],
     },
   ],

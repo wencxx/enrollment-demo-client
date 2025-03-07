@@ -48,7 +48,7 @@ export function MenuMain({
             key={item.title}
             asChild
             defaultOpen={item.isActive}
-            className={`group/collapsible ${user && !item.authorizeUsers.includes(user.groupName) && 'hidden' }`}
+            className={`group/collapsible ${user && !item.authorizeUsers?.includes(user.groupName) && 'hidden' }`}
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -61,7 +61,7 @@ export function MenuMain({
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem className={`${user && !subItem.authorizeUsers.includes(user.groupName) && 'hidden' }`} key={subItem.title}>
+                    <SidebarMenuSubItem className={`${user && !subItem.authorizeUsers?.includes(user.groupName) && 'hidden' }`} key={subItem.title}>
                       <SidebarMenuSubButton asChild>
                         <NavLink to={subItem.url}>
                           <span>{subItem.title}</span>

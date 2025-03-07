@@ -52,3 +52,10 @@ export const courseSchema = z.object({
     message: "Course description must be at least 2 characters.",
   }),
 })
+
+export const enrollment1Schema = z.object({
+  yearCode: z.string()
+    .min(1, { message: "Select a year." }),
+  semCode: z.string()
+    .min(1, { message: "Select a semester." })
+})
