@@ -6,6 +6,7 @@ import { loginSchema } from '@/FldrSchema/userSchema'
 import { LoaderCircle } from 'lucide-react'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -70,7 +71,7 @@ function Login({
     }
 
     return (
-        <div className="flex items-center justify-center h-screen w-screen">
+        <div className="flex items-center justify-center h-screen w-screen p-10">
             <div className={cn("flex flex-col gap-6", className)} {...props}>
                 <Card>
                     <CardHeader className="text-start">
@@ -109,9 +110,9 @@ function Login({
                                 <Button type="submit" className={`w-full ${loggingIn && 'animate-pulse'}`} disabled={loggingIn}>{loggingIn ? <LoaderCircle className='animate-spin' /> : 'Login'}</Button>
                                 <div className="text-center text-sm">
                                     Don&apos;t have an account?{" "}
-                                    <a href="#" className="underline underline-offset-4">
+                                    <Link to="/register" className="underline underline-offset-4">
                                         Sign up
-                                    </a>
+                                    </Link>
                                 </div>
                             </form>
                         </Form>

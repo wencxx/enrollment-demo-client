@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Login from '@/FldrPages/login'
+import Register from '@/FldrPages/register'
 import Layout from '@/FldrPages/FldrLayout/layout'
 import Dashboard from "@/FldrPages/FldrDashboard/dashboard"
 import Rate from "@/FldrPages/FldrEntry/rate"
@@ -12,6 +13,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="entry/course" element={<Course />} />
