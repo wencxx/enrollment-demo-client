@@ -23,7 +23,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Input } from "@/components/ui/input"
-import { StudentCol } from "@/components/FldrDatatable/student"
+import { StudentCol } from "@/components/FldrDatatable/student-columns"
 import { studentSchema } from "@/FldrSchema/userSchema.ts"
 
 type StudentFormData = z.infer<typeof studentSchema>

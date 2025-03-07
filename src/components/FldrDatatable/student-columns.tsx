@@ -3,27 +3,15 @@ import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { format } from "date-fns";
+import { StudentCol } from "@/FldrTypes/students-col";
 
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-export type StudentCol = {
-    studentCode: string
-    studentID: string
-    firstName: string
-    lastName: string
-    middleName: string
-    birthDate: Date
-    Address: string
-    enrollStatusCode: number
-    enrollRemarks: string
-}
 
 export const columns: ColumnDef<StudentCol>[] = [
         {
@@ -197,13 +185,13 @@ export const columns: ColumnDef<StudentCol>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(Student.studentCode)}
+                            onClick={() => navigator.clipboard.writeText(Student.studentID)}
                         >
-                            Copy payment ID
+                            Copy student ID
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>View payment details</DropdownMenuItem>
+                        <DropdownMenuItem>View</DropdownMenuItem>
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

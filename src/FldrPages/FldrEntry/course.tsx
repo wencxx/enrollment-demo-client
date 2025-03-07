@@ -1,8 +1,9 @@
-import { CourseCol, columns } from "@/components/FldrDatatable/course";
+import { columns } from "@/components/FldrDatatable/course-columns";
 import { DataTable } from "@/components/FldrDatatable/data-table";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { CourseForm } from "@/components/FldrForm/entrycourse"
+import { CourseCol } from "@/FldrTypes/course.col";
 import {
     Dialog,
     DialogContent,
@@ -15,7 +16,7 @@ import { plsConnect } from "@/FldrClass/ClsGetConnection";
 export default function Course() {
   const [data, setData] = useState<CourseCol[]>([]);
 
-  useEffect(() => {
+  useEffect(() => { 
     axios
       .get<CourseCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
       .then((response) => {
