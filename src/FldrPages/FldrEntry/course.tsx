@@ -31,7 +31,7 @@ export default function Course() {
     <>
     <Dialog>
         <DialogTrigger asChild>
-         <Button variant="outline">Add new course</Button>
+        <Button variant="outline">Add new course</Button>
         </DialogTrigger>
         <DialogContent>
           <CourseForm />

@@ -7,25 +7,26 @@ import { plsConnect } from "@/FldrClass/ClsGetConnection";
 
 
 export default function Rate() {
-    const [data, setData] = useState<RateCol[]>([]);
+  const [data, setData] = useState<RateCol[]>([]);
 
-    useEffect(() => {
-        axios
-            .get<RateCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListRate`)
-            .then((response) => {
-                setData(response.data);
-                console.log("wtf", data);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-    }, []);
+  useEffect(() => {
+    axios
+      .get<RateCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListRate`)
+      .then((response) => {
+        setData(response.data);
+        console.log("wtf", data);
+        console.log("plsConnect:", plsConnect);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
 
 
-    return (
-        <>
-            <DataTable columns={columns} data={data} />
-        </>
-
-    );
+return (
+    <>
+        <DataTable columns={columns} data={data}/>
+    </>
+    
+  );
 }

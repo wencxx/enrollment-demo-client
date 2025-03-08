@@ -35,7 +35,7 @@ export const columns: ColumnDef<StudentCol>[] = [
         ),
         enableSorting: false,
         enableHiding: false,
-    },
+      },
     {
         accessorKey: "studentID",
         header: ({ column }) => {
