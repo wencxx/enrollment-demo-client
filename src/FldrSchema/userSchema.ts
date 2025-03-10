@@ -65,5 +65,5 @@ export const enrollment1Schema = z.object({
     voucher: z.string()
     .min(1, { message: "Select a voucher." }),
     enrollStatusCode: z.string()
-    .min(1, { message: "Select a voucher." })
+    .min(1, { message: "Please confirm status." })
 })

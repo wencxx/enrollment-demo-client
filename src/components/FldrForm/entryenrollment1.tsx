@@ -121,7 +121,7 @@ const filteredCourses = course.filter((course) => {
     async function fetchStudent() {
       try {
         const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListApplicant`) 
-        console.log("Fetched students:", response.data);
+        //console.log("Fetched students:", response.data);
         setStudent(response.data) 
         } catch (error: any) {
             console.error("Error fetching students:", error)
@@ -172,8 +172,8 @@ const filteredCourses = course.filter((course) => {
 
         const putResponse = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollmentStatus`, enrollment1Data)
   
-        console.log("Data submitted successfully:", postResponse)
-        console.log("Data submitted successfully:", putResponse)
+        console.log("Insert:", postResponse)
+        console.log("Update:", putResponse)
         toast("Success.")
       } catch (error) {
         if (axios.isAxiosError(error)) {
