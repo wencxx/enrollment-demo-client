@@ -24,8 +24,8 @@ export default function Rate() {
 
 
 return (
-  <>
-    <DataTable columns={columns} data={data}/>
+    <>
+        <DataTable columns={columns} data={data}/>
     </>
     
   );

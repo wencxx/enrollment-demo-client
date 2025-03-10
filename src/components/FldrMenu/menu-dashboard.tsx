@@ -14,7 +14,7 @@ import {
 export function MenuDashboard({
   dashboard,
 }: {
-  dashboard: {
+  dashboard: {                                                              
     name: string
     url: string
     icon: LucideIcon,

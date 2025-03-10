@@ -58,7 +58,7 @@ const data = {
         {
           title: "Rate Type",
           url: "#",
-          authorizeUsers: ['Student']
+          authorizeUsers: ['Admin']
         },
         {
           title: "Enroll Status",
@@ -68,7 +68,7 @@ const data = {
         {
           title: "Semester",
           url: "#",
-          authorizeUsers: ['Student']
+          authorizeUsers: ['Admin']
         },
         {
           title: "Year",
