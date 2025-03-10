@@ -352,35 +352,6 @@ const filteredCourses = course.filter((course) => {
           )}
         />
 
-        {/* <FormField
-          control={form.control}
-          name="courseCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Course</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a course" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {course.length > 0 ? (
-                    course.map((course) => (
-                      <SelectItem key={course.courseCode} value={course.courseCode}>
-                        {course.courseDesc}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem disabled>No courses available</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-
         {/* placeholder */}
         <FormField
           control={form.control}
