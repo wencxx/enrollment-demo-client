@@ -155,26 +155,24 @@ export const columns: ColumnDef<StudentCol>[] = [
         },
         cell: ({ row }) => {
             let statusClass = '';
-            let statusColor = '';
             
-            const status = row.getValue("enrollStatusCode")
+            const status: string = row.getValue("enrollStatusCode")
   
             // Apply color logic based on the status value
-            if (status === 'Active') {
+            if (status === 'Approve') {
               statusClass = 'bg-green-500 text-white';
-              statusColor = 'Active';
-            } else if (status === 'Inactive') {
+            } else if (status === 'Disapprove') {
               statusClass = 'bg-red-500 text-white';
-              statusColor = 'Inactive';
             } else if (status === 'Pending') {
-              statusClass = 'bg-blue-500/60 text-white';
-              statusColor = 'Pending';
+              statusClass = 'bg-orange-500 text-white';
             }
   
             return (
-              <span className={`px-2 py-1 rounded ${statusClass}`}>
-                {statusColor}
-              </span>
+              <div className="flex">
+                  <span className={`px-2 py-1 rounded w-full text-start ${statusClass}`}>
+                    {status}
+                  </span>
+              </div>
             );
           },
     },

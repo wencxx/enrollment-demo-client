@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
+import { Plus } from 'lucide-react'
 
 export default function Course() {
   const [data, setData] = useState<CourseCol[]>([]);
@@ -31,7 +32,10 @@ export default function Course() {
     <>
     <Dialog>
         <DialogTrigger asChild>
-        <Button variant="outline">Add new course</Button>
+        <Button variant="outline">
+          <Plus />
+          Add new course
+        </Button>
         </DialogTrigger>
         <DialogContent>
           <CourseForm />
