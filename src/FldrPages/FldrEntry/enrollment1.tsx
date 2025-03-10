@@ -6,6 +6,7 @@ import {
   } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
+import { Plus } from 'lucide-react'
 // import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 // import { columns } from "@/components/FldrDatatable/student-columns";
 // import { DataTable } from "@/components/FldrDatatable/data-table";
@@ -34,7 +35,10 @@ export default function Enrollment1() {
     <>
     <Dialog>
         <DialogTrigger asChild>
-        <Button variant="outline">Enrollment 1</Button>
+        <Button variant="outline">
+          <Plus />
+          Enrollment 1
+        </Button>
         </DialogTrigger>
         <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
         {/* <StudentForm onSubmitSuccess={addNewStudent} /> */}

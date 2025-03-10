@@ -38,7 +38,7 @@ const data = {
       title: "Entry",
       url: "#",
       icon: FileInput,
-      authorizeUsers: ['Admin'],
+      authorizeUsers: ['Admin', 'Student'],
       items: [
         {
           title: "Student",
