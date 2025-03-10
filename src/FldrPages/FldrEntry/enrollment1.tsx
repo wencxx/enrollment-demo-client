@@ -14,7 +14,6 @@ import { Toaster } from "@/components/ui/sonner"
 // import axios from "axios";
 // import { StudentCol } from "@/FldrTypes/students-col"
 
-
 export default function Enrollment1() {
 //   const [data, setData] = useState<StudentCol[]>([]);
 

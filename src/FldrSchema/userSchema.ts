@@ -57,5 +57,13 @@ export const enrollment1Schema = z.object({
   yearCode: z.string()
     .min(1, { message: "Select a year." }),
   semCode: z.string()
-    .min(1, { message: "Select a semester." })
+    .min(1, { message: "Select a semester." }),
+    courseCode: z.string()
+    .min(1, { message: "Select a course." }),
+    studentID: z.string()
+    .min(1, { message: "Select a student." }),
+    voucher: z.string()
+    .min(1, { message: "Select a voucher." }),
+    enrollStatusCode: z.string()
+    .min(1, { message: "Select a voucher." })
 })
