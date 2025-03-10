@@ -15,7 +15,6 @@ import { Plus } from 'lucide-react'
 // import axios from "axios";
 // import { StudentCol } from "@/FldrTypes/students-col"
 
-
 export default function Enrollment1() {
 //   const [data, setData] = useState<StudentCol[]>([]);
 

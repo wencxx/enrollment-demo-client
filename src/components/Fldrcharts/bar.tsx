@@ -30,13 +30,13 @@ export default function BarChartComponent({ dataChart }: { dataChart: StudentsCo
                   />
                   <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
                   <Bar
-                    dataKey="regular"
+                    dataKey="validated"
                     type="monotone"
                     fill="var(--color-regular)"
                     strokeWidth={2}
                   />
                   <Bar
-                    dataKey="irregular"
+                    dataKey="applicants"
                     type="monotone"
                     fill="var(--color-irregular)"
                     strokeWidth={2}

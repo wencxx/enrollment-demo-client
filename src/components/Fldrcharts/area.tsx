@@ -30,13 +30,13 @@ export default function AreaChartComponent({ dataChart }: { dataChart: StudentsC
                   />
                   <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
                   <Area
-                    dataKey="regular"
+                    dataKey="validated"
                     type="monotone"
                     stroke="var(--color-regular)"
                     strokeWidth={2}
                   />
                   <Area
-                    dataKey="irregular"
+                    dataKey="applicants"
                     type="monotone"
                     stroke="var(--color-irregular)"
                     strokeWidth={2}
