@@ -1,7 +1,8 @@
 import * as React from "react"
 import {
   FileInput,
-  ChartColumn
+  ChartColumn,
+  FileUser
 } from "lucide-react"
 
 import {
@@ -12,7 +13,7 @@ import {
 
 import { MenuMain } from "@/components/FldrMenu/menu-main"
 import { MenuDashboard } from "@/components/FldrMenu/menu-dashboard"
-// import { NavProjects } from "@/components/FldrMenu/nav-projects"
+import { MenuEnrollment } from "@/components/FldrMenu/menu-enrollment"
 import { NavUser } from "@/components/FldrMenu/nav-user"
 import {
   Sidebar,
@@ -75,13 +76,51 @@ const data = {
           url: "#",
           authorizeUsers: ['Admin']
         },
+      ],
+    },
+    {
+      title: "Enrollment",
+      url: "#",
+      icon: FileUser,
+      authorizeUsers: ['Admin'],
+      items: [
         {
-          title: "Enrollment 1",
-          url: "entry/enrollment1",
+          title: "Enrollment - 1",
+          url: "enrollment/enrollment1",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Enrollment - 2",
+          url: "enrollment/enrollment2",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Enrollment - 3",
+          url: "enrollment/enrollment3",
           authorizeUsers: ['Admin']
         },
       ],
+    }
+  ],
+  menuEnrollment: [
+    {
+      name: 'Enrollment1',
+      url: 'enrollment/enrollment1',
+      icon: ChartColumn,
+      authorizeUsers: ['Admin']
     },
+    {
+      name: 'Enrollment2',
+      url: 'enrollment/enrollment1',
+      icon: ChartColumn,
+      authorizeUsers: ['Admin']
+    },
+    {
+      name: 'Enrollment3',
+      url: 'enrollment/enrollment1',
+      icon: ChartColumn,
+      authorizeUsers: ['Admin']
+    }
   ],
 }
 
@@ -112,6 +151,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         { (user && (user.groupName === 'Admin')) && <MenuDashboard dashboard={data.menuDashboard} /> }
+        {/* { (user && (user.groupName === 'Admin')) && <MenuEnrollment dashboard={data.menuEnrollment} /> } */}
         { (user && (user.groupName === 'Admin'  || user.groupName === 'Student')) && <MenuMain items={data.menuMain} /> }
       </SidebarContent>
       <SidebarFooter>

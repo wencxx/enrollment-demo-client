@@ -22,7 +22,7 @@ function App() {
             <Route path="entry/course" element={<Course />} />
             <Route path="entry/student" element={<Student />} />
             <Route path="entry/rate" element={<Rate />} />
-            <Route path="entry/enrollment1" element={<Enrollment1 />} />
+            <Route path="enrollment/enrollment1" element={<Enrollment1 />} />
           </Route>
           <Route path="/unauthorize" element={<Unauhtorize />} />
         </Routes>

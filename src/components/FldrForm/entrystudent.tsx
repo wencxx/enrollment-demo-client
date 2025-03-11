@@ -23,13 +23,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Input } from "@/components/ui/input"
-import { StudentCol } from "@/FldrTypes/students-col"
+import { StudentColFullName } from "@/FldrTypes/students-col"
 import { studentSchema } from "@/FldrSchema/userSchema.ts"
 
 type StudentFormData = z.infer<typeof studentSchema>
 
 interface StudentFormProps {
-  onSubmitSuccess: (newStudent: StudentCol) => void;
+  onSubmitSuccess: (newStudent: StudentColFullName) => void;
 }
 
 
@@ -38,12 +38,12 @@ export function StudentForm({ onSubmitSuccess }: StudentFormProps) {
   const form = useForm<StudentFormData>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
-        firstName: "",
-        middleName: "",
-        lastName: "",
-        address: "",
-        birthDate: "",
-        enrollRemarks: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      address: "",
+      birthDate: "",
+      enrollRemarks: "",
     },
   })
 
@@ -54,12 +54,10 @@ export function StudentForm({ onSubmitSuccess }: StudentFormProps) {
       console.log("Data submitted successfully:", response.data)
       toast("New student registered successfully.")
 
-      const newStudent: StudentCol = {
+      const newStudent: StudentColFullName = {
         studentCode: response.data.studentCode,
         studentID: response.data.studentID,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        middleName: values.middleName,
+        fullName: `${values.firstName} ${values.middleName} ${values.lastName}`,
         birthDate: new Date(values.birthDate || ""),
         Address: values.address,
         enrollStatusCode: response.data.enrollStatusCode,
@@ -138,47 +136,47 @@ export function StudentForm({ onSubmitSuccess }: StudentFormProps) {
             )}
           />
 
-        <FormField
-          control={form.control}
-          name="birthDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Date of birth</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                         format(new Date(field.value), "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value ? new Date(field.value) : undefined}
-                    onSelect={field.onChange}
-                    disabled={(date: Date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="birthDate"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Date of birth</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(new Date(field.value), "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value ? new Date(field.value) : undefined}
+                      onSelect={field.onChange}
+                      disabled={(date: Date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}

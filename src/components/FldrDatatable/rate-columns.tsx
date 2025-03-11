@@ -114,6 +114,11 @@ export const columns: ColumnDef<RateCol>[] = [
                 </Button>
             )
         },
+        cell: ({ row }) => {
+            return (
+                <span>₱ {row.original.rateAmount}</span>
+            )
+        }
     },
     {
         accessorKey: "yearCode",

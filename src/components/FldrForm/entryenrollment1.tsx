@@ -1,4 +1,4 @@
-"use client"
+import { z } from "zod"
 import { enrollment1Schema } from "@/FldrSchema/userSchema.ts"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
@@ -14,14 +14,14 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import useAuthStore from "@/FldrStore/auth"
 import {
-    Form,
-    FormControl,
-   // FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-  } from "@/components/ui/form"
+  Form,
+  FormControl,
+  // FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import {
   Select,
   SelectContent,
@@ -33,32 +33,32 @@ import {
 type Enrollment1FormData = z.infer<typeof enrollment1Schema>
 
 export function Enrollment1Form() {
-    const form = useForm<Enrollment1FormData>({
-        resolver: zodResolver(enrollment1Schema),
-        defaultValues: {
-          yearCode: "",
-          semCode: "",
-          courseCode: "",
-          studentID: "",
-          voucher: "",
-          date: new Date(),
-          enrollStatusCode: "",
-        },
-        mode: 'onChange',
-      })
+  const form = useForm<Enrollment1FormData>({
+    resolver: zodResolver(enrollment1Schema),
+    defaultValues: {
+      yearCode: "",
+      semCode: "",
+      courseCode: "",
+      studentID: "",
+      voucher: "",
+      date: new Date(),
+      enrollStatusCode: "",
+    },
+    mode: 'onChange',
+  })
 
-    const [years, setYears] = useState<Year[]>([])
-    const [sem, setSem] = useState<Sem[]>([])
-    const [course, setCourse] = useState<CourseCol[]>([])
-    const [student, setStudent] = useState<StudentCol[]>([])
-    const [status, setStatus] = useState<EnrollmentStatus[]>([])
+  const [years, setYears] = useState<Year[]>([])
+  const [sem, setSem] = useState<Sem[]>([])
+  const [course, setCourse] = useState<CourseCol[]>([])
+  const [student, setStudent] = useState<StudentCol[]>([])
+  const [status, setStatus] = useState<EnrollmentStatus[]>([])
 
-    const [studentSearch, setStudentSearch] = useState("");
-    const [courseSearch, setCourseSearch] = useState("");
+  const [studentSearch, setStudentSearch] = useState("");
+  const [courseSearch, setCourseSearch] = useState("");
 
-    const handleStudentSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setStudentSearch(event.target.value); // Update search query
-    };
+  const handleStudentSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStudentSearch(event.target.value); // Update search query
+  };
 
   const filteredStudents = student.filter((student) => {
     return (
@@ -72,156 +72,145 @@ export function Enrollment1Form() {
     setCourseSearch(event.target.value); // Update search query
   };
 
-const filteredCourses = course.filter((course) => {
-  return (
-    course.courseDesc.toLowerCase().includes(courseSearch.toLowerCase())
-  );
-});
+  const filteredCourses = course.filter((course) => {
+    return (
+      course.courseDesc.toLowerCase().includes(courseSearch.toLowerCase())
+    );
+  });
+
+  async function fetchYears() {
+    try {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListYear`)
+      setYears(response.data)
+    } catch (error: any) {
+      console.error("Error fetching years:", error)
+    }
+  }
+
+  async function fetchSem() {
+    try {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListSemester`)
+      setSem(response.data)
+    } catch (error: any) {
+      console.error("Error fetching semseters:", error)
+    }
+  }
+
+  async function fetchCourse() {
+    try {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
+      setCourse(response.data)
+    } catch (error: any) {
+      console.error("Error fetching courses:", error)
+    }
+  }
+
+  async function fetchStudent() {
+    try {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListApplicant`)
+      console.log("Fetched students:", response.data);
+      setStudent(response.data)
+    } catch (error: any) {
+      console.error("Error fetching students:", error)
+    }
+  }
+
+  async function fetchStatus() {
+    try {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollStatus`)
+      setStatus(response.data)
+    } catch (error: any) {
+      console.error("Error fetching courses:", error)
+    }
+  }
 
   useEffect(() => {
-    async function fetchYears() {
-      try {
-        const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListYear`) 
-        setYears(response.data) 
-        } catch (error: any) {
-            console.error("Error fetching years:", error)
-        }
-        }
-
     fetchYears()
-  }, [])
-
-  useEffect(() => {
-    async function fetchSem() {
-      try {
-        const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListSemester`) 
-        setSem(response.data) 
-        } catch (error: any) {
-            console.error("Error fetching semseters:", error)
-        }
-        }
-
     fetchSem()
-  }, [])
-
-  useEffect(() => {
-    async function fetchCourse() {
-      try {
-        const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`) 
-        setCourse(response.data) 
-        } catch (error: any) {
-            console.error("Error fetching courses:", error)
-        }
-        }
-
     fetchCourse()
-  }, [])
-
-  useEffect(() => {
-    async function fetchStudent() {
-      try {
-        const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListApplicant`) 
-        console.log("Fetched students:", response.data);
-        setStudent(response.data) 
-        } catch (error: any) {
-            console.error("Error fetching students:", error)
-        }
-        }
-
     fetchStudent()
-  }, [])
-
-  useEffect(() => {
-    async function fetchStatus() {
-      try {
-        const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollStatus`) 
-        setStatus(response.data) 
-        } catch (error: any) {
-            console.error("Error fetching courses:", error)
-        }
-        }
-
-      fetchStatus()
+    fetchStatus()
   }, [])
 
   const { currentUser } = useAuthStore.getState();
 
-    if (!currentUser) {
-      toast("User not logged in.");
-      return;
-    }
+  if (!currentUser) {
+    toast("User not logged in.");
+    return;
+  }
 
   const onSubmit = async (values: Enrollment1FormData) => {
-      const currentDate = new Date();
+    const currentDate = new Date();
 
-      const enrollment1Data = {
-        yearCode: values.yearCode,
-        semCode: values.semCode,
-        courseCode: values.courseCode,
-        //since StudentCode and StudentID are identical for now, StudentID is put into StudentCode. god bless us all
-        studentCode: values.studentID,
-        userCode: currentUser.userCode,
-        voucher: values.voucher,
-        tDate: currentDate,
-        dateEncoded: currentDate,
-        enrollStatusCode: values.enrollStatusCode,
-      }
-  
-      try {
-        const postResponse = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertEnrollment1`, enrollment1Data)
+    const enrollment1Data = {
+      // yearCode: values.yearCode,
+      // semCode: values.semCode,
+      // courseCode: values.courseCode,
+      // voucher: values.voucher,
+      // enrollStatusCode: values.enrollStatusCode,
+      ...values,
+      //since StudentCode and StudentID are identical for now, StudentID is put into StudentCode. god bless us all
+      studentCode: values.studentID,
+      userCode: currentUser.userCode,
+      tDate: currentDate,
+      dateEncoded: currentDate,
+    }
 
-        const putResponse = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollmentStatus`, enrollment1Data)
-  
-        console.log("Data submitted successfully:", postResponse)
-        console.log("Data submitted successfully:", putResponse)
-        toast("Success.")
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          toast("Error submitting form.")
-        } else {
-          console.error("Network error:", error)
-          toast("Network error.")
-        }
+    try {
+      const postResponse = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertEnrollment1`, enrollment1Data)
+
+      const putResponse = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollmentStatus`, enrollment1Data)
+
+      console.log("Data submitted successfully:", postResponse)
+      console.log("Data submitted successfully:", putResponse)
+      toast("Success.")
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast("Error submitting form.")
+      } else {
+        console.error("Network error:", error)
+        toast("Network error.")
       }
     }
+  }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 grid grid-cols-2 gap-2">
 
-      <FormField
+        <FormField
           control={form.control}
           name="studentID"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Student</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Pending applicant" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <div className="p-2">
-                      <input
-                        type="text"
-                        className="w-full px-3 py-2 border rounded text-sm"
-                        placeholder="Search for a student"
-                        value={studentSearch}
-                        onChange={handleStudentSearchChange}
-                      />
-                    </div>
-                    {filteredStudents.length > 0 ? (
-                      filteredStudents.map((student) => (
-                        <SelectItem key={student.studentID} value={student.studentID}>
-                          {student.firstName} {student.lastName}, {student.middleName}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem disabled>No students available</SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Pending applicant" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <div className="p-2">
+                    <input
+                      type="text"
+                      className="w-full px-3 py-2 border rounded text-sm"
+                      placeholder="Search for a student"
+                      value={studentSearch}
+                      onChange={handleStudentSearchChange}
+                    />
+                  </div>
+                  {filteredStudents.length > 0 ? (
+                    filteredStudents.map((student) => (
+                      <SelectItem key={student.studentID} value={student.studentID}>
+                        {student.firstName} {student.lastName}, {student.middleName}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem disabled>No students available</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -285,7 +274,7 @@ const filteredCourses = course.filter((course) => {
           )}
         />
 
-<FormField
+        <FormField
           control={form.control}
           name="semCode"
           render={({ field }) => (
@@ -314,39 +303,39 @@ const filteredCourses = course.filter((course) => {
           )}
         />
 
-<FormField
+        <FormField
           control={form.control}
           name="courseCode"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Course</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a course" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent className="top-full max-h-40 overflow-y-auto max-w-full">
-                    <div className="p-2">
-                      <input
-                        type="text"
-                        className="w-full px-3 py-2 border rounded text-sm"
-                        placeholder="Search for a course"
-                        value={courseSearch}
-                        onChange={handleCourseSearchChange}
-                      />
-                    </div>
-                    {filteredCourses.length > 0 ? (
-                      filteredCourses.map((course) => (
-                        <SelectItem key={course.courseCode} value={course.courseCode}>
-                          {course.courseDesc}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem disabled>No courses available</SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a course" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent className="top-full max-h-40 overflow-y-auto max-w-full">
+                  <div className="p-2">
+                    <input
+                      type="text"
+                      className="w-full px-3 py-2 border rounded text-sm"
+                      placeholder="Search for a course"
+                      value={courseSearch}
+                      onChange={handleCourseSearchChange}
+                    />
+                  </div>
+                  {filteredCourses.length > 0 ? (
+                    filteredCourses.map((course) => (
+                      <SelectItem key={course.courseCode} value={course.courseCode}>
+                        {course.courseDesc}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem disabled>No courses available</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
