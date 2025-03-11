@@ -19,7 +19,7 @@ const useAuthStore = create<AuthState>((set) => ({
     auth: !!localStorage.getItem('token'),
     login: async (credentials: z.infer<typeof loginSchema>, navigate) => {
         try {
-            const res: any = await axios.get(`${plsConnect()}/API/WebAPI/tblUserAll/GetLoginAllUserInfo?strUserName=${credentials.username}&strPassword=${credentials.username}`)
+            const res: any = await axios.get(`${plsConnect()}/API/WebAPI/tblUserAll/GetLoginAllUserInfo?strUserName=${credentials.username}&strPassword=${credentials.password}`)
 
             set({ currentUser: res.data })
             set({ auth: true })
@@ -27,14 +27,15 @@ const useAuthStore = create<AuthState>((set) => ({
             localStorage.setItem('token', res.data.token)
 
             const role = res.data.groupName
-
+            
             if (role === 'Admin') {
-                navigate('/')
-            } else {
-                console.log(res)
+                navigate('/enrollment/enrollment2')
+            } else if (role === 'Student') {
+                navigate('/enrollment/enrollment2')
             }
         } catch (error: unknown) {
             console.log(error)
+            set({ auth: false })
         }
     },
     logout: async () => {

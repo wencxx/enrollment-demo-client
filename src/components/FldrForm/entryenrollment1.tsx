@@ -365,7 +365,9 @@ export function Enrollment1Form() {
           )}
         />
 
-        <Button type="submit" className="w-20">Submit</Button>
+        <div className="col-span-2">
+          <Button type="submit" className="float-right">Submit</Button>
+        </div>
       </form>
     </Form>
   )
