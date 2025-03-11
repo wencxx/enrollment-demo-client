@@ -169,7 +169,7 @@ export function NavUser() {
               {user && (
                 <Avatar className="h-8 w-8 rounded-lg !text-black dark:!text-white">
                   <AvatarImage src={user?.groupName} alt={user?.groupName} />
-                  <AvatarFallback className="rounded-lg uppercase">{user.fullName.split(' ')[0].slice(0, 1) + user.fullName.split(' ')[1].slice(0, 1)}</AvatarFallback>
+                  <AvatarFallback className="rounded-lg uppercase">{user.fullName ? user.fullName.split(' ')[0].slice(0, 1) + user.fullName.split(' ')[1].slice(0, 1) : ''}</AvatarFallback>
                 </Avatar>
               )}
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -190,7 +190,7 @@ export function NavUser() {
                 {user && (
                   <Avatar className="h-8 w-8 rounded-lg !text-black dark:!text-white">
                     <AvatarImage src={user?.groupCode} alt={user?.groupCode} />
-                    <AvatarFallback className="rounded-lg">{user.fullName.split(' ')[0].slice(0, 1) + user.fullName.split(' ')[1].slice(0, 1)}</AvatarFallback>
+                    <AvatarFallback className="rounded-lg uppercase">{user.fullName ? user.fullName.split(' ')[0].slice(0, 1) + user.fullName.split(' ')[1].slice(0, 1) : 'WB'}</AvatarFallback>
                   </Avatar>
                 )}
                 <div className="grid flex-1 text-left text-sm leading-tight">

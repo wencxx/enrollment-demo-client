@@ -13,7 +13,6 @@ import {
 
 import { MenuMain } from "@/components/FldrMenu/menu-main"
 import { MenuDashboard } from "@/components/FldrMenu/menu-dashboard"
-import { MenuEnrollment } from "@/components/FldrMenu/menu-enrollment"
 import { NavUser } from "@/components/FldrMenu/nav-user"
 import {
   Sidebar,
@@ -54,6 +53,11 @@ const data = {
         {
           title: "Rate",
           url: "entry/rate",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Rate Course",
+          url: "entry/ratecourse",
           authorizeUsers: ['Admin']
         },
       ],
