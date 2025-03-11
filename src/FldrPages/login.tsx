@@ -60,6 +60,8 @@ function Login({
         } catch (error: unknown) {
             if(error instanceof Error){
                 setErr(error.message)
+            }else{
+                setErr('An error occurred')
             }
         } finally {
             setLoggingIn(false)

@@ -3,7 +3,9 @@ import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { format } from "date-fns";
-import { StudentCol } from "@/FldrTypes/students-col";
+import { StudentColFullName } from "@/FldrTypes/students-col";
+import { Badge } from "@/components/ui/badge"
+import moment from 'moment'
 
 import {
     DropdownMenu,
@@ -13,7 +15,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export const columns: ColumnDef<StudentCol>[] = [
+export const columns: ColumnDef<StudentColFullName>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -51,42 +53,14 @@ export const columns: ColumnDef<StudentCol>[] = [
         },
     },
     {
-        accessorKey: "firstName",
+        accessorKey: "fullName",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    First Name
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    {
-        accessorKey: "lastName",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Last Name
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    {
-        accessorKey: "middleName",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Middle Name
+                    Full Name
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
@@ -119,7 +93,7 @@ export const columns: ColumnDef<StudentCol>[] = [
             }
 
             if (!isNaN(dateObject.getTime())) {
-                return format(dateObject, "yyyy-MM-dd");
+                return moment(format(dateObject, "yyyy-MM-dd")).format('ll');
             }
 
             return "N/A";
@@ -154,48 +128,32 @@ export const columns: ColumnDef<StudentCol>[] = [
             )
         },
         cell: ({ row }) => {
-            let statusClass = '';
+            let variantType: 'approve' | 'disapprove' | 'pending' = 'pending';
             
             const status: string = row.getValue("enrollStatusCode")
   
             // Apply color logic based on the status value
             if (status === 'Approve') {
-              statusClass = 'bg-green-500 text-white';
+              variantType = 'approve';
             } else if (status === 'Disapprove') {
-              statusClass = 'bg-red-500 text-white';
+              variantType = 'disapprove';
             } else if (status === 'Pending') {
-              statusClass = 'bg-orange-500 text-white';
+              variantType = 'pending';
             }
   
             return (
               <div className="flex">
-                  <span className={`px-2 py-1 rounded w-full text-start ${statusClass}`}>
+                  <Badge variant={variantType}>
                     {status}
-                  </span>
+                  </Badge>
               </div>
             );
           },
     },
     {
-        accessorKey: "enrollRemarks",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Remarks
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-
-    {
         id: "actions",
         cell: ({ row }) => {
             const Student = row.original
-
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -212,8 +170,6 @@ export const columns: ColumnDef<StudentCol>[] = [
                             Copy student ID
                         </DropdownMenuItem>
                         <DropdownMenuItem>View</DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

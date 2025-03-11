@@ -12,19 +12,24 @@ import { DataTable } from "@/components/FldrDatatable/data-table";
 import { useState, useEffect } from "react";
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios";
-import { StudentCol } from "@/FldrTypes/students-col"
+import { StudentCol, StudentColFullName } from "@/FldrTypes/students-col"
 import { Plus } from 'lucide-react'
 // import { useReactToPrint } from "react-to-print";
 // import { useRef } from "react";
 
 export default function Student() {
-  const [data, setData] = useState<StudentCol[]>([]);
+  const [data, setData] = useState<StudentColFullName[]>([]);
 
   const getStudents = async () => {
     try {
       const res = await axios.get<StudentCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListStudent`)
 
-      setData(res.data);
+      const dataWithFullName = res.data.map(student => ({
+        ...student,
+        fullName: `${student.firstName} ${student.middleName} ${student.lastName}`
+      }));
+
+      setData(dataWithFullName);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -34,7 +39,7 @@ export default function Student() {
     getStudents()
   }, []);
 
-  const addNewStudent = (newStudent: StudentCol) => {
+  const addNewStudent = (newStudent: StudentColFullName) => {
     setData((prevData) => [...prevData, newStudent])
   }
 

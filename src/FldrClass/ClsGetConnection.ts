@@ -7,4 +7,4 @@
     // const strEndpoint: string = 'https://localhost:7092'
 
     return strEndpoint
-}
+}   
