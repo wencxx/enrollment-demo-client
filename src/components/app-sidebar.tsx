@@ -56,26 +56,6 @@ const data = {
           url: "entry/rate",
           authorizeUsers: ['Admin']
         },
-        {
-          title: "Rate Type",
-          url: "#",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Enroll Status",
-          url: "#",
-          authorizeUsers: ['Student', 'Admin']
-        },
-        {
-          title: "Semester",
-          url: "#",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Year",
-          url: "#",
-          authorizeUsers: ['Admin']
-        },
       ],
     },
     {

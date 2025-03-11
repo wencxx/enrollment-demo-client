@@ -87,7 +87,6 @@ export function RateForm() {
                 value: item.courseCode,
             }))
             setCourse(mappedCourseCode)
-        console.log("Course data: ", response.data)
         } catch (error: any) {
             console.error("Error fetching courses:", error)
         }
@@ -111,19 +110,14 @@ export function RateForm() {
   const onSubmit = async (values: RateFormData) => {
 
       const rateData = {
-        yearCode: values.yearCode,
-        courseCode: values.courseCode,
-        rateTypeCode: values.rateTypeCode,
-        noUnits: values.noUnits,
-        rateDesc: values.rateDesc,
-        rateAmount: values.rateAmount,
+        ...values,
       }
 
       try {
-        //const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertRate`, rateData)
+        const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertRate`, rateData)
   
         toast("Success.")
-        console.log("Data:", rateData)
+        console.log("Data:", response)
       } catch (error) {
         if (axios.isAxiosError(error)) {
           toast("Error submitting form.")
