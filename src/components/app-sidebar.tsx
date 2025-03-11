@@ -57,6 +57,11 @@ const data = {
           authorizeUsers: ['Admin']
         },
         {
+          title: "Rate Course",
+          url: "entry/ratecourse",
+          authorizeUsers: ['Student', 'Admin']
+        },
+        {
           title: "Rate Type",
           url: "#",
           authorizeUsers: ['Admin']
