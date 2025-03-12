@@ -6,7 +6,8 @@ import Dashboard from "@/FldrPages/FldrDashboard/dashboard"
 import Course from "@/FldrPages/FldrEntry/course"
 import Student from "./FldrPages/FldrEntry/student"
 import Rate from "./FldrPages/FldrEntry/rate"
-import Enrollment1 from "@/FldrPages/FldrEntry/enrollment1"
+import Enrollment1 from "./FldrPages/FldrEnrollment/enrollment1"
+import Enrollment2 from "./FldrPages/FldrEnrollment/enrollment2"
 import Unauhtorize from "@/FldrPages/redirects/unauthorized"
 import RateCourse from "@/FldrPages/FldrEntry/ratecourse"
 
@@ -25,6 +26,7 @@ function App() {
             <Route path="entry/rate" element={<Rate />} />
             <Route path="entry/ratecourse" element={<RateCourse />} />
             <Route path="enrollment/enrollment1" element={<Enrollment1 />} />
+            <Route path="enrollment/enrollment2" element={<Enrollment2 />} />
           </Route>
           <Route path="/unauthorize" element={<Unauhtorize />} />
         </Routes>

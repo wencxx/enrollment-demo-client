@@ -13,7 +13,6 @@ import {
 
 import { MenuMain } from "@/components/FldrMenu/menu-main"
 import { MenuDashboard } from "@/components/FldrMenu/menu-dashboard"
-import { MenuEnrollment } from "@/components/FldrMenu/menu-enrollment"
 import { NavUser } from "@/components/FldrMenu/nav-user"
 import {
   Sidebar,
@@ -59,26 +58,6 @@ const data = {
         {
           title: "Rate Course",
           url: "entry/ratecourse",
-          authorizeUsers: ['Student', 'Admin']
-        },
-        {
-          title: "Rate Type",
-          url: "#",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Enroll Status",
-          url: "#",
-          authorizeUsers: ['Student', 'Admin']
-        },
-        {
-          title: "Semester",
-          url: "#",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Year",
-          url: "#",
           authorizeUsers: ['Admin']
         },
       ],
@@ -87,22 +66,22 @@ const data = {
       title: "Enrollment",
       url: "#",
       icon: FileUser,
-      authorizeUsers: ['Admin'],
+      authorizeUsers: ['Admin', 'Student'],
       items: [
         {
           title: "Enrollment - 1",
           url: "enrollment/enrollment1",
-          authorizeUsers: ['Admin']
+          authorizeUsers: ['Admin', 'Student']
         },
         {
           title: "Enrollment - 2",
           url: "enrollment/enrollment2",
-          authorizeUsers: ['Admin']
+          authorizeUsers: ['Admin', 'Student']
         },
         {
           title: "Enrollment - 3",
           url: "enrollment/enrollment3",
-          authorizeUsers: ['Admin']
+          authorizeUsers: ['Admin', 'Student']
         },
       ],
     }
