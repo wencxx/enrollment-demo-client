@@ -4,3 +4,10 @@ export type RateCourseCol = {
     courseDesc: string
     semDesc: string
 }
+
+export type EntryRateCourse = {
+    pkCode: string
+    yearCode: string
+    courseCode: string
+    semCode: string
+}

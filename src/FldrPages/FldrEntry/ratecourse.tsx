@@ -4,7 +4,15 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { RateCourseCol } from "@/FldrTypes/ratecourse-col";
-
+import { Plus } from 'lucide-react'
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Toaster } from "@/components/ui/sonner"
+import { RateCourseForm } from "@/components/FldrForm/entryratecourse";
 
 
 export default function RateCourse() {
@@ -26,8 +34,21 @@ export default function RateCourse() {
 
 return (
     <>
-        <DataTable columns={columns} data={data}/>
+    <Dialog>
+        <DialogTrigger asChild>
+        <Button variant="outline">
+          <Plus />
+          Add new course
+        </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <RateCourseForm />
+        </DialogContent>
+    </Dialog>
+    <div className="mt-4">
+      <DataTable columns={columns} data={data} />
+    </div>
+    <Toaster />
     </>
-    
   );
 }

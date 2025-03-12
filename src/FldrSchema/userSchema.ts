@@ -68,3 +68,12 @@ export const enrollment1Schema = z.object({
   enrollStatusCode: z.string()
     .min(1, { message: "Select a voucher." })
 })
+
+export const entryRateSchema = z.object({
+  yearCode: z.string()
+  .min(1, { message: "Select a year." }),
+  semCode: z.string()
+  .min(1, { message: "Select a semester." }),
+  courseCode: z.string()
+  .min(1, { message: "Select a course." }),
+})
