@@ -83,5 +83,5 @@ export const rateSchema = z.object({
     .transform((val) => parseFloat(val))
     .refine((val) => !isNaN(val), { message: "Rate amount must be a valid number." }),
   pkCode: z.string()
-  .min(1, { message: "Select a rate course." }),
+  .min(1, { message: "Select a rate course." })
 })
