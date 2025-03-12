@@ -85,3 +85,13 @@ export const rateSchema = z.object({
   pkCode: z.string()
   .min(1, { message: "Select a rate course." })
 })
+
+// DIAZ: this is for entryRateCourse
+export const entryRateSchema = z.object ({
+  yearCode: z.string()
+  .min(1, { message: "Select a year." }),
+  courseCode: z.string()
+  .min(1, { message: "Select a course." }),
+  semCode: z.string()
+  .min(1, { message: "Select a semester." }),
+})

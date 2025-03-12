@@ -1,10 +1,16 @@
 export type Enrollment1Col = {
+    studentCode: string
     firstName: string
     lastName: string
     middleName: string
-    birthDate: Date
-    address: string
-//    enrollStatusCode: number
+    studentStatus: boolean
+    void: boolean
 
-    enrollRemarks: string
+
+    // birthDate: Date
+    // address: string
+    // enrollRemarks: string
+    // courseCode: string
+    // semCode: string
+    // yearCode: string
 }
