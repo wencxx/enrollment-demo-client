@@ -69,7 +69,7 @@ export function CourseForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="float-right">Submit</Button>
       </form>
     </Form>
     </>

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import { loginSchema } from '@/FldrSchema/userSchema'
 import { LoaderCircle } from 'lucide-react'
 import { Link } from "react-router-dom"
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from "@/components/ui/button"
 import {
@@ -31,7 +31,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import useAuthStore from "@/FldrStore/auth"
 
 function Login({
@@ -60,6 +60,7 @@ function Login({
         } catch (error: unknown) {
             if(error instanceof Error){
                 setErr(error.message)
+                console.log(error)
             }else{
                 setErr('An error occurred')
             }
@@ -68,7 +69,20 @@ function Login({
         }
     }
 
-    if(authenticated) return <Navigate to='/' />
+    useEffect(() => {
+        if (authenticated) {
+            const role = store.currentUser?.groupName
+            if (role === 'Admin') {
+                navigate('/')
+            } else if (role === 'Student') {
+                navigate('/enrollment/enrollment2')
+            } else {
+                navigate('/')
+            }
+        }
+    }, [authenticated, navigate, store.currentUser])
+
+    if(authenticated) return null
 
     return (
         <div className="flex items-center justify-center h-screen w-screen p-10">
@@ -152,9 +166,11 @@ function Login({
                                 <br />
                                 <p>If you have any questions or concerns regarding these Terms, please contact us at <a href="mailto:[email/contact information]">cbyteprog@gmail.com</a>.</p>
                             </div>
-                            <DialogTrigger className="flex justify-end">
-                                <Button className="cursor-pointer">I agree</Button>
-                            </DialogTrigger>
+                            <div className="flex justify-end">
+                                <DialogTrigger asChild>
+                                    <Button className="cursor-pointer w-fit">I agree</Button>
+                                </DialogTrigger>
+                            </div>
                         </DialogContent>
                     </Dialog>{" "}
                     and <a href="#">Privacy Policy</a>.

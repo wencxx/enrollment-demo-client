@@ -66,22 +66,22 @@ const data = {
       title: "Enrollment",
       url: "#",
       icon: FileUser,
-      authorizeUsers: ['Admin'],
+      authorizeUsers: ['Admin', 'Student'],
       items: [
         {
           title: "Enrollment - 1",
           url: "enrollment/enrollment1",
-          authorizeUsers: ['Admin']
+          authorizeUsers: ['Admin', 'Student']
         },
         {
           title: "Enrollment - 2",
           url: "enrollment/enrollment2",
-          authorizeUsers: ['Admin']
+          authorizeUsers: ['Admin', 'Student']
         },
         {
           title: "Enrollment - 3",
           url: "enrollment/enrollment3",
-          authorizeUsers: ['Admin']
+          authorizeUsers: ['Admin', 'Student']
         },
       ],
     }
