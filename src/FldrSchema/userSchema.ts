@@ -61,10 +61,29 @@ export const enrollment1Schema = z.object({
   courseCode: z.string()
     .min(1, { message: "Select a course." }),
   studentID: z.string()
-    .min(1, { message: "Select a student." }),
-  voucher: z.string()
-    .min(1, { message: "Select a voucher." }),
-  date: z.date(),
+   .min(1, { message: "Select a student." }),
   enrollStatusCode: z.string()
-    .min(1, { message: "Select a voucher." })
+    .min(1, { message: "Please confirm status." })
+})
+
+export const rateSchema = z.object({
+  yearCode: z.string()
+    .min(1, { message: "Select a year." }),
+  courseCode: z.string()
+    .min(1, { message: "Select a course." }),
+  rateTypeCode: z.string()
+    .min(1, { message: "Select a rate type." }),
+  rateDesc: z.string()
+    .min(1, { message: "Enter a description." }),
+  noUnits: z
+    .string()
+    .min(1, { message: "Enter the number of units." })
+    .transform((val) => parseInt(val))
+    .refine((val) => Number.isInteger(val), { message: "Number of units must be an integer." })
+    .refine((val) => val > 0, { message: "Number of units must be a positive number." }),
+  rateAmount: z
+    .string()
+    .min(1, { message: "Enter the rate amount." })
+    .transform((val) => parseFloat(val)) // Transform string to float
+    .refine((val) => !isNaN(val), { message: "Rate amount must be a valid number." })
 })

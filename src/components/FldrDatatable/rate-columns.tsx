@@ -16,6 +16,7 @@ export type RateCol = {
     rateCode: string
     rateDesc: string
     rateTypeCode: string
+    rateTypeDesc: string
     noUnits: number
     rateAmount: number
     yearCode: number
@@ -45,6 +46,20 @@ export const columns: ColumnDef<RateCol>[] = [
         enableSorting: false,
         enableHiding: false,
       },
+      {
+        accessorKey: "rowNum",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    RowNum
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+    },
     {
         accessorKey: "rateCode",
         header: ({ column }) => {
@@ -74,7 +89,7 @@ export const columns: ColumnDef<RateCol>[] = [
         },
     },
     {
-        accessorKey: "rateTypeCode",
+        accessorKey: "rateTypeDesc",
         header: ({ column }) => {
             return (
                 <Button
@@ -82,20 +97,6 @@ export const columns: ColumnDef<RateCol>[] = [
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
                     Rate Type Code
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    {
-        accessorKey: "noUnits",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    No. of Units
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
@@ -121,34 +122,19 @@ export const columns: ColumnDef<RateCol>[] = [
         }
     },
     {
-        accessorKey: "yearCode",
+        accessorKey: "noUnits",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Year Code
+                    No. of Units
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
     },
-    {
-        accessorKey: "courseCode",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Course Code
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    
     {
         id: "actions",
         cell: ({ row }) => {
