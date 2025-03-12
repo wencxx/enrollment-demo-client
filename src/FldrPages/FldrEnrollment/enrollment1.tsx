@@ -7,27 +7,34 @@ import {
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
 import { Plus } from 'lucide-react'
-// import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-// import { columns } from "@/components/FldrDatatable/student-columns";
-// import { DataTable } from "@/components/FldrDatatable/data-table";
-// import { useState, useEffect } from "react";
-// import { plsConnect } from "@/FldrClass/ClsGetConnection"
-// import axios from "axios";
-// import { StudentCol } from "@/FldrTypes/students-col"
+import { useState, useEffect } from "react"
+import { Enrollment1Col } from "@/FldrTypes/enrollment1"
+import { plsConnect } from "@/FldrClass/ClsGetConnection"
+import axios from "axios"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import { columns } from "@/components/FldrDatatable/enrollment1-col";
+import { DataTable } from "@/components/FldrDatatable/data-table";
 
 export default function Enrollment1() {
-//   const [data, setData] = useState<StudentCol[]>([]);
+  const [data, setData] = useState<Enrollment1Col[]>([]);
 
-//   useEffect(() => {
-//     axios
-//       .get<StudentCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListStudent`)
-//       .then((response) => {
-//         setData(response.data);
-//       })
-//       .catch((error) => {
-//         console.error("Error fetching data:", error);
-//       });
-//   }, []);
+  useEffect(() => {
+    const fetchEnrollment1 = async () => {
+      try {
+        const response = await axios.get<Enrollment1Col[]>(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`);
+        const updatedData = response.data.map((item) => ({
+          ...item,
+          fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}`,
+        }));
+        setData(updatedData);
+        console.log(updatedData)
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchEnrollment1();
+  }, []);
 
 
   return (
@@ -44,10 +51,10 @@ export default function Enrollment1() {
         <Enrollment1Form />
         </DialogContent>
     </Dialog>
-    {/* <ScrollArea className="mt-4 overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
+    <ScrollArea className="mt-4 overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
           <DataTable columns={columns} data={data} />
       <ScrollBar orientation="horizontal" />
-    </ScrollArea> */}
+    </ScrollArea>
 
     <Toaster />
     </>
