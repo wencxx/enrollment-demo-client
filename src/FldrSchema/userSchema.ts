@@ -16,16 +16,16 @@ export const registerSchema = z.object({
   }).min(6, "Username must be atleat 6 charactesrs").max(50, "Username must not exceed 50 characters"),
   pWord: z.string({
     required_error: "Please enter a password"
-  }).min(8, "Password must be atleast 8 characters").max(50, "Password must not exceed 50 characteds").regex(/[0-9]/, "Password must have a number").regex(/^(?=.*[a-z])(?=.*[A-Z]).*$/, 'Password must have upper and lowercase'),
+  }).min(8, "Password must be atleast 8 characters").max(50, "Password must not exceed 50 characters").regex(/[0-9]/, "Password must have a number").regex(/^(?=.*[a-z])(?=.*[A-Z]).*$/, 'Password must have upper and lowercase'),
   firstName: z.string({
     required_error: "Please enter your first name"
-  }).min(5),
+  }).min(3),
   middleName: z.string({
     required_error: "Please enter your middle name"
-  }).min(5),
+  }).min(2),
   lastName: z.string({
     required_error: "Please enter your last name"
-  }).min(5)
+  }).min(2)
 })
 
 export const studentSchema = z.object({
