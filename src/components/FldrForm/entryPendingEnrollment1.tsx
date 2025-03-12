@@ -6,7 +6,6 @@ import { useEffect, useState } from "react"
 import { Year } from "@/FldrTypes/year"
 import { Sem } from "@/FldrTypes/sem"
 import { CourseCol } from "@/FldrTypes/course.col"
-import { StudentCol } from "@/FldrTypes/students-col"
 import { EnrollmentStatus } from "@/FldrTypes/enrollmentstatus"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -47,13 +46,11 @@ import {
 
 type Enrollment1FormData = z.infer<typeof enrollment1Schema>
 
-interface PendingApplicantEnrollment1FormProps {
-    studentCode: string; // Passed from the parent (datatable)
-    isOpen: boolean;
-    onClose: () => void;
-  }
+type PendingApplicantEnrollment1FormProps = {
+  studentCode: string;
+};
 
-export function PendingApplicantEnrollment1Form() {
+export function PendingApplicantEnrollment1Form({ studentCode }: PendingApplicantEnrollment1FormProps) {
   const form = useForm<Enrollment1FormData>({
     resolver: zodResolver(enrollment1Schema),
     defaultValues: {
@@ -127,7 +124,6 @@ export function PendingApplicantEnrollment1Form() {
   }
 
   const onSubmit = async (values: Enrollment1FormData) => {
-    console.log("Form values before submit:", values);
     const currentDate = new Date();
 
     const enrollment1Data = {
@@ -139,11 +135,10 @@ export function PendingApplicantEnrollment1Form() {
 
     try {
       const postResponse = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertEnrollment1`, enrollment1Data)
-
       const putResponse = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollmentStatus`, enrollment1Data)
-
       console.log("Data submitted successfully:", postResponse)
       console.log("Data submitted successfully:", putResponse)
+      // console.log("Data: ", enrollment1Data)
       toast("Success.")
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -186,18 +181,18 @@ export function PendingApplicantEnrollment1Form() {
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="APPROVE or DISAPPROVE" />
+                    <SelectValue placeholder="Status" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {status.length > 0 ? (
-                    status.map((status) => (
-                      <SelectItem key={status.enrollStatusCode} value={status.enrollStatusCode}>
-                        {status.enrollStatusDesc}
+                    status.map((statusItem) => (
+                      <SelectItem key={statusItem.enrollStatusCode} value={statusItem.enrollStatusCode}>
+                        {statusItem.enrollStatusDesc}
                       </SelectItem>
                     ))
                   ) : (
-                    <SelectItem disabled>Not Available</SelectItem>
+                    <SelectItem key="no-status" disabled>Not Available</SelectItem>
                   )}
                 </SelectContent>
               </Select>
@@ -215,18 +210,18 @@ export function PendingApplicantEnrollment1Form() {
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a year" />
+                    <SelectValue placeholder="Select year" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {years.length > 0 ? (
-                    years.map((year) => (
-                      <SelectItem key={year.yearCode} value={year.yearCode}>
-                        {year.yearDesc}
+                    years.map((yearItem) => (
+                      <SelectItem key={yearItem.yearCode} value={yearItem.yearCode}>
+                        {yearItem.yearDesc}
                       </SelectItem>
                     ))
                   ) : (
-                    <SelectItem disabled>No years available</SelectItem>
+                    <SelectItem key="no-status" disabled>No years available</SelectItem>
                   )}
                 </SelectContent>
               </Select>
@@ -244,18 +239,18 @@ export function PendingApplicantEnrollment1Form() {
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a semester" />
+                    <SelectValue placeholder="Select semester" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {sem.length > 0 ? (
-                    sem.map((sem) => (
-                      <SelectItem key={sem.semCode} value={sem.semCode}>
-                        {sem.semDesc}
+                    sem.map((semItem) => (
+                      <SelectItem key={semItem.semCode} value={semItem.semCode}>
+                        {semItem.semDesc}
                       </SelectItem>
                     ))
                   ) : (
-                    <SelectItem disabled>No semesters available</SelectItem>
+                    <SelectItem key="no-status" disabled>No semesters available</SelectItem>
                   )}
                 </SelectContent>
               </Select>
