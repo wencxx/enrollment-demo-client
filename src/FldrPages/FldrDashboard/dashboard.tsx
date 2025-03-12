@@ -9,6 +9,8 @@ function Dashboard() {
     const [studentCount, setStudentCount] = useState({
         applicant: 0,
         student: 0,
+        irregular: 0,
+        regular: 0,
         // validated: 0,
     });
     const [studentsCount, setStudentsCount] = useState([]);
@@ -17,10 +19,18 @@ function Dashboard() {
         try {
             const applicant = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StudentCount/1`);
             const student = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StudentCount/2`);
+            const irregular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/0`, {
+                params: { validated: 1 } 
+            });
+            const regular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/1`, {
+                params: { validated: 1 } 
+            });
             // const validated = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/ValidatedCounts/2`);
             setStudentCount({
                 applicant: applicant.data,
                 student: student.data,
+                irregular: irregular.data,
+                regular: regular.data,
                 // validated: validated.data,
             })
         } catch (error) {
@@ -60,17 +70,17 @@ function Dashboard() {
         {
             title: 'Enrolled students',
             icon: UserCheck,
-            data: studentCount.student
+            data: 800000 
         },
         {
             title: 'Regular students',
             icon: User,
-            data: 2500
+            data: studentCount.regular
         },
         {
             title: 'Irregular students',
             icon: User,
-            data: 500
+            data: studentCount.irregular
         }
     ]
 
