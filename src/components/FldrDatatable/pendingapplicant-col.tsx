@@ -14,12 +14,6 @@ import {
     // DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useState } from "react"
-import { PendingApplicantEnrollment1Form } from "../FldrForm/entryPendingEnrollment1"
-
-interface PendingApplicantProps {
-    onEnrollClick: (studentCode: string) => void
-  }
 
 export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
     {
@@ -90,11 +84,6 @@ export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
         id: "actions",
         cell: ({ row }) => {
           const Student = row.original
-          const [isModalOpen, setIsModalOpen] = useState(false)
-    
-          const handleEnrollClick = () => {
-            setIsModalOpen(true)
-          }
     
           return (
             <>
@@ -106,17 +95,13 @@ export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => Student.studentCode && row.getValue("studentCode") && row.getValue("studentCode")}>
+                <DropdownMenuItem>
                     Enroll
+                    {/* Dialog trigger for entryPendingEnrollment1 */}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
     
-              {isModalOpen && (
-                <PendingApplicantEnrollment1Form
-                // something here
-                />
-              )}
             </>
           )
         },
