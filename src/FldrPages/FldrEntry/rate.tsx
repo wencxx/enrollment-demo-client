@@ -23,8 +23,6 @@ export default function Rate() {
       try {
         const response = await axios.get<RateCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListRate`);
         setRate(response.data);
-        console.log("wtf", rate);
-        console.log("plsConnect:", plsConnect);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

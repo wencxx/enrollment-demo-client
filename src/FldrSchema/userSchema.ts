@@ -60,17 +60,13 @@ export const enrollment1Schema = z.object({
     .min(1, { message: "Select a semester." }),
   courseCode: z.string()
     .min(1, { message: "Select a course." }),
-  studentID: z.string()
+  studentCode: z.string()
    .min(1, { message: "Select a student." }),
   enrollStatusCode: z.string()
     .min(1, { message: "Please confirm status." })
 })
 
 export const rateSchema = z.object({
-  yearCode: z.string()
-    .min(1, { message: "Select a year." }),
-  courseCode: z.string()
-    .min(1, { message: "Select a course." }),
   rateTypeCode: z.string()
     .min(1, { message: "Select a rate type." }),
   rateDesc: z.string()
@@ -84,6 +80,8 @@ export const rateSchema = z.object({
   rateAmount: z
     .string()
     .min(1, { message: "Enter the rate amount." })
-    .transform((val) => parseFloat(val)) // Transform string to float
-    .refine((val) => !isNaN(val), { message: "Rate amount must be a valid number." })
+    .transform((val) => parseFloat(val))
+    .refine((val) => !isNaN(val), { message: "Rate amount must be a valid number." }),
+  pkCode: z.string()
+  .min(1, { message: "Select a rate course." }),
 })
