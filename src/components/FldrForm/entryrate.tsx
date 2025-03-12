@@ -255,7 +255,7 @@ export function RateForm() {
 
         
         <div className="col-span-2">
-        <Button type="submit" className="w-full sm:w-20">
+        <Button type="submit" className="w-full sm:w-20 float-right">
             Submit
         </Button>
         </div>

@@ -11,7 +11,6 @@ function Dashboard() {
         student: 0,
         irregular: 0,
         regular: 0,
-        // validated: 0,
     });
     const [studentsCount, setStudentsCount] = useState([]);
 
@@ -25,13 +24,11 @@ function Dashboard() {
             const regular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/1`, {
                 params: { validated: 1 } 
             });
-            // const validated = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/ValidatedCounts/2`);
             setStudentCount({
                 applicant: applicant.data,
                 student: student.data,
                 irregular: irregular.data,
                 regular: regular.data,
-                // validated: validated.data,
             })
         } catch (error) {
             console.error("Error fetching student count:", error);
@@ -40,12 +37,14 @@ function Dashboard() {
 
     const fetchStudentStats = async () => {
         try {
-            const response = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/ValidatedCounts/2`);
-            const formattedData = response.data.map((item:
-                { year: number; validated: number }) => ({
-                    year: item.year,
-                    validated: item.validated,
-                }));
+            const response = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCountChart`);
+
+            // Transform data to match expected format
+            const formattedData = response.data.map((item: any) => ({
+                year: item?.year ?? 0,
+                regular: item?.regular ?? 0,
+                irregular: item?.irregular ?? 0,
+            }));
             setStudentsCount(formattedData);
         } catch (error) {
             console.error("Error fetching student stats:", error);
@@ -56,6 +55,7 @@ function Dashboard() {
         fetchCount();
         fetchStudentStats();
     }, []);
+
 
     useEffect(() => {
         console.log("Data passed to ChartMain:", studentsCount);

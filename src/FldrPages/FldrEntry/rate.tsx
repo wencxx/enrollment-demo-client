@@ -34,6 +34,7 @@ export default function Rate() {
 
 return (
     <>
+      <div className="space-x-2">
       <Dialog>
         <DialogTrigger asChild>
         <Button variant="outline">
@@ -45,6 +46,7 @@ return (
         <RateForm />
         </DialogContent>
     </Dialog>
+    </div>
     <DataTable columns={columns} data={rate}/>
     <Toaster />
     </>

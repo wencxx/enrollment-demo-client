@@ -29,6 +29,7 @@ export default function RateCourse() {
 
   return (
     <>
+          <div className="space-x-2">
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="outline">
@@ -40,6 +41,7 @@ export default function RateCourse() {
           <RateCourseForm />
         </DialogContent>
       </Dialog>
+      </div>
       <div className="mt-4">
         <DataTable columns={columns} data={data} />
       </div>
