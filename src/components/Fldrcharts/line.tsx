@@ -30,14 +30,14 @@ export default function LineChartComponent({ dataChart }: { dataChart: StudentsC
                 />
                 <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
                 <Line
-                    dataKey="validated"
+                    dataKey="regular"
                     type="monotone"
                     stroke="var(--color-regular)"
                     strokeWidth={2}
                     dot={false}
                 />
                 <Line
-                    dataKey="applicants"
+                    dataKey="irregular"
                     type="monotone"
                     stroke="var(--color-irregular)"
                     strokeWidth={2}
