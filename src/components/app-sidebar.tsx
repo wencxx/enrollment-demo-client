@@ -2,7 +2,8 @@ import * as React from "react"
 import {
   FileInput,
   ChartColumn,
-  FileUser
+  FileUser,
+  User
 } from "lucide-react"
 
 import {
@@ -84,28 +85,41 @@ const data = {
           authorizeUsers: ['Admin']
         },
       ],
-    }
-  ],
-  menuEnrollment: [
-    {
-      name: 'Enrollment1',
-      url: 'enrollment/enrollment1',
-      icon: ChartColumn,
-      authorizeUsers: ['Admin']
     },
     {
-      name: 'Enrollment2',
-      url: 'enrollment/enrollment1',
-      icon: ChartColumn,
-      authorizeUsers: ['Admin']
-    },
-    {
-      name: 'Enrollment3',
-      url: 'enrollment/enrollment1',
-      icon: ChartColumn,
-      authorizeUsers: ['Admin']
+      title: "Student",
+      url: "#",
+      icon: User,
+      authorizeUsers: ['Student'],
+      items: [
+        {
+          title: "Application",
+          url: "student/application",
+          authorizeUsers: ['Student']
+        },
+      ],
     }
   ],
+  // menuEnrollment: [
+  //   {
+  //     name: 'Enrollment1',
+  //     url: 'enrollment/enrollment1',
+  //     icon: ChartColumn,
+  //     authorizeUsers: ['Admin']
+  //   },
+  //   {
+  //     name: 'Enrollment2',
+  //     url: 'enrollment/enrollment1',
+  //     icon: ChartColumn,
+  //     authorizeUsers: ['Admin']
+  //   },
+  //   {
+  //     name: 'Enrollment3',
+  //     url: 'enrollment/enrollment1',
+  //     icon: ChartColumn,
+  //     authorizeUsers: ['Admin']
+  //   }
+  // ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
