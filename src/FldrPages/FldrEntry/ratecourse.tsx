@@ -15,7 +15,6 @@ export default function RateCourse() {
       .get<RateCourseCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListRateCourse`)
       .then((response) => {
         setData(response.data);
-        console.log("wtf", data);
         console.log("plsConnect:", plsConnect);
       })
       .catch((error) => {

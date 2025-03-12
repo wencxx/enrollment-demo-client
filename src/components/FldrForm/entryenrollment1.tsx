@@ -54,7 +54,7 @@ export function Enrollment1Form() {
       yearCode: "",
       semCode: "",
       courseCode: "",
-      studentID: "",
+      studentCode: "",
       date: new Date(),
       enrollStatusCode: "",
     },
@@ -155,8 +155,6 @@ export function Enrollment1Form() {
 
     const enrollment1Data = {
       ...values,
-      //since StudentCode and StudentID are identical for now, StudentID is put into StudentCode. god bless us all
-      studentCode: values.studentID,
       userCode: currentUser.userCode,
       tDate: currentDate,
       dateEncoded: currentDate,
@@ -186,7 +184,7 @@ export function Enrollment1Form() {
 
         <FormField
           control={form.control}
-          name="studentID"
+          name="studentCode"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Student</FormLabel>
@@ -208,7 +206,7 @@ export function Enrollment1Form() {
                   </div>
                   {filteredStudents.length > 0 ? (
                     filteredStudents.map((student) => (
-                      <SelectItem key={student.studentID} value={student.studentID}>
+                      <SelectItem key={student.studentCode} value={student.studentCode}>
                         {student.firstName} {student.lastName}, {student.middleName}
                       </SelectItem>
                     ))
