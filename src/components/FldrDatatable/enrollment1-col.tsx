@@ -15,7 +15,7 @@ import { Enrollment1Col } from "@/FldrTypes/enrollment1"
 //     DropdownMenuTrigger,
 // } from "@/components/ui/dropdown-menu"
 
-export const columns: ColumnDef<Enrollment1Col>[] = [
+export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
     {
         id: "select",
         header: ({ table }) => (
