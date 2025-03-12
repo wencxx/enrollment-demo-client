@@ -20,7 +20,6 @@ export default function RateCourse() {
       )
       .then((response) => {
         setData(response.data);
-        console.log("wtf", data);
         console.log("plsConnect:", plsConnect);
       })
       .catch((error) => {
