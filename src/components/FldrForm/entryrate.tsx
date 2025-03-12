@@ -208,7 +208,7 @@ export function RateForm() {
                         ? rateCourse.find(
                             (rateCourse) => rateCourse.value === field.value
                           )?.label
-                        : "Select course"}
+                        : "Select course, year, and semester"}
                       <ChevronsUpDown className="opacity-50" />
                     </Button>
                   </FormControl>
