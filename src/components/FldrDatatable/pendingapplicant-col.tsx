@@ -1,19 +1,22 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, Stamp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-// import { format } from "date-fns";
-// import { Badge } from "@/components/ui/badge"
-// import moment from 'moment'
 import { PendingApplicantCol } from "@/FldrTypes/pendingapplicant"
-
+import { PendingApplicantEnrollment1Form } from "../FldrForm/entryPendingEnrollment1"
+import { useState } from "react"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    // DropdownMenuLabel,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+  DialogHeader
+} from "@/components/ui/dialog"
 
 export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
     {
@@ -83,22 +86,35 @@ export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
     {
         id: "actions",
         cell: ({ row }) => {
-          const Student = row.original
-    
+          // can you use useState in a cell?
+          const [isDialogOpen, setIsDialogOpen] = useState(false);
+          const [studentCode, setStudentCode] = useState("");
+
+          const handleDialogOpen = (code: string) => {
+            setStudentCode(code);
+            setIsDialogOpen(true);
+          };
+
           return (
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-8 w-8 p-0">
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.studentCode)}>
                     <span className="sr-only">Open menu</span>
-                    <MoreHorizontal className="h-4 w-4" />
+                    <Stamp className="h-4 w-4" />
                   </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+                    <DialogHeader>
+                      <DialogTitle className="mb-4">Enrollment 1 - Enroll a student</DialogTitle>
+                    </DialogHeader>
+                    <PendingApplicantEnrollment1Form studentCode={studentCode} />
+                  </DialogContent>
+              </Dialog>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                    Enroll
-                    {/* Dialog trigger for entryPendingEnrollment1 */}
-                  </DropdownMenuItem>
+                <DropdownMenuContent align="end">    
                 </DropdownMenuContent>
               </DropdownMenu>
     
