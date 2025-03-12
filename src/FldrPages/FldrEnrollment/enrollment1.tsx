@@ -6,17 +6,25 @@ import {
   } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
-import { Plus } from 'lucide-react'
+import { Plus, Minus } from 'lucide-react'
 import { useState, useEffect } from "react"
 import { Enrollment1Col } from "@/FldrTypes/enrollment1"
+import { PendingApplicantCol } from "@/FldrTypes/pendingapplicant"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { columns } from "@/components/FldrDatatable/enrollment1-col";
+import { columnsEnrolled } from "@/components/FldrDatatable/enrollment1-col";
 import { DataTable } from "@/components/FldrDatatable/data-table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { columnsPending } from "@/components/FldrDatatable/pendingapplicant-col"
 
 export default function Enrollment1() {
-  const [data, setData] = useState<Enrollment1Col[]>([]);
+  // enrolled students
+  const [list, setList] = useState<Enrollment1Col[]>([]);
+  const [minimizeList, setMinimizeList] = useState(true);
+  const toggleListMinimize = () => {
+    setMinimizeList(!minimizeList);
+  };
 
   useEffect(() => {
     const fetchEnrollment1 = async () => {
@@ -26,7 +34,7 @@ export default function Enrollment1() {
           ...item,
           fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}`,
         }));
-        setData(updatedData);
+        setList(updatedData);
         console.log(updatedData)
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -36,6 +44,30 @@ export default function Enrollment1() {
     fetchEnrollment1();
   }, []);
 
+  // applicants who are "Pending"
+  const [pending, setPending] = useState<PendingApplicantCol[]>([]);
+  const [minimizePending, setMinimizePending] = useState(false);
+  const toggleListPending = () => {
+    setMinimizePending(!minimizePending);
+  };
+
+  useEffect(() => {
+    const fetchPending = async () => {
+      try {
+        const response = await axios.get<PendingApplicantCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListApplicant`);
+        const updatedData = response.data.map((item) => ({
+          ...item,
+          fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}`,
+        }));
+        setPending(updatedData);
+        console.log(updatedData)
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchPending();
+  }, []);
 
   return (
     <>
@@ -47,16 +79,50 @@ export default function Enrollment1() {
         </Button>
         </DialogTrigger>
         <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-        {/* <StudentForm onSubmitSuccess={addNewStudent} /> */}
-        <Enrollment1Form />
+          <Enrollment1Form />
         </DialogContent>
     </Dialog>
-    <ScrollArea className="mt-4 overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
-          <DataTable columns={columns} data={data} />
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+
+    <Card className="mt-4 overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
+        <CardHeader>
+          <CardTitle className="flex justify-between items-center">
+            List of pending applicants
+            <Button variant="outline" className="ml-auto" onClick={toggleListPending}>
+            {minimizePending ? <Plus /> : <Minus />}
+          </Button>
+          </CardTitle>
+        </CardHeader>
+        {!minimizePending && (
+          <CardContent>
+            <ScrollArea className="overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
+                <DataTable columns={columnsPending} data={pending} />
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+          </CardContent>
+        )}
+      </Card>
+
+    <Card className="mt-4 overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
+        <CardHeader>
+          <CardTitle className="flex justify-between items-center">
+            List of enrolled students
+            <Button variant="outline" className="ml-auto" onClick={toggleListMinimize}>
+            {minimizeList ? <Plus /> : <Minus />}
+          </Button>
+          </CardTitle>
+        </CardHeader>
+        {!minimizeList && (
+          <CardContent>
+            <ScrollArea className="overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
+                <DataTable columns={columnsEnrolled} data={list} />
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+          </CardContent>
+        )}
+      </Card>
 
     <Toaster />
+      
     </>
   )
 }
