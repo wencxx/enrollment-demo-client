@@ -16,19 +16,21 @@ import { RateForm } from "@/components/FldrForm/entryrate";
 
 
 export default function Rate() {
-  const [data, setData] = useState<RateCol[]>([]);
+  const [rate, setRate] = useState<RateCol[]>([]);
 
   useEffect(() => {
-    axios
-      .get<RateCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListRate`)
-      .then((response) => {
-        setData(response.data);
-        console.log("wtf", data);
+    const fetchRate = async () => {
+      try {
+        const response = await axios.get<RateCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListRate`);
+        setRate(response.data);
+        console.log("wtf", rate);
         console.log("plsConnect:", plsConnect);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching data:", error);
-      });
+      }
+    };
+  
+    fetchRate();
   }, []);
 
 
@@ -45,7 +47,7 @@ return (
         <RateForm />
         </DialogContent>
     </Dialog>
-    <DataTable columns={columns} data={data}/>
+    <DataTable columns={columns} data={rate}/>
     <Toaster />
     </>
     
