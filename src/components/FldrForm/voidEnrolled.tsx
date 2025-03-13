@@ -22,7 +22,6 @@ export function VoidEnrolledForm({ studentCode, closeModal }: studentCodeProps) 
     mode: 'onChange',
   })
 
-  useEffect(() => {
     const fetchVoidStatus = async () => {
       try {
         const response = await axios.get(`${plsConnect()}/API/WEBAPI/VariousController/GetStudentVoidStatus/${studentCode}`)
@@ -39,8 +38,10 @@ export function VoidEnrolledForm({ studentCode, closeModal }: studentCodeProps) 
         toast("Failed to load student status.")
       }
     }
-    fetchVoidStatus()
-  }, [studentCode])
+
+  useEffect(() => {
+    fetchVoidStatus();
+  }, [studentCode]);
   
   const onSubmit = async (values: voidFormData) => {
         try {
@@ -51,7 +52,7 @@ export function VoidEnrolledForm({ studentCode, closeModal }: studentCodeProps) 
             studentCode, 
             void: invertedVoidStatus,
           });
-        closeModal()
+        closeModal();
         toast("Status updated successfully.");
         console.log("Successful update: ", response)
       } catch (error) {
@@ -77,7 +78,7 @@ export function VoidEnrolledForm({ studentCode, closeModal }: studentCodeProps) 
           Are you sure you want to {isVoided ? "reinstate" : "void"} this student?
         </p>
         <p className="text-sm text-gray-600">
-          This action will {isVoided ? "restore" : "un-enroll"} the student.
+          This student is currently {isVoided ? "voided" : "enrolled"}. This action will {isVoided ? "restore" : "un-enroll"} the student.
         </p>
       </div>
     </div>
