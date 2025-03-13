@@ -62,7 +62,7 @@ function Layout() {
   // Check if the user is authorized to access the current route
   const isAuthorized = () => {
     const path = location.pathname.split('/')[2] || '/'
-    const authorizedPaths = {
+    const authorizedPaths: Record<string, string[]> = {
       'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/'],
       'Student': ['enrollment1', 'enrollment2']
     }
