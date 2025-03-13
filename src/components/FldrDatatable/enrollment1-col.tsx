@@ -1,18 +1,19 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Stamp, Ban } from "lucide-react"
+import { ArrowUpDown, Ban } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 // import { format } from "date-fns";
 // import { Badge } from "@/components/ui/badge"
 // import moment from 'moment'
 import { Enrollment1Col } from "@/FldrTypes/enrollment1"
+import { Badge } from "../ui/badge"
 
 import { useState } from "react"
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
-  DialogTitle,
+//   DialogTitle,
   DialogHeader,
 } from "@/components/ui/dialog"
 import { VoidEnrolledForm } from "../FldrForm/voidEnrolled"
@@ -94,6 +95,39 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
           },
     },
     {
+        accessorKey: "void",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Enrollment
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+        cell: ({ row }) => {
+             let variantType: "approve" | "disapprove" = "disapprove";
+            const status: boolean = row.getValue("void");
+            const displayStatus = status ? "Void" : "Enrolled";
+            //reused custom badge colors: disapprove (red) and approve (green)
+            if (status === true) {
+                variantType = "disapprove";
+              } else if (status === false) {
+                variantType = "approve";
+              }
+
+            return (
+              <div className="flex">
+                <Badge variant={variantType}>
+                    {displayStatus}
+                </Badge>
+              </div>
+            );
+          },
+    },
+    {
         id: "actions",
         cell: ({ row }) => {
           const [isVoidDialogOpen, setIsVoidDialogOpen] = useState(false);
@@ -120,7 +154,7 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
                     </DialogTrigger>
                     <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
                         <DialogHeader>
-                        <DialogTitle className="mb-4">Void enrolled student</DialogTitle>
+                        {/* <DialogTitle className="mb-4">Void enrolled student</DialogTitle> */}
                         </DialogHeader>
                         <VoidEnrolledForm studentCode={studentCode} closeModal={closeModal}/>
                     </DialogContent>
