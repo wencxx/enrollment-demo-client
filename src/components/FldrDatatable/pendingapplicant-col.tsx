@@ -111,7 +111,7 @@ export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
                   </DialogTrigger>
                   <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
                     <DialogHeader>
-                      <DialogTitle className="mb-4">Enrollment 1 - Enroll a student</DialogTitle>
+                      <DialogTitle className="mb-4">Begin student enrollment</DialogTitle>
                     </DialogHeader>
                     <PendingApplicantEnrollment1Form studentCode={studentCode} closeModal={closeModal} />
                   </DialogContent>

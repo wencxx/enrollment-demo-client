@@ -26,7 +26,6 @@ export default function Enrollment1() {
     setMinimizeList(!minimizeList);
   };
 
-  useEffect(() => {
     const fetchEnrollment1 = async () => {
       try {
         const response = await axios.get<Enrollment1Col[]>(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`);
@@ -40,9 +39,11 @@ export default function Enrollment1() {
         console.error("Error fetching data:", error);
       }
     };
-  
+
+  useEffect(() => {  
     fetchEnrollment1();
   }, []);
+
 
   // applicants who are "Pending"
   const [pending, setPending] = useState<PendingApplicantCol[]>([]);
