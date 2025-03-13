@@ -126,3 +126,7 @@ export const applicationSchema = z.object({
   }),
   birthDate: z.union([z.string(), z.date()]).optional(),
 })
+
+export const voidSchema = z.object({
+  void: z.boolean(),
+});

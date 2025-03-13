@@ -86,7 +86,6 @@ export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
     {
         id: "actions",
         cell: ({ row }) => {
-          // can you use useState in a cell?
           const [isDialogOpen, setIsDialogOpen] = useState(false);
           const [studentCode, setStudentCode] = useState("");
 
@@ -94,6 +93,10 @@ export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
             setStudentCode(code);
             setIsDialogOpen(true);
           };
+
+          const closeModal = () => {
+            setIsDialogOpen(false)
+          }
 
           return (
             <>
@@ -108,9 +111,9 @@ export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
                   </DialogTrigger>
                   <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
                     <DialogHeader>
-                      <DialogTitle className="mb-4">Enrollment 1 - Enroll a student</DialogTitle>
+                      <DialogTitle className="mb-4">Begin student enrollment</DialogTitle>
                     </DialogHeader>
-                    <PendingApplicantEnrollment1Form studentCode={studentCode} />
+                    <PendingApplicantEnrollment1Form studentCode={studentCode} closeModal={closeModal} />
                   </DialogContent>
               </Dialog>
                 </DropdownMenuTrigger>

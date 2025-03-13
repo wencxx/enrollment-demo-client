@@ -43,14 +43,11 @@ import {
     PopoverContent,
     PopoverTrigger,
   } from "@/components/ui/popover"
+  import { studentCodeProps } from "@/FldrTypes/studentCode"
 
 type Enrollment1FormData = z.infer<typeof enrollment1Schema>
 
-type PendingApplicantEnrollment1FormProps = {
-  studentCode: string;
-};
-
-export function PendingApplicantEnrollment1Form({ studentCode }: PendingApplicantEnrollment1FormProps) {
+export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: studentCodeProps) {
   const form = useForm<Enrollment1FormData>({
     resolver: zodResolver(enrollment1Schema),
     defaultValues: {
@@ -138,7 +135,7 @@ export function PendingApplicantEnrollment1Form({ studentCode }: PendingApplican
       const putResponse = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollmentStatus`, enrollment1Data)
       console.log("Data submitted successfully:", postResponse)
       console.log("Data submitted successfully:", putResponse)
-      // console.log("Data: ", enrollment1Data)
+      closeModal()
       toast("Success.")
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -324,7 +321,6 @@ export function PendingApplicantEnrollment1Form({ studentCode }: PendingApplican
                   )}
                 />
 
-          {/* no voucher na */}
           <div className="col-span-2">
             <Button type="submit" className="w-full sm:w-20 float-right">Submit</Button>
           </div>

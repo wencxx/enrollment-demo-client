@@ -36,6 +36,7 @@ export default function Enrollment1() {
   useEffect(() => {
     fetchPending();
   }, []);
+  
 
   return (
     <>
