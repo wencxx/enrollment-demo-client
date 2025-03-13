@@ -100,9 +100,9 @@ export function VoidEnrolledForm({ studentCode, closeModal }: studentCodeProps) 
 
       <Button
         type="submit"
-        className={`w-full sm:w-20 ${isVoided ? "bg-red-500" : "bg-green-500"}`}
+        className={`w-full sm:w-20 ${isVoided ? "bg-green-500" : "bg-red-500 text-white"}`}
       >
-        {isVoided ? "Reinstate" : "Confirm"}
+        {isVoided ? "Reinstate" : "Void"}
       </Button>
     </div>
   </form>
