@@ -9,7 +9,8 @@ function Dashboard() {
     const [studentCount, setStudentCount] = useState({
         applicant: 0,
         student: 0,
-        // validated: 0,
+        irregular: 0,
+        regular: 0,
     });
     const [studentsCount, setStudentsCount] = useState([]);
 
@@ -17,11 +18,17 @@ function Dashboard() {
         try {
             const applicant = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StudentCount/1`);
             const student = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StudentCount/2`);
-            // const validated = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/ValidatedCounts/2`);
+            const irregular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/0`, {
+                params: { validated: 1 } 
+            });
+            const regular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/1`, {
+                params: { validated: 1 } 
+            });
             setStudentCount({
                 applicant: applicant.data,
                 student: student.data,
-                // validated: validated.data,
+                irregular: irregular.data,
+                regular: regular.data,
             })
         } catch (error) {
             console.error("Error fetching student count:", error);
@@ -30,12 +37,14 @@ function Dashboard() {
 
     const fetchStudentStats = async () => {
         try {
-            const response = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/ValidatedCounts/2`);
-            const formattedData = response.data.map((item:
-                { year: number; validated: number }) => ({
-                    year: item.year,
-                    validated: item.validated,
-                }));
+            const response = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCountChart`);
+
+            // Transform data to match expected format
+            const formattedData = response.data.map((item: any) => ({
+                year: item?.year ?? 0,
+                regular: item?.regular ?? 0,
+                irregular: item?.irregular ?? 0,
+            }));
             setStudentsCount(formattedData);
         } catch (error) {
             console.error("Error fetching student stats:", error);
@@ -46,6 +55,7 @@ function Dashboard() {
         fetchCount();
         fetchStudentStats();
     }, []);
+
 
     useEffect(() => {
         console.log("Data passed to ChartMain:", studentsCount);
@@ -60,17 +70,17 @@ function Dashboard() {
         {
             title: 'Enrolled students',
             icon: UserCheck,
-            data: studentCount.student
+            data: 800000 
         },
         {
             title: 'Regular students',
             icon: User,
-            data: 2500
+            data: studentCount.regular
         },
         {
             title: 'Irregular students',
             icon: User,
-            data: 500
+            data: studentCount.irregular
         }
     ]
 

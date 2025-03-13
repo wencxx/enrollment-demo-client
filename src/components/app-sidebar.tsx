@@ -2,7 +2,8 @@ import * as React from "react"
 import {
   FileInput,
   ChartColumn,
-  FileUser
+  FileUser,
+  User
 } from "lucide-react"
 
 import {
@@ -13,7 +14,6 @@ import {
 
 import { MenuMain } from "@/components/FldrMenu/menu-main"
 import { MenuDashboard } from "@/components/FldrMenu/menu-dashboard"
-import { MenuEnrollment } from "@/components/FldrMenu/menu-enrollment"
 import { NavUser } from "@/components/FldrMenu/nav-user"
 import {
   Sidebar,
@@ -39,7 +39,7 @@ const data = {
       title: "Entry",
       url: "#",
       icon: FileInput,
-      authorizeUsers: ['Admin', 'Student'],
+      authorizeUsers: ['Admin'],
       items: [
         {
           title: "Student",
@@ -59,26 +59,6 @@ const data = {
         {
           title: "Rate Course",
           url: "entry/ratecourse",
-          authorizeUsers: ['Student', 'Admin']
-        },
-        {
-          title: "Rate Type",
-          url: "#",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Enroll Status",
-          url: "#",
-          authorizeUsers: ['Student', 'Admin']
-        },
-        {
-          title: "Semester",
-          url: "#",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Year",
-          url: "#",
           authorizeUsers: ['Admin']
         },
       ],
@@ -87,46 +67,59 @@ const data = {
       title: "Enrollment",
       url: "#",
       icon: FileUser,
-      authorizeUsers: ['Admin', 'Student'],
+      authorizeUsers: ['Admin'],
       items: [
         {
           title: "Enrollment - 1",
           url: "enrollment/enrollment1",
-          authorizeUsers: ['Admin', 'Student']
+          authorizeUsers: ['Admin']
         },
         {
           title: "Enrollment - 2",
           url: "enrollment/enrollment2",
-          authorizeUsers: ['Admin', 'Student']
+          authorizeUsers: ['Admin']
         },
         {
           title: "Enrollment - 3",
           url: "enrollment/enrollment3",
-          authorizeUsers: ['Admin', 'Student']
+          authorizeUsers: ['Admin']
+        },
+      ],
+    },
+    {
+      title: "Student",
+      url: "#",
+      icon: User,
+      authorizeUsers: ['Student'],
+      items: [
+        {
+          title: "Application",
+          url: "student/application",
+          authorizeUsers: ['Student']
         },
       ],
     }
   ],
-  menuEnrollment: [
-    {
-      name: 'Enrollment1',
-      url: 'enrollment/enrollment1',
-      icon: ChartColumn,
-      authorizeUsers: ['Admin']
-    },
-    {
-      name: 'Enrollment2',
-      url: 'enrollment/enrollment1',
-      icon: ChartColumn,
-      authorizeUsers: ['Admin']
-    },
-    {
-      name: 'Enrollment3',
-      url: 'enrollment/enrollment1',
-      icon: ChartColumn,
-      authorizeUsers: ['Admin']
-    }
-  ],
+  // menuEnrollment: [
+  //   {
+  //     name: 'Enrollment1',
+  //     url: 'enrollment/enrollment1',
+  //     icon: ChartColumn,
+  //     authorizeUsers: ['Admin']
+  //   },
+  //   {
+  //     name: 'Enrollment2',
+  //     url: 'enrollment/enrollment1',
+  //     icon: ChartColumn,
+  //     authorizeUsers: ['Admin']
+  //   },
+  //   {
+  //     name: 'Enrollment3',
+  //     url: 'enrollment/enrollment1',
+  //     icon: ChartColumn,
+  //     authorizeUsers: ['Admin']
+  //   }
+  // ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

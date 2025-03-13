@@ -36,14 +36,13 @@ import {
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[],
-    options?: {
-        filterBy?: string; 
-    };
+    title: string 
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    title
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -74,7 +73,8 @@ export function DataTable<TData, TValue>({
     })
 
     return (
-        <div className="mt-4">
+        <div className="mt-8">
+            <h1 className="mb-4">List of {title}</h1>
             <div className="flex items-center mb-4 gap-x-5 md:gap-x-0">
                 <Input
                     placeholder="Search"

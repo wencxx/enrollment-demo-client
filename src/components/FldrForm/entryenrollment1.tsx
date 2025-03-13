@@ -29,6 +29,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Check, ChevronsUpDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 type Enrollment1FormData = z.infer<typeof enrollment1Schema>
 
@@ -39,8 +54,7 @@ export function Enrollment1Form() {
       yearCode: "",
       semCode: "",
       courseCode: "",
-      studentID: "",
-      voucher: "",
+      studentCode: "",
       date: new Date(),
       enrollStatusCode: "",
     },
@@ -54,10 +68,9 @@ export function Enrollment1Form() {
   const [status, setStatus] = useState<EnrollmentStatus[]>([])
 
   const [studentSearch, setStudentSearch] = useState("");
-  const [courseSearch, setCourseSearch] = useState("");
 
   const handleStudentSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStudentSearch(event.target.value); // Update search query
+    setStudentSearch(event.target.value);
   };
 
   const filteredStudents = student.filter((student) => {
@@ -65,16 +78,6 @@ export function Enrollment1Form() {
       student.firstName.toLowerCase().includes(studentSearch.toLowerCase()) ||
       student.lastName.toLowerCase().includes(studentSearch.toLowerCase()) ||
       student.middleName.toLowerCase().includes(studentSearch.toLowerCase())
-    );
-  });
-
-  const handleCourseSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCourseSearch(event.target.value); // Update search query
-  };
-
-  const filteredCourses = course.filter((course) => {
-    return (
-      course.courseDesc.toLowerCase().includes(courseSearch.toLowerCase())
     );
   });
 
@@ -96,10 +99,23 @@ export function Enrollment1Form() {
     }
   }
 
+  async function fetchStatus() {
+    try {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollStatus`)
+      setStatus(response.data)
+    } catch (error: any) {
+      console.error("Error fetching courses:", error)
+    }
+  }
+
   async function fetchCourse() {
     try {
       const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
-      setCourse(response.data)
+      const mappedCourseCode = response.data.map((item: CourseCol) => ({
+        label: item.courseDesc,
+        value: item.courseCode,
+      }))
+      setCourse(mappedCourseCode)
     } catch (error: any) {
       console.error("Error fetching courses:", error)
     }
@@ -108,19 +124,10 @@ export function Enrollment1Form() {
   async function fetchStudent() {
     try {
       const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListApplicant`)
-      console.log("Fetched students:", response.data);
+      //console.log("Fetched students:", response.data);
       setStudent(response.data)
     } catch (error: any) {
       console.error("Error fetching students:", error)
-    }
-  }
-
-  async function fetchStatus() {
-    try {
-      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollStatus`)
-      setStatus(response.data)
-    } catch (error: any) {
-      console.error("Error fetching courses:", error)
     }
   }
 
@@ -140,17 +147,11 @@ export function Enrollment1Form() {
   }
 
   const onSubmit = async (values: Enrollment1FormData) => {
+    console.log("Form values before submit:", values);
     const currentDate = new Date();
 
     const enrollment1Data = {
-      // yearCode: values.yearCode,
-      // semCode: values.semCode,
-      // courseCode: values.courseCode,
-      // voucher: values.voucher,
-      // enrollStatusCode: values.enrollStatusCode,
       ...values,
-      //since StudentCode and StudentID are identical for now, StudentID is put into StudentCode. god bless us all
-      studentCode: values.studentID,
       userCode: currentUser.userCode,
       tDate: currentDate,
       dateEncoded: currentDate,
@@ -180,7 +181,7 @@ export function Enrollment1Form() {
 
         <FormField
           control={form.control}
-          name="studentID"
+          name="studentCode"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Student</FormLabel>
@@ -188,7 +189,7 @@ export function Enrollment1Form() {
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Pending applicant" />
-                  </SelectTrigger>
+                  </SelectTrigger> 
                 </FormControl>
                 <SelectContent>
                   <div className="p-2">
@@ -202,7 +203,7 @@ export function Enrollment1Form() {
                   </div>
                   {filteredStudents.length > 0 ? (
                     filteredStudents.map((student) => (
-                      <SelectItem key={student.studentID} value={student.studentID}>
+                      <SelectItem key={student.studentCode} value={student.studentCode}>
                         {student.firstName} {student.lastName}, {student.middleName}
                       </SelectItem>
                     ))
@@ -307,66 +308,70 @@ export function Enrollment1Form() {
           control={form.control}
           name="courseCode"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col">
               <FormLabel>Course</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a course" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent className="top-full max-h-40 overflow-y-auto max-w-full">
-                  <div className="p-2">
-                    <input
-                      type="text"
-                      className="w-full px-3 py-2 border rounded text-sm"
-                      placeholder="Search for a course"
-                      value={courseSearch}
-                      onChange={handleCourseSearchChange}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "w-full justify-between",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value
+                        ? course.find(
+                          (course) => course.value === field.value
+                        )?.label
+                        : "Select course"}
+                      <ChevronsUpDown className="opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput
+                      placeholder="Search..."
+                      className="h-9"
                     />
-                  </div>
-                  {filteredCourses.length > 0 ? (
-                    filteredCourses.map((course) => (
-                      <SelectItem key={course.courseCode} value={course.courseCode}>
-                        {course.courseDesc}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem disabled>No courses available</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
+                    <CommandList>
+                      <CommandEmpty>None found.</CommandEmpty>
+                      <CommandGroup>
+                        {course.map((course) => (
+                          <CommandItem
+                            value={course.label}
+                            key={course.value}
+                            onSelect={() => {
+                              form.setValue("courseCode", course.value);
+                              field.onChange(course.value);
+                            }}
+                          >
+                            {course.label}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                course.value === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* placeholder */}
-        <FormField
-          control={form.control}
-          name="voucher"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Voucher</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a voucher" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="AA">AA placeholder</SelectItem>
-                  <SelectItem value="BB">BB placeholder</SelectItem>
-                  <SelectItem value="CC">CC placeholder</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+        {/* no voucher na */}
         <div className="col-span-2">
-          <Button type="submit" className="float-right">Submit</Button>
+          <Button type="submit" className="w-full sm:w-20 float-right">Submit</Button>
         </div>
       </form>
     </Form>

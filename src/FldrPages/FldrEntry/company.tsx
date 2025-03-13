@@ -27,7 +27,7 @@ export default function Company() {
         <CompanyForm />
       </div>
       <div className="flex-2">
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={data} title="company" />
       </div>
     </div>
     </>

@@ -28,22 +28,26 @@ function Layout() {
   const toggleMode = () => {
     const htmlElement = document.documentElement;
 
+    htmlElement.style.removeProperty("--sidebar");
+    htmlElement.style.removeProperty("--sidebar-foreground");
+    htmlElement.style.removeProperty("--primary");
+    htmlElement.style.removeProperty("--chart-1");
+    htmlElement.style.removeProperty("--chart-2");
+
+    localStorage.removeItem('color');
+    localStorage.removeItem('primary');
+    localStorage.removeItem('chart1');
+    localStorage.removeItem('chart2');
+    localStorage.removeItem('text');
+
     if (htmlElement.classList.contains('dark')) {
       htmlElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
       setTheme('light')
-      htmlElement.style.setProperty("--sidebar", 'oklch(0.985 0.001 106.423)');
-      localStorage.setItem('color', 'oklch(0.985 0.001 106.423)');
-      htmlElement.style.setProperty("--sidebar-foreground", 'oklch(0.147 0.004 49.25)');
-      localStorage.setItem('text', 'oklch(0.147 0.004 49.25)');
     } else {
       htmlElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
       setTheme('dark')
-      htmlElement.style.setProperty("--sidebar", 'oklch(0.216 0.006 56.043)');
-      localStorage.setItem('color', 'oklch(0.216 0.006 56.043)');
-      htmlElement.style.setProperty("--sidebar-foreground", 'oklch(0.985 0.001 106.423)');
-      localStorage.setItem('text', 'oklch(0.985 0.001 106.423)');
     }
   }
 
@@ -64,11 +68,12 @@ function Layout() {
     const path = location.pathname.split('/')[2] || '/'
     const authorizedPaths: Record<string, string[]> = {
       'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/'],
-      'Student': ['enrollment1', 'enrollment2']
+      // Students should not access enrollment
+      'Student': ['application']
     }
     return user && authorizedPaths[user.groupName]?.includes(path)
   }
- 
+
   if (!authenticated) return <Navigate to='/login' />
   if (!isAuthorized()) return <Navigate to='/unauthorize' />
 

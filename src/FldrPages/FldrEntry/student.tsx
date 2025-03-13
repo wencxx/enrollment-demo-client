@@ -14,6 +14,7 @@ import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios";
 import { StudentCol, StudentColFullName } from "@/FldrTypes/students-col"
 import { Plus } from 'lucide-react'
+import { DialogTitle } from "@radix-ui/react-dialog";
 // import { useReactToPrint } from "react-to-print";
 // import { useRef } from "react";
 
@@ -57,7 +58,8 @@ export default function Student() {
               Add new student
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+          <DialogContent className="max-h-[90vh] overflow-y-auto scrollbar-hidden" aria-labelledby="dialog-title">
+            <DialogTitle className="text-lg font-medium">Add new student</DialogTitle>
             <StudentForm onSubmitSuccess={addNewStudent} />
           </DialogContent>
         </Dialog>
@@ -65,7 +67,7 @@ export default function Student() {
           Print
         </Button> */}
       </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} title="students" />
       {/* <div className="hidden print:block" ref={contentRef}>this is the content to print</div> */}
       <Toaster />
     </>

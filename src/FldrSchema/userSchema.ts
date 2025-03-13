@@ -2,7 +2,7 @@ import { z } from "zod"
 
 export const loginSchema = z.object({
   username: z.string({
-    required_error: "Please enter a password",
+    required_error: "Please enter a username",
   }).min(3).max(50),
   password: z.string({
     required_error: "Please enter a password",
@@ -16,16 +16,16 @@ export const registerSchema = z.object({
   }).min(6, "Username must be atleat 6 charactesrs").max(50, "Username must not exceed 50 characters"),
   pWord: z.string({
     required_error: "Please enter a password"
-  }).min(8, "Password must be atleast 8 characters").max(50, "Password must not exceed 50 characteds").regex(/[0-9]/, "Password must have a number").regex(/^(?=.*[a-z])(?=.*[A-Z]).*$/, 'Password must have upper and lowercase'),
+  }).min(8, "Password must be atleast 8 characters").max(50, "Password must not exceed 50 characters").regex(/[0-9]/, "Password must have a number").regex(/^(?=.*[a-z])(?=.*[A-Z]).*$/, 'Password must have upper and lowercase'),
   firstName: z.string({
     required_error: "Please enter your first name"
-  }).min(5),
+  }).min(3),
   middleName: z.string({
     required_error: "Please enter your middle name"
-  }).min(5),
+  }).min(2),
   lastName: z.string({
     required_error: "Please enter your last name"
-  }).min(5)
+  }).min(2)
 })
 
 export const studentSchema = z.object({
@@ -60,11 +60,69 @@ export const enrollment1Schema = z.object({
     .min(1, { message: "Select a semester." }),
   courseCode: z.string()
     .min(1, { message: "Select a course." }),
-  studentID: z.string()
+  studentCode: z.string()
     .min(1, { message: "Select a student." }),
-  voucher: z.string()
-    .min(1, { message: "Select a voucher." }),
-  date: z.date(),
+  date: z.date()
+    .refine((val) => val <= new Date(), { message: "Date must be today or earlier." }),
   enrollStatusCode: z.string()
-    .min(1, { message: "Select a voucher." })
+    .min(1, { message: "Please confirm status." })
+})
+
+export const enrollment2Schema = z.object({
+  studentCode: z.string()
+    .min(1, { message: "Select a student." }),
+  rateCode: z.string()
+    .min(1, { message: "Select rate." }),
+  rateDesc: z.string()
+    .min(1, { message: "Input rate description." }),
+  units: z.number()
+    .min(1, { message: "Input Units." }),
+  amount: z.number()
+    .min(1, { message: "Input amount." }),
+})
+
+export const rateSchema = z.object({
+  rateTypeCode: z.string()
+    .min(1, { message: "Select a rate type." }),
+  rateDesc: z.string()
+    .min(1, { message: "Enter a description." }),
+  noUnits: z
+    .string()
+    .min(1, { message: "Enter the number of units." })
+    .transform((val) => parseInt(val))
+    .refine((val) => Number.isInteger(val), { message: "Number of units must be an integer." })
+    .refine((val) => val > 0, { message: "Number of units must be a positive number." }),
+  rateAmount: z
+    .string()
+    .min(1, { message: "Enter the rate amount." })
+    .transform((val) => parseFloat(val))
+    .refine((val) => !isNaN(val), { message: "Rate amount must be a valid number." }),
+  pkCode: z.string()
+    .min(1, { message: "Select a rate course." })
+})
+
+// DIAZ: this is for entryRateCourse
+export const entryRateSchema = z.object({
+  yearCode: z.string()
+    .min(1, { message: "Select a year." }),
+  courseCode: z.string()
+    .min(1, { message: "Select a course." }),
+  semCode: z.string()
+    .min(1, { message: "Select a semester." }),
+})
+
+export const applicationSchema = z.object({
+  firstName: z.string().min(2, {
+    message: "First name at least 2 characters.",
+  }),
+  middleName: z.string().min(2, {
+    message: "Middle name at least 2 characters.",
+  }),
+  lastName: z.string().min(2, {
+    message: "Last name at least 2 characters.",
+  }),
+  address: z.string().min(2, {
+    message: "Address invalid.",
+  }),
+  birthDate: z.union([z.string(), z.date()]).optional(),
 })
