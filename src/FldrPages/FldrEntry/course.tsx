@@ -5,10 +5,10 @@ import axios from "axios";
 import { CourseForm } from "@/components/FldrForm/entrycourse"
 import { CourseCol } from "@/FldrTypes/course.col";
 import {
-    Dialog,
-    DialogContent,
-    DialogTrigger,
-  } from "@/components/ui/dialog"
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
@@ -17,36 +17,43 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 
 export default function Course() {
   const [data, setData] = useState<CourseCol[]>([]);
+  const [loading, setLoading] = useState<boolean>(false)
 
-  useEffect(() => { 
-    axios
-      .get<CourseCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
-      .then((response) => {
-        setData(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+
+  const getCourse = async () => {
+    try {
+      setLoading(true)
+      const res = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
+      setData(res.data)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+      getCourse()
   }, []);
 
   return (
     <>
-    <Dialog>
+      <Dialog>
         <DialogTrigger asChild>
-        <Button variant="outline">
-          <Plus />
-          Add new course
-        </Button>
+          <Button variant="outline">
+            <Plus />
+            Add new course
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogTitle className="text-lg font-medium">Add new course</DialogTitle>
           <CourseForm />
         </DialogContent>
-    </Dialog>
-    <div className="mt-4">
-      <DataTable columns={columns} data={data} title="courses" />
-    </div>
-    <Toaster />
+      </Dialog>
+      <div className="mt-4">
+        <DataTable columns={columns} data={data} loading={loading} title="courses" />
+      </div>
+      <Toaster />
     </>
   )
 }
