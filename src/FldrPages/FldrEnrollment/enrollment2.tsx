@@ -12,16 +12,18 @@ import { Enrollment1Col } from "@/FldrTypes/enrollment1"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { columnsEnrolled } from "@/components/FldrDatatable/enrollment1-col";
+import { columnsEnrolled } from "@/components/FldrDatatable/enrollment2-col";
 import { DataTable } from "@/components/FldrDatatable/data-table";
 import { DialogTitle } from "@radix-ui/react-dialog"
 
 export default function Enrollment1() {
   // enrolled students
   const [list, setList] = useState<Enrollment1Col[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchEnrollment1 = async () => {
     try {
+      setLoading(true)
       const response = await axios.get<Enrollment1Col[]>(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`);
       const updatedData = response.data.map((item) => ({
         ...item,
@@ -30,6 +32,8 @@ export default function Enrollment1() {
       setList(updatedData);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -53,7 +57,7 @@ export default function Enrollment1() {
       </Dialog>
 
       <ScrollArea className="overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
-        <DataTable columns={columnsEnrolled} data={list} title="approved students" />
+        <DataTable columns={columnsEnrolled} data={list} loading={loading} title="approved students" />
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
 

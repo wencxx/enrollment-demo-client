@@ -18,20 +18,24 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 
 export default function Rate() {
   const [rates, setRate] = useState<RateCol[]>([]);
+  const [loading, setLoading] = useState<boolean>(false)
 
   const fetchRate = async () => {
     try {
+      setLoading(true)
       const response = await axios.get<RateCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListRate`);
       setRate(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false)
     }
   };
 
   useEffect(() => {
     fetchRate();
   }, []);
-
+  
   return (
     <>
       <div className="space-x-2">
@@ -42,13 +46,13 @@ export default function Rate() {
               Add Rate
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-auto" aria-labelledby="dialog-title">
+          <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[80dvw] lg:!max-w-[70dvw]" aria-labelledby="dialog-title">
             <DialogTitle id="dialog-title" className="text-lg font-medium">Add new rate</DialogTitle>
             <RateForm />
           </DialogContent>
         </Dialog>
       </div>
-      <DataTable columns={columns} data={rates} title="rates" />
+      <DataTable columns={columns} data={rates} loading={loading} title="rates" />
       <Toaster />
     </>
 

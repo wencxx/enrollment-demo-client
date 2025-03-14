@@ -69,37 +69,31 @@ export const enrollment1Schema = z.object({
 })
 
 export const enrollment2Schema = z.object({
-  studentCode: z.string()
-    .min(1, { message: "Select a student." }),
-  rateCode: z.string()
-    .min(1, { message: "Select rate." }),
-  rateDesc: z.string()
-    .min(1, { message: "Input rate description." }),
-  units: z.number()
-    .min(1, { message: "Input Units." }),
-  amount: z.number()
-    .min(1, { message: "Input amount." }),
-})
+  studentCode: z.string().min(1, { message: "Select a student." }),
+  rates: z.array(
+    z.object({
+      rateCode: z.string().min(1, { message: "Select rate." }),
+      rateDesc: z.string().min(1, { message: "Input rate description." }),
+      units: z.number().min(1, { message: "Input Units." }),
+      amount: z.number().min(1, { message: "Input amount." }),
+    })
+  ),
+});
 
 export const rateSchema = z.object({
-  rateTypeCode: z.string()
-    .min(1, { message: "Select a rate type." }),
-  rateDesc: z.string()
-    .min(1, { message: "Enter a description." }),
-  noUnits: z
-    .string()
-    .min(1, { message: "Enter the number of units." })
-    .transform((val) => parseInt(val))
-    .refine((val) => Number.isInteger(val), { message: "Number of units must be an integer." })
-    .refine((val) => val > 0, { message: "Number of units must be a positive number." }),
-  rateAmount: z
-    .string()
-    .min(1, { message: "Enter the rate amount." })
-    .transform((val) => parseFloat(val))
-    .refine((val) => !isNaN(val), { message: "Rate amount must be a valid number." }),
-  pkCode: z.string()
-    .min(1, { message: "Select a rate course." })
-})
+  pkCode: z.string().min(1, { message: "Select a rate course." }),
+  rows: z.array(
+    z.object({
+      rowNum: z.number(),
+      // rateDesc: z.string().min(1, { message: "Denter" }),
+      subjectCode: z.string().min(1, { message: "Subject code is required." }),
+      rateTypeCode: z.string().min(1, { message: "Rate type code is required." }),
+      rateAmount: z.string().min(1, { message: "Rate amount is required." }),
+      noUnits: z.string().min(1, { message: "Number of units is required." }),
+    })
+  ),
+});
+
 
 // DIAZ: this is for entryRateCourse
 export const entryRateSchema = z.object({
