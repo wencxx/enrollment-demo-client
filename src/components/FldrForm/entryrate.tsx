@@ -51,37 +51,38 @@ import { Input } from "../ui/input"
 // type RateFormData = z.infer<typeof rateSchema>
 
 export function RateForm() {
-    // const form = useForm<RateFormData>({
-    //     resolver: zodResolver(rateSchema),
-    //     defaultValues: {
-    //       pkCode: "",
-    //       rows: [
-    //         {
-    //           subjectCode: "",
-    //           rateTypeCode: "",
-    //           rateAmount: "",
-    //           noUnits: "",
-    //         },
-    //       ],
-    //     },
-    //     mode: 'onChange',
-    //   })
+    const form = useForm<RateFormData>({
+        resolver: zodResolver(rateSchema),
+        defaultValues: {
+          pkCode: "",
+          rows: [
+            {
+              subjectCode: "",
+              rateTypeCode: "",
+              rateAmount: "",
+              noUnits: "",
+              rowNum: 1,
+            },
+          ],
+        },
+        mode: 'onChange',
+      })
 
-    const form = useForm({
-      defaultValues: {
-        pkCode: "",
-        rows: [
-          {
-            subjectCode: "",
-            rateTypeCode: "",
-            rateAmount: "",
-            noUnits: "",
-            rowNum: 1,
-          },
-        ],
-      },
-      mode: 'onChange',
-    });
+    // const form = useForm({
+    //   defaultValues: {
+    //     pkCode: "",
+    //     rows: [
+    //       {
+    //         subjectCode: "",
+    //         rateTypeCode: "",
+    //         rateAmount: "",
+    //         noUnits: "",
+    //         rowNum: 1,
+    //       },
+    //     ],
+    //   },
+    //   mode: 'onChange',
+    // });
 
     const { control, handleSubmit, setValue } = form;
 
