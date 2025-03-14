@@ -8,16 +8,14 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronsUpDown, Plus, Trash } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
     Form,
     FormControl,
-    //FormDescription,
     FormField,
     FormItem,
     FormLabel,
-    FormMessage,
   } from "@/components/ui/form"
 import {
   Select,
@@ -42,7 +40,6 @@ import {
   import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -79,6 +76,7 @@ export function RateForm() {
             rateTypeCode: "",
             rateAmount: "",
             noUnits: "",
+            rowNum: 1,
           },
         ],
       },
@@ -126,29 +124,37 @@ export function RateForm() {
   }, [])
 
   const handleAddRow = () => {
+  const nextRowNum = fields.length > 0 ? fields[fields.length - 1].rowNum + 1 : 1;
     append({
       subjectCode: "",
       rateTypeCode: "",
       rateAmount: "",
       noUnits: "",
+      rowNum: nextRowNum,
     });
   };
 
   const onSubmit = async (values: any) => {
-    if (form.formState.isValid) {
-      console.log("Form submitted", values);
-    } else {
-      console.log("Form has validation errors");
-    }
+    // if (form.formState.isValid) {
+    //   console.log("Form submitted", values);
+    // } else {
+    //   console.log("Form has validation errors");
+    // }
 
-      const rateData = {
-        ...values,
-      }
-
+    const rateData = values.rows.map((row: any) => ({
+      pkCode: values.pkCode,
+      rateCode: "",
+      subjectCode: row.subjectCode,
+      rateTypeCode: row.rateTypeCode,
+      noUnits: parseInt(row.noUnits, 10),
+      rateAmount: parseFloat(row.rateAmount),
+      rowNum: row.rowNum,
+    }));
+    
       try {
-        // const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertRate`, rateData)
+        const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertRate`, rateData)
         toast("Added new rate successfully.")
-        console.log("Console log:", rateData)
+        console.log("Data:", response)
       } catch (error) {
         if (axios.isAxiosError(error)) {
           toast("Error submitting form.")
@@ -225,7 +231,6 @@ export function RateForm() {
                   </Command>
                 </PopoverContent>
               </Popover>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -238,12 +243,13 @@ export function RateForm() {
                 <TableHead>Number of Units</TableHead>
                 <TableHead>Rate Type</TableHead>
                 <TableHead className="text-right">Rate Amount</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {fields.map((item, index) => (
                 <TableRow key={item.id}>
-                  <TableCell>
+                  <TableCell className="text-right w-[100px]">
                     <FormField
                       control={control}
                       name={`rows[${index}].subjectCode`}
@@ -252,12 +258,11 @@ export function RateForm() {
                           <FormControl>
                             <Input placeholder="Ex. ITPFL6" {...field} />
                           </FormControl>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-right w-[100px]">
                     <FormField
                       control={control}
                       name={`rows[${index}].noUnits`}
@@ -266,12 +271,11 @@ export function RateForm() {
                           <FormControl>
                             <Input placeholder="Ex. 3" {...field} />
                           </FormControl>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-right w-[100px]">
                     <FormField
                       control={control}
                       name={`rows[${index}].rateTypeCode`}
@@ -297,12 +301,11 @@ export function RateForm() {
                               </SelectContent>
                             </Select>
                           </FormControl>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right w-[100px]">
                     <FormField
                       control={control}
                       name={`rows[${index}].rateAmount`}
@@ -311,11 +314,20 @@ export function RateForm() {
                           <FormControl>
                             <Input placeholder="Ex. 5000" {...field} />
                           </FormControl>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
                   </TableCell>
+                  <TableCell className="text-center w-[50px]">
+                      <Button 
+                        type="button"
+                        variant="outline"
+                        onClick={() => remove(index)}
+                        className="text-red-500"
+                      >
+                        <Trash size={16} />
+                      </Button>
+                    </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -323,7 +335,7 @@ export function RateForm() {
 
           <div className="col-span-2 flex justify-center">
             <Button type="button" onClick={handleAddRow} className="w-full sm:w-20">
-              +
+              <Plus />
             </Button>
           </div>
 
