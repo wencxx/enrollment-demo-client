@@ -35,7 +35,7 @@ export default function Rate() {
   useEffect(() => {
     fetchRate();
   }, []);
-
+  
   return (
     <>
       <div className="space-x-2">
@@ -46,7 +46,7 @@ export default function Rate() {
               Add Rate
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-auto" aria-labelledby="dialog-title">
+          <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[80dvw] lg:!max-w-[70dvw]" aria-labelledby="dialog-title">
             <DialogTitle id="dialog-title" className="text-lg font-medium">Add new rate</DialogTitle>
             <RateForm />
           </DialogContent>

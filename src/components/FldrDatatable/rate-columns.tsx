@@ -14,13 +14,14 @@ import {
 
 export type RateCol = {
     rateCode: string
-    rateDesc: string
+    subjectCode: string
     rateTypeCode: string
     rateTypeDesc: string
     noUnits: number
     rateAmount: number
-    yearCode: number
-    courseCode: number
+    yearDesc: string
+    courseDesc: string
+    semDesc: string
 }
 
 export const columns: ColumnDef<RateCol>[] = [
@@ -47,6 +48,20 @@ export const columns: ColumnDef<RateCol>[] = [
         enableHiding: false,
       },
       {
+        accessorKey: "rateCode",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Rate Code
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+    },
+      {
         accessorKey: "rowNum",
         header: ({ column }) => {
             return (
@@ -61,28 +76,14 @@ export const columns: ColumnDef<RateCol>[] = [
         },
     },
     {
-        accessorKey: "rateCode",
+        accessorKey: "subjectCode",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Rate Code
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    {
-        accessorKey: "rateDesc",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Rate Description
+                    Subject Code
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
@@ -97,6 +98,20 @@ export const columns: ColumnDef<RateCol>[] = [
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
                     Rate Type Code
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+    },
+    {
+        accessorKey: "noUnits",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    No. of Units
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
@@ -122,47 +137,48 @@ export const columns: ColumnDef<RateCol>[] = [
         }
     },
     {
-        accessorKey: "noUnits",
+        accessorKey: "courseDesc",
         header: ({ column }) => {
+            
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    No. of Units
+                    Rate Description
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
     },
-    {
-        id: "actions",
-        cell: ({ row }) => {
-            const Rate = row.original
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(Rate.rateCode)}
-                        >
-                            Copy payment ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>View payment details</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
-        },
-    },
+    // {
+    //     id: "actions",
+    //     cell: ({ row }) => {
+    //         const Rate = row.original
+        
+    //         return (
+    //             <DropdownMenu>
+    //                 <DropdownMenuTrigger asChild>
+    //                     <Button variant="ghost" className="h-8 w-8 p-0">
+    //                         <span className="sr-only">Open menu</span>
+    //                         <MoreHorizontal className="h-4 w-4" />
+    //                     </Button>
+    //                 </DropdownMenuTrigger>
+    //                 <DropdownMenuContent align="end">
+    //                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+    //                     <DropdownMenuItem
+    //                         onClick={() => navigator.clipboard.writeText(Rate.rateCode)}
+    //                     >
+    //                         Copy payment ID
+    //                     </DropdownMenuItem>
+    //                     <DropdownMenuSeparator />
+    //                     <DropdownMenuItem>View customer</DropdownMenuItem>
+    //                     <DropdownMenuItem>View payment details</DropdownMenuItem>
+    //                 </DropdownMenuContent>
+    //             </DropdownMenu>
+    //         )
+    //     },
+    // },
 ]
 
 
