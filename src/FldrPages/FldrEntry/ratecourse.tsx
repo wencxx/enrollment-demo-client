@@ -30,19 +30,19 @@ export default function RateCourse() {
 
   return (
     <>
-          <div className="space-x-2">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">
-            <Plus />
-            Add new rate course
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogTitle className="text-lg font-medium">Add new rate course</DialogTitle>
-          <RateCourseForm />
-        </DialogContent>
-      </Dialog>
+      <div className="space-x-2">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline">
+              <Plus />
+              Add new rate course
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogTitle className="text-lg font-medium">Add new rate course</DialogTitle>
+            <RateCourseForm />
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="mt-4">
         <DataTable columns={columns} data={data} title="course rates" />
