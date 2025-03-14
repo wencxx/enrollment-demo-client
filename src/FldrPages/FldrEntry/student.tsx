@@ -20,9 +20,11 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 
 export default function Student() {
   const [data, setData] = useState<StudentColFullName[]>([]);
+  const [loading, setLoading] = useState<boolean>(false)
 
   const getStudents = async () => {
     try {
+      setLoading(true)
       const res = await axios.get<StudentCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListStudent`)
 
       const dataWithFullName = res.data.map(student => ({
@@ -33,6 +35,8 @@ export default function Student() {
       setData(dataWithFullName);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -67,7 +71,7 @@ export default function Student() {
           Print
         </Button> */}
       </div>
-      <DataTable columns={columns} data={data} title="students" />
+      <DataTable columns={columns} data={data} title="students" loading={loading} />
       {/* <div className="hidden print:block" ref={contentRef}>this is the content to print</div> */}
       <Toaster />
     </>

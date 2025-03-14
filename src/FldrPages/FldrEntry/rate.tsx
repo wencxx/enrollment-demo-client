@@ -18,13 +18,17 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 
 export default function Rate() {
   const [rates, setRate] = useState<RateCol[]>([]);
+  const [loading, setLoading] = useState<boolean>(false)
 
   const fetchRate = async () => {
     try {
+      setLoading(true)
       const response = await axios.get<RateCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListRate`);
       setRate(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -48,7 +52,7 @@ export default function Rate() {
           </DialogContent>
         </Dialog>
       </div>
-      <DataTable columns={columns} data={rates} title="rates" />
+      <DataTable columns={columns} data={rates} loading={loading} title="rates" />
       <Toaster />
     </>
 

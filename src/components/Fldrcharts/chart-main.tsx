@@ -34,7 +34,7 @@ const chartType = [
   }
 ];
 
-export function ChartMain({ chartData, defaultChart }: { chartData: StudentsCount[], defaultChart?: String }) {
+export function ChartMain({ chartData, defaultChart, title }: { chartData: StudentsCount[], defaultChart?: string, title: string }) {
   const [selectedChartType, setSelectedChartType] = useState(defaultChart || chartType[0].type);
 
   const handleChartTypeChange = (type: string) => {
@@ -45,7 +45,7 @@ export function ChartMain({ chartData, defaultChart }: { chartData: StudentsCoun
     <>
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
-          <span>Number of students</span>
+          <span>{title}</span>
           <Select onValueChange={handleChartTypeChange}>
             <SelectTrigger className="w-[170px]">
               <SelectValue placeholder="Select Chart Type" />
