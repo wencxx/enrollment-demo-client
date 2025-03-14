@@ -22,40 +22,40 @@ export function VoidEnrolledForm({ studentCode, closeModal }: studentCodeProps) 
     mode: 'onChange',
   })
 
-    const fetchVoidStatus = async () => {
-      try {
-        const response = await axios.get(`${plsConnect()}/API/WEBAPI/VariousController/GetStudentVoidStatus/${studentCode}`)
-        
-        if (response.data) {
-            console.log("API Response Data:", response.data);
-            const { void: Void } = response.data;
-            console.log("Fetched Void Status:", Void);
-            setIsVoided(Void);
-            form.setValue("void", Void);
-          }
-      } catch (error) {
-        console.error("Error fetching void status:", error)
-        toast("Failed to load student status.")
+  const fetchVoidStatus = async () => {
+    try {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/VariousController/GetStudentVoidStatus/${studentCode}`)
+
+      if (response.data) {
+        console.log("API Response Data:", response.data);
+        const { void: Void } = response.data;
+        console.log("Fetched Void Status:", Void);
+        setIsVoided(Void);
+        form.setValue("void", Void);
       }
+    } catch (error) {
+      console.error("Error fetching void status:", error)
+      toast("Failed to load student status.")
     }
+  }
 
   useEffect(() => {
     fetchVoidStatus();
   }, [studentCode]);
-  
-  const onSubmit = async (values: voidFormData) => {
-        try {
-        const voidStatus = values.void;
-        const invertedVoidStatus = !voidStatus;
 
-        const response = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateEnrollment1VoidStatus`, {
-            studentCode, 
-            void: invertedVoidStatus,
-          });
-        closeModal();
-        toast("Status updated successfully.");
-        console.log("Successful update: ", response)
-      } catch (error) {
+  const onSubmit = async (values: voidFormData) => {
+    try {
+      const voidStatus = values.void;
+      const invertedVoidStatus = !voidStatus;
+
+      const response = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateEnrollment1VoidStatus`, {
+        studentCode,
+        void: invertedVoidStatus,
+      });
+      closeModal();
+      toast("Status updated successfully.");
+      console.log("Successful update: ", response)
+    } catch (error) {
       if (axios.isAxiosError(error)) {
         toast("Error submitting form.")
       } else {
@@ -64,50 +64,51 @@ export function VoidEnrolledForm({ studentCode, closeModal }: studentCodeProps) 
       }
     }
   }
-  
+
   if (isVoided === null) {
     return <div>Loading status...</div>
   }
 
   return (
     <Form {...form}>
-  <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 grid grid-cols-2 gap-2">
-    <div className="col-span-2">
-      <div className="text-center">
-        <p className="text-lg">
-          Are you sure you want to {isVoided ? "reinstate" : "void"} this student?
-        </p>
-        <p className="text-sm text-gray-600">
-          This student is currently {isVoided ? "voided" : "enrolled"}. This action will {isVoided ? "restore" : "un-enroll"} the student.
-        </p>
-      </div>
-    </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 grid grid-cols-2 gap-2">
+        <div className="col-span-2">
+          <div className="text-center">
+            <p className="text-lg">
+              Are you sure you want to {isVoided ? "reinstate" : "void"} this student?
+            </p>
+            <p className="text-sm text-gray-600">
+              This student is currently {isVoided ? "voided" : "enrolled"}. This action will {isVoided ? "restore" : "un-enroll"} the student.
+            </p>
+          </div>
+        </div>
 
-    <input
-      type="hidden"
-      {...form.register("void")}
-      value={isVoided ? "true" : "false"}
-    />
+        <input
+          type="hidden"
+          {...form.register("void")}
+          value={isVoided ? "true" : "false"}
+        />
 
-    <div className="col-span-2 flex justify-between gap-2">
-      <Button
-        type="button"
-        onClick={() => closeModal()}
-        variant="outline"
-        className="w-full sm:w-20"
-      >
-        Cancel
-      </Button>
+        <div className="col-span-2 flex justify-between gap-2">
+          <Button
+            type="button"
+            onClick={() => closeModal()}
+            variant="outline"
+            size="lg"
+          >
+            Cancel
+          </Button>
 
-      <Button
-        type="submit"
-        className={`w-full sm:w-20 ${isVoided ? "bg-green-500" : "bg-red-500 text-white"}`}
-      >
-        {isVoided ? "Reinstate" : "Void"}
-      </Button>
-    </div>
-  </form>
-</Form>
+          <Button
+            type="submit"
+            size="lg"
+            variant={isVoided ? "green" : "red"}
+          >
+            {isVoided ? "Reinstate" : "Void"}
+          </Button>
+        </div>
+      </form>
+    </Form>
 
   )
 }

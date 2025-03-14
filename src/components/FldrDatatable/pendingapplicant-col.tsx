@@ -19,110 +19,110 @@ import {
 } from "@/components/ui/dialog"
 
 export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
-    {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
-    {
-        accessorKey: "studentCode",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Student Code
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "studentCode",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Student Code
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
     },
-    {
-        accessorKey: "fullName",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Full Name
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
+  },
+  {
+    accessorKey: "fullName",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Full Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
     },
-    {
-        accessorKey: "enrollStatusCode",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Status
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
+  },
+  {
+    accessorKey: "enrollStatusCode",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
     },
-    {
-        id: "actions",
-        cell: ({ row }) => {
-          const [isDialogOpen, setIsDialogOpen] = useState(false);
-          const [studentCode, setStudentCode] = useState("");
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const [isDialogOpen, setIsDialogOpen] = useState(false);
+      const [studentCode, setStudentCode] = useState("");
 
-          const handleDialogOpen = (code: string) => {
-            setStudentCode(code);
-            setIsDialogOpen(true);
-          };
+      const handleDialogOpen = (code: string) => {
+        setStudentCode(code);
+        setIsDialogOpen(true);
+      };
 
-          const closeModal = () => {
-            setIsDialogOpen(false)
-          }
+      const closeModal = () => {
+        setIsDialogOpen(false)
+      }
 
-          return (
-            <>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      return (
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.studentCode)}>
                     <span className="sr-only">Open menu</span>
                     <Stamp className="h-4 w-4" />
                   </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-                    <DialogHeader>
-                      <DialogTitle className="mb-4">Begin student enrollment</DialogTitle>
-                    </DialogHeader>
-                    <PendingApplicantEnrollment1Form studentCode={studentCode} closeModal={closeModal} />
-                  </DialogContent>
+                </DialogTrigger>
+                <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+                  <DialogHeader>
+                    <DialogTitle className="mb-4">Begin student enrollment</DialogTitle>
+                  </DialogHeader>
+                  <PendingApplicantEnrollment1Form studentCode={studentCode} closeModal={closeModal} />
+                </DialogContent>
               </Dialog>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">    
-                </DropdownMenuContent>
-              </DropdownMenu>
-    
-            </>
-          )
-        },
-      },
-    ]
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+        </>
+      )
+    },
+  },
+]

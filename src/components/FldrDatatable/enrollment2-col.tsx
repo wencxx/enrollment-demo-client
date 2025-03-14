@@ -152,7 +152,7 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
                         <Ban className="h-4 w-4" />
                     </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+                    <DialogContent className="max-h-[90vh] overflow-y-auto" aria-labelledby="dialog-title">
                         <DialogHeader>
                         {/* <DialogTitle className="mb-4">Void enrolled student</DialogTitle> */}
                         </DialogHeader>

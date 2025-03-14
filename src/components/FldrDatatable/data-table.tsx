@@ -36,7 +36,7 @@ import {
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[],
-    title: string 
+    title: string
 }
 
 export function DataTable<TData, TValue>({

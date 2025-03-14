@@ -69,17 +69,16 @@ export const enrollment1Schema = z.object({
 })
 
 export const enrollment2Schema = z.object({
-  studentCode: z.string()
-    .min(1, { message: "Select a student." }),
-  rateCode: z.string()
-    .min(1, { message: "Select rate." }),
-  rateDesc: z.string()
-    .min(1, { message: "Input rate description." }),
-  units: z.number()
-    .min(1, { message: "Input Units." }),
-  amount: z.number()
-    .min(1, { message: "Input amount." }),
-})
+  studentCode: z.string().min(1, { message: "Select a student." }),
+  rates: z.array(
+    z.object({
+      rateCode: z.string().min(1, { message: "Select rate." }),
+      rateDesc: z.string().min(1, { message: "Input rate description." }),
+      units: z.number().min(1, { message: "Input Units." }),
+      amount: z.number().min(1, { message: "Input amount." }),
+    })
+  ),
+});
 
 export const rateSchema = z.object({
   rateTypeCode: z.string()
