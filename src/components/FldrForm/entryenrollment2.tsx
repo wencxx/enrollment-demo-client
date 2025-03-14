@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { enrollment2Schema } from "@/FldrSchema/userSchema.ts"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
@@ -8,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { Plus } from 'lucide-react'
+import { Plus, Minus } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -38,21 +37,34 @@ import {
 import useAuthStore from "@/FldrStore/auth"
 import { RateCol } from "@/components/FldrDatatable/rate-columns";
 import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
-type Enrollment2FormData = z.infer<typeof enrollment2Schema>
+type RateFormData = {
+  rateCode: string;
+  rateDesc: string;
+  units: number;
+  amount: number;
+};
+
+type Enrollment2FormData = {
+  studentCode: string;
+  rates: RateFormData[];
+};
 
 export function Enrollment2Form() {
   const form = useForm<Enrollment2FormData>({
     resolver: zodResolver(enrollment2Schema),
     defaultValues: {
       studentCode: "",
-      rateCode: "",
-      rateDesc: "",
-      units: 0,
-      amount: 0,
+      rates: [],
     },
     mode: 'onChange',
-  })
+  });
 
   const [student, setStudent] = useState<StudentCol[]>([])
   const [studentSearch, setStudentSearch] = useState("");
@@ -103,19 +115,20 @@ export function Enrollment2Form() {
     return;
   }
 
-  const handleRateChange = (rateCode: string) => {
+  const handleRateChange = (rateCode: string, index: number) => {
     const selectedRate = rates.find(rate => rate.rateCode === rateCode);
     if (selectedRate) {
-      form.setValue("rateDesc", selectedRate.rateDesc);
-      form.setValue("units", selectedRate.noUnits);
-      form.setValue("amount", selectedRate.rateAmount);
+      form.setValue(`rates.${index}.rateDesc`, selectedRate.rateDesc);
+      form.setValue(`rates.${index}.units`, selectedRate.noUnits);
+      form.setValue(`rates.${index}.amount`, selectedRate.rateAmount);
     }
-    form.setValue("rateCode", rateCode);
+    form.setValue(`rates.${index}.rateCode`, rateCode);
   };
 
   const onSubmit = async (values: Enrollment2FormData) => {
     console.log("Form values before submit:", values);
-    const currentDate = new Date();
+    // console.log(values)
+    // const currentDate = new Date();
 
     // const enrollment2Data = {
     //   ...values,
@@ -141,6 +154,20 @@ export function Enrollment2Form() {
     //   }
     // }
   }
+
+  const [rows, setRows] = useState<RateFormData[]>([]);
+
+  const addRow = () => {
+    if (!form.getValues("studentCode")) {
+      toast("Please select a student first.");
+      return;
+    }
+    setRows([...rows, { rateCode: "", rateDesc: "", units: 0, amount: 0 }]);
+  };
+
+  const removeRow = (index: number) => {
+    setRows(rows.filter((_, i) => i !== index));
+  };
 
   return (
     <Form {...form}>
@@ -187,7 +214,7 @@ export function Enrollment2Form() {
         <div className="col-span-2">
           <Table>
             <TableCaption>
-              <Button type="button" variant="ghost" size="sm">
+              <Button type="button" variant="ghost" size="sm" onClick={addRow}>
                 <Plus />
               </Button>
             </TableCaption>
@@ -197,82 +224,101 @@ export function Enrollment2Form() {
                 <TableHead>Description</TableHead>
                 <TableHead>Units</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
+                {/* <TableHead></TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">
-                  <FormField
-                    control={form.control}
-                    name="rateCode"
-                    render={({ field }) => (
-                      <FormItem className="col-span-2">
-                        <Select onValueChange={handleRateChange} value={field.value}>
-                          {/* <Select> */}
+              {rows.map((row, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium w-[200px]">
+                    <FormField
+                      control={form.control}
+                      name={`rates.${index}.rateCode`}
+                      render={({ field }) => (
+                        <FormItem className="col-span-2">
+                          <Select
+                            onValueChange={(value) => handleRateChange(value, index)}
+                            value={rates.length > 0 ? field.value : ""}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select code" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {rates.length > 0 ? (
+                                rates.map((rate) => (
+                                  <SelectItem key={rate.rateCode} value={rate.rateCode}>
+                                    {rate.rateCode} - {rate.rateDesc}
+                                  </SelectItem>
+                                ))
+                              ) : (
+                                <SelectItem disabled>No rates available</SelectItem>
+                              )}
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell className="w-[300px]">
+                    <FormField
+                      control={form.control}
+                      name={`rates.${index}.rateDesc`}
+                      render={({ field }) => (
+                        <FormItem>
                           <FormControl>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select code" />
-                            </SelectTrigger>
+                            <Input {...field} readOnly />
                           </FormControl>
-                          <SelectContent>
-                            {rates.length > 0 ? (
-                              rates.map((rate) => (
-                                <SelectItem key={rate.rateCode} value={rate.rateCode}>
-                                  {rate.rateCode} - {rate.rateDesc}
-                                </SelectItem>
-                              ))
-                            ) : (
-                              <SelectItem disabled>No rates available</SelectItem>
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </FormItem>
-                    )}
-                  />
-                </TableCell>
-                <TableCell className="w-[300px]">
-                  <FormField
-                    control={form.control}
-                    name="rateDesc"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input {...field} readOnly />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </TableCell>
-                <TableCell className="w-[100px]">
-                  <FormField
-                    control={form.control}
-                    name="units"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input {...field} readOnly />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </TableCell>
-                <TableCell className="text-right w-[100px]">
-                  <FormField
-                    control={form.control}
-                    name="amount"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input {...field} readOnly className="text-end bor" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </TableCell>
-              </TableRow>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell className="w-[100px]">
+                    <FormField
+                      control={form.control}
+                      name={`rates.${index}.units`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input {...field} readOnly />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right w-[100px]">
+                    <FormField
+                      control={form.control}
+                      name={`rates.${index}.amount`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input {...field} readOnly className="text-end" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" onClick={() => removeRow(index)}>
+                            <Minus />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Remove row</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
             <TableFooter>
               <TableRow>
@@ -282,44 +328,6 @@ export function Enrollment2Form() {
             </TableFooter>
           </Table>
         </div>
-
-        {/* <FormField
-          control={form.control}
-          name="studentCode"
-          render={({ field }) => (
-            <FormItem className="col-span-2">
-              <FormLabel>Student</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Pending applicant" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <div className="p-2">
-                    <input
-                      type="text"
-                      className="w-full px-3 py-2 border rounded text-sm"
-                      placeholder="Search for a student"
-                      value={studentSearch}
-                      onChange={handleStudentSearchChange}
-                    />
-                  </div>
-                  {filteredStudents.length > 0 ? (
-                    filteredStudents.map((student) => (
-                      <SelectItem key={student.studentCode} value={student.studentCode}>
-                        {student.firstName} {student.lastName}, {student.middleName}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem disabled>No students available</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
 
         {/* no voucher na */}
         <div className="col-span-2">

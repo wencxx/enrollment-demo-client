@@ -189,7 +189,7 @@ export function Enrollment1Form() {
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Pending applicant" />
-                  </SelectTrigger> 
+                  </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   <div className="p-2">
