@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { Plus } from 'lucide-react'
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 export default function Course() {
   const [data, setData] = useState<CourseCol[]>([]);
@@ -38,11 +39,12 @@ export default function Course() {
         </Button>
         </DialogTrigger>
         <DialogContent>
+          <DialogTitle className="text-lg font-medium">Add new course</DialogTitle>
           <CourseForm />
         </DialogContent>
     </Dialog>
     <div className="mt-4">
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} title="courses" />
     </div>
     <Toaster />
     </>

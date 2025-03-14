@@ -4,12 +4,11 @@
 
 @plugin "tailwindcss-animate";
 
-@custom-variant dark (&:is(.dark *)); 
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --font-inter: 'Inter'
 }
-
 
 * {
   font-family: 'Inter';
@@ -142,14 +141,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-/* custom css for hiding scrollbar on modal */
-.scrollbar-hidden::-webkit-scrollbar {
-  display: none; 
-}
-
-.scrollbar-hidden {
-  -ms-overflow-style: none;
-  scrollbar-width: none; 
 }

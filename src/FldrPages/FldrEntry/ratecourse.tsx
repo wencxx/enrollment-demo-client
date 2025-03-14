@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Toaster } from "@/components/ui/sonner";
 import { RateCourseForm } from "@/components/FldrForm/entryratecourse";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 export default function RateCourse() {
   const [data, setData] = useState<RateCourseCol[]>([]);
@@ -38,12 +39,13 @@ export default function RateCourse() {
           </Button>
         </DialogTrigger>
         <DialogContent>
+          <DialogTitle className="text-lg font-medium">Add new rate course</DialogTitle>
           <RateCourseForm />
         </DialogContent>
       </Dialog>
       </div>
       <div className="mt-4">
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={data} title="course rates" />
       </div>
       <Toaster />
     </>

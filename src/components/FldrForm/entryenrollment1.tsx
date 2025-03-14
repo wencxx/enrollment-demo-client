@@ -32,18 +32,18 @@ import {
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-  } from "@/components/ui/command"
-  import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-  } from "@/components/ui/popover"
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 type Enrollment1FormData = z.infer<typeof enrollment1Schema>
 
@@ -108,36 +108,33 @@ export function Enrollment1Form() {
     }
   }
 
-      async function fetchCourse() {
-        try {
-          const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
-              const mappedCourseCode = response.data.map((item: CourseCol) => ({
-                  label: item.courseDesc,
-                  value: item.courseCode,
-              }))
-              setCourse(mappedCourseCode)
-          } catch (error: any) {
-              console.error("Error fetching courses:", error)
-          }
-          }
+  async function fetchCourse() {
+    try {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
+      const mappedCourseCode = response.data.map((item: CourseCol) => ({
+        label: item.courseDesc,
+        value: item.courseCode,
+      }))
+      setCourse(mappedCourseCode)
+    } catch (error: any) {
+      console.error("Error fetching courses:", error)
+    }
+  }
+
+  async function fetchStudent() {
+    try {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListApplicant`)
+      //console.log("Fetched students:", response.data);
+      setStudent(response.data)
+    } catch (error: any) {
+      console.error("Error fetching students:", error)
+    }
+  }
 
   useEffect(() => {
     fetchYears()
     fetchSem()
     fetchCourse()
-  }, [])
-
-  useEffect(() => {
-    async function fetchStudent() {
-      try {
-        const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListApplicant`) 
-        //console.log("Fetched students:", response.data);
-        setStudent(response.data) 
-        } catch (error: any) {
-            console.error("Error fetching students:", error)
-        }
-        }
-
     fetchStudent()
     fetchStatus()
   }, [])
@@ -192,7 +189,7 @@ export function Enrollment1Form() {
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Pending applicant" />
-                  </SelectTrigger>
+                  </SelectTrigger> 
                 </FormControl>
                 <SelectContent>
                   <div className="p-2">
@@ -308,74 +305,74 @@ export function Enrollment1Form() {
         />
 
         <FormField
-                  control={form.control}
-                  name="courseCode"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Course</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
+          control={form.control}
+          name="courseCode"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Course</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "w-full justify-between",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value
+                        ? course.find(
+                          (course) => course.value === field.value
+                        )?.label
+                        : "Select course"}
+                      <ChevronsUpDown className="opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput
+                      placeholder="Search..."
+                      className="h-9"
+                    />
+                    <CommandList>
+                      <CommandEmpty>None found.</CommandEmpty>
+                      <CommandGroup>
+                        {course.map((course) => (
+                          <CommandItem
+                            value={course.label}
+                            key={course.value}
+                            onSelect={() => {
+                              form.setValue("courseCode", course.value);
+                              field.onChange(course.value);
+                            }}
+                          >
+                            {course.label}
+                            <Check
                               className={cn(
-                                "w-full justify-between",
-                                !field.value && "text-muted-foreground"
+                                "ml-auto",
+                                course.value === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
                               )}
-                            >
-                              {field.value
-                                ? course.find(
-                                    (course) => course.value === field.value
-                                  )?.label
-                                : "Select course"}
-                              <ChevronsUpDown className="opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-full p-0">
-                          <Command>
-                            <CommandInput
-                              placeholder="Search..."
-                              className="h-9"
                             />
-                            <CommandList>
-                              <CommandEmpty>None found.</CommandEmpty>
-                              <CommandGroup>
-                                {course.map((course) => (
-                                  <CommandItem
-                                    value={course.label}
-                                    key={course.value}
-                                    onSelect={() => {
-                                        form.setValue("courseCode", course.value);
-                                        field.onChange(course.value);
-                                    }}
-                                  >
-                                    {course.label}
-                                    <Check
-                                      className={cn(
-                                        "ml-auto",
-                                        course.value === field.value
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-          {/* no voucher na */}
-          <div className="col-span-2">
-            <Button type="submit" className="w-full sm:w-20 float-right">Submit</Button>
-          </div>
+        {/* no voucher na */}
+        <div className="col-span-2">
+          <Button type="submit" className="w-full sm:w-20 float-right">Submit</Button>
+        </div>
       </form>
     </Form>
   )

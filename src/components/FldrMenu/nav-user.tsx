@@ -45,88 +45,15 @@ import {
   SheetClose
 } from "@/components/ui/sheet"
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import useAuthStore from "@/FldrStore/auth"
-
-type Theme = {
-  color: string; 
-  background: string;
-  text: string;
-}
-
-const colorTheme: Theme[] = [
-  {
-    color: 'red',
-    background: 'oklch(0.637 0.237 25.331)',
-    text: 'white'
-  },
-  {
-    color: 'blue',
-    background: 'oklch(0.623 0.214 259.815)',
-    text: 'white'
-  },
-  {
-    color: 'yellow',
-    background: 'oklch(0.795 0.184 86.047)',
-    text: 'white'
-  },
-  {
-    color: 'green',
-    background: 'oklch(0.723 0.219 149.579)',
-    text: 'white'
-  },
-  {
-    color: 'orange',
-    background: 'oklch(0.705 0.213 47.604)',
-    text: 'white'
-  },
-  {
-    color: 'violet',
-    background: 'oklch(0.606 0.25 292.717)',
-    text: 'white'
-  },
-  {
-    color: 'teal',
-    background: 'oklch(0.704 0.14 182.503)',
-    text: 'white'
-  },
-  {
-    color: 'pink',
-    background: 'oklch(0.656 0.241 354.308)',
-    text: 'white'
-  },
-  {
-    color: 'cyan',
-    background: 'oklch(0.715 0.143 215.221)',
-    text: 'white'
-  },
-  {
-    color: 'lime',
-    background: 'oklch(0.768 0.233 130.85)',
-    text: 'white'
-  },
-  {
-    color: 'rose',
-    background: 'oklch(0.645 0.246 16.439)',
-    text: 'white'
-  },
-  {
-    color: 'amber',
-    background: 'oklch(0.769 0.188 70.08)',
-    text: 'white'
-  },
-  {
-    color: 'emerald',
-    background: 'oklch(0.696 0.17 162.48)',
-    text: 'white'
-  },
-]
+import { debounce } from "lodash";
 
 export function NavUser() {
   const { isMobile } = useSidebar()
   const store = useAuthStore()
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [color, setColor] = useState<string | undefined>(undefined);
 
   const user = store.currentUser
 
@@ -134,26 +61,121 @@ export function NavUser() {
     store.logout()
   }
 
-  const handleThemeChange = (color?: string, text?: string) => {
+  const updateTheme = (color: string) => {
     const htmlElement = document.documentElement;
+    const isDark = checkIfDarkColor(color);
+    const text = isDark ? 'white' : 'black';
+    const hsl = hexToHSL(color);
 
-    if(color && text){
+    requestAnimationFrame(() => {
       htmlElement.style.setProperty("--sidebar", color);
-      localStorage.setItem('color', color); 
       htmlElement.style.setProperty("--sidebar-foreground", text);
-      localStorage.setItem('text', text); 
+      htmlElement.style.setProperty("--primary", color);
+      htmlElement.style.setProperty("--chart-1", hsl.original);
+      htmlElement.style.setProperty("--chart-2", hsl.lighter);
       htmlElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light'); 
+    });
+
+    localStorage.setItem('color', color);
+    localStorage.setItem('text', text);
+    localStorage.setItem('primary', color);
+    localStorage.setItem('chart1', hsl.original);
+    localStorage.setItem('chart2', hsl.lighter);
+    localStorage.setItem('theme', 'light');
+  };
+
+  const debouncedUpdateTheme = debounce(updateTheme, 100);
+
+  const handleThemeChange = (color?: string) => {
+    if (!color) return;
+    setColor(color);
+    debouncedUpdateTheme(color);
+  };
+
+  function checkIfDarkColor(hex: string | undefined) {
+
+    if (!hex) return false;
+    let r = parseInt(hex.substring(1, 3), 16);
+    let g = parseInt(hex.substring(3, 5), 16);
+    let b = parseInt(hex.substring(5, 7), 16);
+
+    let luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+    return luminance < 0.5;
+  }
+
+  function hexToHSL(hex: string): {
+    original: string;
+    lighter: string;
+  } {
+    hex = hex.replace(/^#/, '');
+
+    let r = parseInt(hex.substring(0, 2), 16);
+    let g = parseInt(hex.substring(2, 4), 16);
+    let b = parseInt(hex.substring(4, 6), 16);
+
+    return rgb2hsl(r, g, b);
+  }
+
+  function rgb2hsl(r: number, g: number, b: number): {
+    original: string;
+    lighter: string;
+  } {
+    r = r / 255;
+    g = g / 255;
+    b = b / 255;
+
+    let max = Math.max(r, g, b);
+    let min = Math.min(r, g, b);
+    let lum = (max + min) / 2;
+    let hue = 0;
+    let sat = 0;
+
+    if (max !== min) {
+      let c = max - min;
+      sat = c / (1 - Math.abs(2 * lum - 1));
+
+      switch (max) {
+        case r:
+          hue = ((g - b) / c) % 6;
+          break;
+        case g:
+          hue = (b - r) / c + 2;
+          break;
+        case b:
+          hue = (r - g) / c + 4;
+          break;
+      }
+
+      hue = Math.round(hue * 60);
+      if (hue < 0) hue += 360;
     }
+
+    sat = Math.round(sat * 100);
+    lum = Math.round(lum * 100);
+
+    let lighterLum = Math.min(lum + 15, 100);
+
+    return {
+      original: `${hue} ${sat}% ${lum}%`,
+      lighter: `${hue} ${sat}% ${lighterLum}%`
+    };
   }
 
   useEffect(() => {
     const color = localStorage.getItem('color');
     const text = localStorage.getItem('text');
+    const primary = localStorage.getItem('primary');
+    const chart1 = localStorage.getItem('chart1');
+    const chart2 = localStorage.getItem('chart2');
 
-    if(color){
+    if (color && text && primary) {
+      setColor(color)
       document.documentElement.style.setProperty("--sidebar", color);
       document.documentElement.style.setProperty("--sidebar-foreground", text);
+      document.documentElement.style.setProperty("--primary", primary);
+      document.documentElement.style.setProperty("--chart-1", chart1);
+      document.documentElement.style.setProperty("--chart-2", chart2);
     }
   }, [])
 
@@ -169,7 +191,9 @@ export function NavUser() {
               {user && (
                 <Avatar className="h-8 w-8 rounded-lg !text-black dark:!text-white">
                   <AvatarImage src={user?.groupName} alt={user?.groupName} />
-                  {/* <AvatarFallback className="rounded-lg uppercase">{user.fullName ? user.fullName.split(' ')[0].slice(0, 1) + user.fullName.split(' ')[1].slice(0, 1) : ''}</AvatarFallback> */}
+                  {user.fullName && (
+                    <AvatarFallback className="rounded-lg uppercase">{user.fullName ? user.fullName.split(' ')[0].slice(0, 1) + user.fullName.split(' ')[1].slice(0, 1) : ''}</AvatarFallback>
+                  )}
                 </Avatar>
               )}
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -190,7 +214,9 @@ export function NavUser() {
                 {user && (
                   <Avatar className="h-8 w-8 rounded-lg !text-black dark:!text-white">
                     <AvatarImage src={user?.groupCode} alt={user?.groupCode} />
-                    {/* <AvatarFallback className="rounded-lg uppercase">{user.fullName ? user.fullName.split(' ')[0].slice(0, 1) + user.fullName.split(' ')[1].slice(0, 1) : 'WB'}</AvatarFallback> */}
+                    {user.fullName && (
+                      <AvatarFallback className="rounded-lg uppercase">{user.fullName ? user.fullName.split(' ')[0].slice(0, 1) + user.fullName.split(' ')[1].slice(0, 1) : ''}</AvatarFallback>
+                    )}
                   </Avatar>
                 )}
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -239,19 +265,11 @@ export function NavUser() {
           <SheetHeader>
             <SheetTitle className="uppercase">Settings</SheetTitle>
           </SheetHeader>
-          <div className="grid gap-4 py-4 px-4">
-            <div className="space-y-3">   
-              <p>Themes</p> 
-              <Input placeholder="Input color" onChange={(e) => handleThemeChange(e.target.value)} />
-              <div className="flex flex-wrap gap-3">
-                {colorTheme.map((theme, index) => (
-                  <div
-                    key={index}
-                    className={`w-8 aspect-square rounded cursor-pointer`}
-                    style={{ backgroundColor: theme.background }}
-                    onClick={() => handleThemeChange(theme.background, theme.text)}
-                  />
-                ))}
+          <div className="py-4 px-4">
+            <div className="flex items-center justify-between">
+              <p>Themes</p>
+              <div className="h-6 rounded-full border border-gray-500 aspect-square overflow-hidden flex items-center justify-center">
+                <input type="color" defaultValue={color} className="h-[150%] aspect-square cursor-pointer" onChange={(e) => handleThemeChange(e.target.value)} />
               </div>
             </div>
           </div>

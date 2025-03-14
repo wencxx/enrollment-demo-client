@@ -61,9 +61,24 @@ export const enrollment1Schema = z.object({
   courseCode: z.string()
     .min(1, { message: "Select a course." }),
   studentCode: z.string()
-   .min(1, { message: "Select a student." }),
+    .min(1, { message: "Select a student." }),
+  date: z.date()
+    .refine((val) => val <= new Date(), { message: "Date must be today or earlier." }),
   enrollStatusCode: z.string()
     .min(1, { message: "Please confirm status." })
+})
+
+export const enrollment2Schema = z.object({
+  studentCode: z.string()
+    .min(1, { message: "Select a student." }),
+  rateCode: z.string()
+    .min(1, { message: "Select rate." }),
+  rateDesc: z.string()
+    .min(1, { message: "Input rate description." }),
+  units: z.number()
+    .min(1, { message: "Input Units." }),
+  amount: z.number()
+    .min(1, { message: "Input amount." }),
 })
 
 export const rateSchema = z.object({
@@ -83,17 +98,17 @@ export const rateSchema = z.object({
     .transform((val) => parseFloat(val))
     .refine((val) => !isNaN(val), { message: "Rate amount must be a valid number." }),
   pkCode: z.string()
-  .min(1, { message: "Select a rate course." })
+    .min(1, { message: "Select a rate course." })
 })
 
 // DIAZ: this is for entryRateCourse
-export const entryRateSchema = z.object ({
+export const entryRateSchema = z.object({
   yearCode: z.string()
-  .min(1, { message: "Select a year." }),
+    .min(1, { message: "Select a year." }),
   courseCode: z.string()
-  .min(1, { message: "Select a course." }),
+    .min(1, { message: "Select a course." }),
   semCode: z.string()
-  .min(1, { message: "Select a semester." }),
+    .min(1, { message: "Select a semester." }),
 })
 
 export const applicationSchema = z.object({
@@ -136,3 +151,6 @@ export const studentEditSchema = z.object ({
   studentCode: z.string()
    .min(1, { message: "Select a student." }),
 })
+export const voidSchema = z.object({
+  void: z.boolean(),
+});

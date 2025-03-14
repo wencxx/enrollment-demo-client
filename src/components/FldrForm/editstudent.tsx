@@ -71,12 +71,12 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
           try {
             console.log(`Fetching student details for: ${studentCode}`);
             const response = await axios.get(
-              `${plsConnect()}/API/WEBAPI/ListController/ListStudentEnrollment2?studentCode=${studentCode}`
+              `${plsConnect()}/API/WEBAPI/ListController/ListStudentEnrollment1?studentCode=${studentCode}`
             );
             console.log("Fetched Data:", response.data);
       
             form.reset({
-              studentCode: response.data.studentCode || "",
+              studentCode: response.data.studentCode,
               firstName: response.data.firstName || "",
               middleName: response.data.middleName || "",
               lastName: response.data.lastName || "",
@@ -123,9 +123,10 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
           };
     
           const response = await axios.put(
-            `${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollment2`,
+            `${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollment1`,
             formattedValues,
           );
+          console.log("api", response);
       
           toast("Student details updated successfully.");
       
