@@ -1,7 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Ban } from "lucide-react"
+import { ArrowUpDown, Eye, Ban } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+
 // import { format } from "date-fns";
 // import { Badge } from "@/components/ui/badge"
 // import moment from 'moment'
@@ -13,9 +14,10 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
-//   DialogTitle,
-  DialogHeader,
+  DialogTitle,
+  DialogHeader
 } from "@/components/ui/dialog"
+import { EditStudent } from "../FldrForm/editstudent"
 import { VoidEnrolledForm } from "../FldrForm/voidEnrolled"
 
 export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
@@ -95,42 +97,44 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
           },
     },
     {
-        accessorKey: "void",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Enrollment
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-             let variantType: "approve" | "disapprove" = "disapprove";
-            const status: boolean = row.getValue("void");
-            const displayStatus = status ? "Void" : "Enrolled";
-            //reused custom badge colors: disapprove (red) and approve (green)
-            if (status === true) {
-                variantType = "disapprove";
-              } else if (status === false) {
-                variantType = "approve";
-              }
+      accessorKey: "void",
+      header: ({ column }) => {
+          return (
+              <Button
+                  variant="ghost"
+                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              >
+                  Enrollment
+                  <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+          )
+      },
+      cell: ({ row }) => {
+           let variantType: "approve" | "disapprove" = "disapprove";
+          const status: boolean = row.getValue("void");
+          const displayStatus = status ? "Void" : "Enrolled";
+          //reused custom badge colors: disapprove (red) and approve (green)
+          if (status === true) {
+              variantType = "disapprove";
+            } else if (status === false) {
+              variantType = "approve";
+            }
 
-            return (
-              <div className="flex">
-                <Badge variant={variantType}>
-                    {displayStatus}
-                </Badge>
-              </div>
-            );
-          },
-    },
+          return (
+            <div className="flex">
+              <Badge variant={variantType}>
+                  {displayStatus}
+              </Badge>
+            </div>
+          );
+        },
+  },
     {
         id: "actions",
         cell: ({ row }) => {
           const [isVoidDialogOpen, setIsVoidDialogOpen] = useState(false);
+          const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
+          
           const [studentCode, setStudentCode] = useState("");
 
           const handleDialogOpen = (code: string) => {
@@ -142,9 +146,35 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
             setIsVoidDialogOpen(false)
           }
 
+          const handleProfileDialog = (studentCode: string) => {
+            setStudentCode(studentCode);
+            setIsProfileDialogOpen(true)
+          }
+
+          const handleProfileUpdate = (updatedStudent) => {
+            console.log("Updated student details:", updatedStudent);
+            setIsProfileDialogOpen(false);
+          };
+
           return (
             <>  
                 {/* void modal */}
+                <Dialog open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen}>
+                    <DialogTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleProfileDialog(row.original.studentCode)}>
+                        <span className="sr-only">Open menu</span>
+                        <Eye className="h-4 w-4" />
+                    </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+                        <DialogHeader>
+                        <DialogTitle className="mb-4">View Student Profile</DialogTitle>
+                        </DialogHeader>
+                    <EditStudent studentCode={studentCode} onSubmitSuccess={handleProfileUpdate} />
+                        {/* <PendingApplicantEnrollment1Form studentCode={studentCode} /> */}
+                    </DialogContent>
+                </Dialog>
+
                 <Dialog open={isVoidDialogOpen} onOpenChange={setIsVoidDialogOpen}>
                     <DialogTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.studentCode)}>

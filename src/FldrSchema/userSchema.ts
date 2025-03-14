@@ -121,6 +121,30 @@ export const applicationSchema = z.object({
   birthDate: z.union([z.string(), z.date()]).optional(),
 })
 
+export const studentEditSchema = z.object ({
+  firstName: z.string().min(2, {
+    message: "First name at least 2 characters.",
+  }),
+  middleName: z.string().min(2, {
+    message: "Middle name at least 2 characters.",
+  }),
+  lastName: z.string().min(2, {
+    message: "Last name at least 2 characters.",
+  }),
+  birthDate: z.union([z.string(), z.date()]).optional(),
+
+  address: z.string().min(2, {
+    message: "Address invalid.",
+  }),
+  semCode: z.string()
+    .min(1, { message: "Select a semester." }),
+    yearCode: z.string()
+    .min(1, { message: "Select a year." }),
+  courseCode: z.string()
+    .min(1, { message: "Select a course." }),
+  studentCode: z.string()
+   .min(1, { message: "Select a student." }),
+})
 export const voidSchema = z.object({
   void: z.boolean(),
 });
