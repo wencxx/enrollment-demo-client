@@ -5,7 +5,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { RateCourseCol } from "@/FldrTypes/ratecourse-col"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { Check, ChevronsUpDown } from "lucide-react"
@@ -39,24 +39,59 @@ import {
     PopoverContent,
     PopoverTrigger,
   } from "@/components/ui/popover"
+  import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+  } from "@/components/ui/table"
 import { RateType } from "@/FldrTypes/rate"
 import { Input } from "../ui/input"
 
-type RateFormData = z.infer<typeof rateSchema>
+// type RateFormData = z.infer<typeof rateSchema>
 
 export function RateForm() {
-    const form = useForm<RateFormData>({
-        resolver: zodResolver(rateSchema),
-        defaultValues: {
-          rateTypeCode: "",
-          noUnits: "",
-          rateCode: "",
-          rateDesc: "",
-          rateAmount: "",
-          pkCode: "",
-        },
-        mode: 'onChange',
-      })
+    // const form = useForm<RateFormData>({
+    //     resolver: zodResolver(rateSchema),
+    //     defaultValues: {
+    //       pkCode: "",
+    //       rows: [
+    //         {
+    //           subjectCode: "",
+    //           rateTypeCode: "",
+    //           rateAmount: "",
+    //           noUnits: "",
+    //         },
+    //       ],
+    //     },
+    //     mode: 'onChange',
+    //   })
+
+    const form = useForm({
+      defaultValues: {
+        pkCode: "",
+        rows: [
+          {
+            subjectCode: "",
+            rateTypeCode: "",
+            rateAmount: "",
+            noUnits: "",
+          },
+        ],
+      },
+      mode: 'onChange',
+    });
+
+    const { control, handleSubmit, setValue } = form;
+
+    // Use useFieldArray to handle dynamic rows
+    const { fields, append, remove } = useFieldArray({
+      control,
+      name: "rows",
+    });
 
     const [rateCourse, setRateCourse] = useState<RateCourseCol[]>([])
     const [rateType, setRateType] = useState<RateType[]>([])
@@ -90,17 +125,30 @@ export function RateForm() {
         fetchRateType()
   }, [])
 
-  const onSubmit = async (values: RateFormData) => {
+  const handleAddRow = () => {
+    append({
+      subjectCode: "",
+      rateTypeCode: "",
+      rateAmount: "",
+      noUnits: "",
+    });
+  };
+
+  const onSubmit = async (values: any) => {
+    if (form.formState.isValid) {
+      console.log("Form submitted", values);
+    } else {
+      console.log("Form has validation errors");
+    }
 
       const rateData = {
         ...values,
       }
 
       try {
-        const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertRate`, rateData)
-  
+        // const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertRate`, rateData)
         toast("Added new rate successfully.")
-        console.log("Added rate:", response)
+        console.log("Console log:", rateData)
       } catch (error) {
         if (axios.isAxiosError(error)) {
           toast("Error submitting form.")
@@ -112,79 +160,9 @@ export function RateForm() {
     }
 
   return (
+    <>
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3 grid grid-cols-2 gap-2">
-
-      <FormField
-          control={form.control}
-          name="rateDesc"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Rate Description</FormLabel>
-              <FormControl>
-                <Input placeholder="Description" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-      <FormField
-          control={form.control}
-          name="noUnits"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Number of Units</FormLabel>
-              <FormControl>
-                <Input placeholder="No. of units" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="rateTypeCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Rate Type</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select rate type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {rateType.length > 0 ? (
-                    rateType.map((rateType) => (
-                      <SelectItem key={rateType.rateTypeCode} value={rateType.rateTypeCode}>
-                        {rateType.rateTypeDesc}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem disabled>No rate types available</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="rateAmount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Rate Amount</FormLabel>
-              <FormControl>
-                <Input placeholder="Monetary value" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full">
 
         <div className="col-span-2">
         <FormField
@@ -253,7 +231,102 @@ export function RateForm() {
         />
         </div>
 
-        
+        <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Subject Code</TableHead>
+                <TableHead>Number of Units</TableHead>
+                <TableHead>Rate Type</TableHead>
+                <TableHead className="text-right">Rate Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {fields.map((item, index) => (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <FormField
+                      control={control}
+                      name={`rows[${index}].subjectCode`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Ex. ITPFL6" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <FormField
+                      control={control}
+                      name={`rows[${index}].noUnits`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Ex. 3" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <FormField
+                      control={control}
+                      name={`rows[${index}].rateTypeCode`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select rate type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {rateType.length > 0 ? (
+                                  rateType.map((rateType) => (
+                                    <SelectItem key={rateType.rateTypeCode} value={rateType.rateTypeCode}>
+                                      {rateType.rateTypeDesc}
+                                    </SelectItem>
+                                  ))
+                                ) : (
+                                  <SelectItem disabled>No rate types available</SelectItem>
+                                )}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <FormField
+                      control={control}
+                      name={`rows[${index}].rateAmount`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Ex. 5000" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          <div className="col-span-2 flex justify-center">
+            <Button type="button" onClick={handleAddRow} className="w-full sm:w-20">
+              +
+            </Button>
+          </div>
+
         <div className="col-span-2">
         <Button type="submit" className="w-full sm:w-20 float-right">
             Submit
@@ -261,5 +334,6 @@ export function RateForm() {
         </div>
       </form>
     </Form>
+    </>
   )
 }

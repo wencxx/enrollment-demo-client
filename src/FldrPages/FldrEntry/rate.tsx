@@ -35,14 +35,14 @@ export default function Rate() {
   return (
     <>
       <div className="space-x-2">
-        <Dialog>
+        <Dialog className="w-full">
           <DialogTrigger asChild>
             <Button variant="outline">
               <Plus />
               Add Rate
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-auto" aria-labelledby="dialog-title">
+          <DialogContent className="w-[80vw] max-w-full max-h-[90vh] overflow-y-auto" aria-labelledby="dialog-title">
             <DialogTitle id="dialog-title" className="text-lg font-medium">Add new rate</DialogTitle>
             <RateForm />
           </DialogContent>
