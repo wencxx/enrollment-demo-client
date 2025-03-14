@@ -81,15 +81,14 @@ export const enrollment2Schema = z.object({
 });
 
 export const rateSchema = z.object({
-  pkCode: z.string().min(1, { message: "Select a rate course." }),
+  pkCode: z.string().min(1),
   rows: z.array(
     z.object({
       rowNum: z.number(),
-      // rateDesc: z.string().min(1, { message: "Denter" }),
-      subjectCode: z.string().min(1, { message: "Subject code is required." }),
-      rateTypeCode: z.string().min(1, { message: "Rate type code is required." }),
-      rateAmount: z.string().min(1, { message: "Rate amount is required." }),
-      noUnits: z.string().min(1, { message: "Number of units is required." }),
+      subjectCode: z.string().min(1),
+      rateTypeCode: z.string().min(1),
+      rateAmount: z.string().min(1),
+      noUnits: z.string().min(1),
     })
   ),
 });
