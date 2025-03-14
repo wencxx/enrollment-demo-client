@@ -48,7 +48,7 @@ import {
 import { RateType } from "@/FldrTypes/rate"
 import { Input } from "../ui/input"
 
-// type RateFormData = z.infer<typeof rateSchema>
+type RateFormData = z.infer<typeof rateSchema>
 
 export function RateForm() {
     const form = useForm<RateFormData>({
@@ -68,25 +68,8 @@ export function RateForm() {
         mode: 'onChange',
       })
 
-    // const form = useForm({
-    //   defaultValues: {
-    //     pkCode: "",
-    //     rows: [
-    //       {
-    //         subjectCode: "",
-    //         rateTypeCode: "",
-    //         rateAmount: "",
-    //         noUnits: "",
-    //         rowNum: 1,
-    //       },
-    //     ],
-    //   },
-    //   mode: 'onChange',
-    // });
-
     const { control, handleSubmit, setValue } = form;
 
-    // Use useFieldArray to handle dynamic rows
     const { fields, append, remove } = useFieldArray({
       control,
       name: "rows",
@@ -135,12 +118,17 @@ export function RateForm() {
     });
   };
 
+  const handleRemoveRow = (index: number) => {
+    fields.forEach((item, idx) => {
+      if (idx !== index) {
+        setValue(`rows[${idx}].rowNum`, idx + 1);
+      }
+    });
+    remove(index);
+  };
+  
+
   const onSubmit = async (values: any) => {
-    // if (form.formState.isValid) {
-    //   console.log("Form submitted", values);
-    // } else {
-    //   console.log("Form has validation errors");
-    // }
 
     const rateData = values.rows.map((row: any) => ({
       pkCode: values.pkCode,
@@ -323,7 +311,9 @@ export function RateForm() {
                       <Button 
                         type="button"
                         variant="outline"
-                        onClick={() => remove(index)}
+                        onClick={() => {
+                          handleRemoveRow(index);
+                        }}
                         className="text-red-500"
                       >
                         <Trash size={16} />
