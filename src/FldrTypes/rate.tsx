@@ -1,4 +1,6 @@
-export type RateType = {
-    rateTypeCode: string;
-    rateTypeDesc: string;
-  };
+export type Rate = {
+    subjectCode: string,
+    rateTypeCode: string,
+    noUnits: number,
+    rateAmount: number,
+}

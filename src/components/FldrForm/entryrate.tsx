@@ -50,7 +50,12 @@ import { Input } from "../ui/input"
 
 type RateFormData = z.infer<typeof rateSchema>
 
-export function RateForm() {
+type RateFormProps = {
+  onSubmitSuccess: () => void;
+  onAddRate: () => void;
+};
+
+export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
     const form = useForm<RateFormData>({
         resolver: zodResolver(rateSchema),
         defaultValues: {
@@ -119,9 +124,9 @@ export function RateForm() {
   };
 
   const handleRemoveRow = (index: number) => {
-    fields.forEach((item, idx) => {
-      if (idx !== index) {
-        setValue(`rows[${idx}].rowNum`, idx + 1);
+    fields.forEach((_, i) => {
+      if (i !== index) {
+        setValue(`rows[${i}].rowNum`, i + 1);
       }
     });
     remove(index);
@@ -129,19 +134,21 @@ export function RateForm() {
   
 
   const onSubmit = async (values: any) => {
-
+    
     const rateData = values.rows.map((row: any) => ({
       pkCode: values.pkCode,
       rateCode: "",
       subjectCode: row.subjectCode,
       rateTypeCode: row.rateTypeCode,
-      noUnits: parseInt(row.noUnits, 10),
+      noUnits: parseInt(row.noUnits),
       rateAmount: parseFloat(row.rateAmount),
       rowNum: row.rowNum,
     }));
     
       try {
         const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertRate`, rateData)
+        onSubmitSuccess()
+        onAddRate()
         toast("Added new rate successfully.")
         console.log("Data:", response)
       } catch (error) {
@@ -232,7 +239,7 @@ export function RateForm() {
                 <TableHead>Number of Units</TableHead>
                 <TableHead>Rate Type</TableHead>
                 <TableHead className="text-right">Rate Amount</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
+                <TableHead className="text-center"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -310,7 +317,7 @@ export function RateForm() {
                   <TableCell className="text-center w-[50px]">
                       <Button 
                         type="button"
-                        variant="outline"
+                        variant="ghost"
                         onClick={() => {
                           handleRemoveRow(index);
                         }}
@@ -325,7 +332,7 @@ export function RateForm() {
           </Table>
 
           <div className="col-span-2 flex justify-center">
-            <Button type="button" onClick={handleAddRow} className="w-full sm:w-20">
+            <Button type="button" onClick={handleAddRow} variant="ghost" className="w-full sm:w-10">
               <Plus />
             </Button>
           </div>
