@@ -1,21 +1,24 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, ArrowUpDown } from "lucide-react"
+import { useState } from "react"
+import { Eye, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { format } from "date-fns";
 import { StudentColFullName } from "@/FldrTypes/students-col";
 import { Badge } from "@/components/ui/badge"
 import moment from 'moment'
+import { EditStudent } from "../FldrForm/editstudent"
+import { studentProfile } from "@/FldrTypes/enrollment1"
 
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+    DialogTitle,
+    DialogHeader
+  } from "@/components/ui/dialog"
 
-export const columns: ColumnDef<StudentColFullName>[] = [
+export const columns: ColumnDef<studentProfile>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -153,25 +156,37 @@ export const columns: ColumnDef<StudentColFullName>[] = [
     {
         id: "actions",
         cell: ({ row }) => {
-            const Student = row.original
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(Student.studentID)}
-                        >
-                            Copy student ID
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>View</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+            const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
+            const [studentCode, setStudentCode] = useState("");
+          
+            const handleProfileDialog = (studentCode: string) => {
+              console.log("Opening modal for student:", studentCode); // Debugging
+              setStudentCode(studentCode);
+              setTimeout(() => setIsProfileDialogOpen(true), 0);
+            };
+          
+            const handleProfileUpdate = (updatedStudent) => {
+              console.log("Updated student details:", updatedStudent);
+              setIsProfileDialogOpen(false);
+            };
+
+          return (
+                <>
+                <Dialog open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen}>
+                <DialogTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleProfileDialog(row.original.studentCode)}>
+                    <span className="sr-only">Open menu</span>
+                    <Eye className="h-4 w-4" />
+                </Button>
+                </DialogTrigger>
+                <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+                    <DialogHeader>
+                    <DialogTitle className="mb-4">View Student Profile</DialogTitle>
+                    </DialogHeader>
+                <EditStudent studentCode={studentCode} onSubmitSuccess={handleProfileUpdate} />
+                </DialogContent>
+            </Dialog>
+                </>
             )
         },
     },

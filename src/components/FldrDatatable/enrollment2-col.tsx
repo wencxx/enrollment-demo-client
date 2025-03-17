@@ -146,20 +146,20 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
             setIsVoidDialogOpen(false)
           }
 
-          const handleProfileDialog = (studentCode: string) => {
-            setStudentCode(studentCode);
-            setIsProfileDialogOpen(true)
-          }
+        //   const handleProfileDialog = (studentCode: string) => {
+        //     setStudentCode(studentCode);
+        //     setIsProfileDialogOpen(true)
+        //   }
 
-          const handleProfileUpdate = (updatedStudent) => {
-            console.log("Updated student details:", updatedStudent);
-            setIsProfileDialogOpen(false);
-          };
+        //   const handleProfileUpdate = (updatedStudent) => {
+        //     console.log("Updated student details:", updatedStudent);
+        //     setIsProfileDialogOpen(false);
+        //   };
 
           return (
             <>  
                 {/* void modal */}
-                <Dialog open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen}>
+                {/* <Dialog open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen}>
                     <DialogTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleProfileDialog(row.original.studentCode)}>
                         <span className="sr-only">Open menu</span>
@@ -171,9 +171,8 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
                         <DialogTitle className="mb-4">View Student Profile</DialogTitle>
                         </DialogHeader>
                     <EditStudent studentCode={studentCode} onSubmitSuccess={handleProfileUpdate} />
-                        {/* <PendingApplicantEnrollment1Form studentCode={studentCode} /> */}
                     </DialogContent>
-                </Dialog>
+                </Dialog> */}
 
                 <Dialog open={isVoidDialogOpen} onOpenChange={setIsVoidDialogOpen}>
                     <DialogTrigger asChild>
@@ -182,7 +181,7 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
                         <Ban className="h-4 w-4" />
                     </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+                    <DialogContent className="max-h-[90vh] overflow-y-auto" aria-labelledby="dialog-title">
                         <DialogHeader>
                         {/* <DialogTitle className="mb-4">Void enrolled student</DialogTitle> */}
                         </DialogHeader>

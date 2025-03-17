@@ -18,32 +18,32 @@ import {
 } from "@/components/ui/form";
 import { studentEditSchema } from "@/FldrSchema/userSchema";
 import { studentProfile } from "@/FldrTypes/enrollment1";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 
 type StudentFormData = z.infer<typeof studentEditSchema> & {
-    firstName: string
-    middleName:  string
-    lastName: string
-    address: string
-    birthDate: Date
-    courseCode: string
-    yearCode: string
-    semCode: string
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  address: string;
+  birthDate: Date;
+  courseCode: string;
+  courseDesc: string;
+  yearCode: string;
+  yearDesc: string;
+  semCode: string;
+  semDesc: string;
 };
 
 interface StudentFormProps {
   studentCode: string;
   onSubmitSuccess: (updatedStudent: studentProfile) => void;
-  defaultValues: {
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    address: "",
-    birthDate: "",
-    courseCode: "",
-    yearCode: "",
-    semCode: "",
-  },
 }
 
 const fetchPkCode = async (studentCode: string) => {
@@ -56,8 +56,12 @@ const fetchPkCode = async (studentCode: string) => {
   };
 
 export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [courseList, setCourseList] = useState([]);
+  const [yearList, setYearList] = useState([]);
+  const [semList, setSemList] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
   
     const form = useForm<StudentFormData>({
       resolver: zodResolver(studentEditSchema),
@@ -73,7 +77,7 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
             const response = await axios.get(
               `${plsConnect()}/API/WEBAPI/ListController/ListStudentEnrollment1?studentCode=${studentCode}`
             );
-            console.log("Fetched Data:", response.data);
+            console.log("Fetched Dataaaaa:", response.data);
       
             form.reset({
               studentCode: response.data.studentCode,
@@ -85,8 +89,11 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
                 ? format(new Date(response.data.birthDate), "yyyy-MM-dd")
                 : "",
               courseCode: response.data.courseCode || "",
+              courseDesc: response.data.courseDesc || "",
               yearCode: response.data.yearCode || "",
+              yearDesc: response.data.yearDesc || "",
               semCode: response.data.semCode || "",
+              semDesc: response.data.semDesc || "",
             });
       
             setLoading(false);
@@ -97,7 +104,24 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
           }
         };
       
+        const fetchDropdownData = async () => {
+          try {
+            const [courseRes, yearRes, semRes] = await Promise.all([
+              axios.get(`${plsConnect()}/API/WebAPI/ListController/ListCourse`),
+              axios.get(`${plsConnect()}/API/WebAPI/ListController/ListYear`),
+              axios.get(`${plsConnect()}/API/WebAPI/ListController/ListSemester`),
+            ]);
+    
+            setCourseList(courseRes.data);
+            setYearList(yearRes.data);
+            setSemList(semRes.data);
+          } catch (err) {
+            console.error("Dropdown fetch error:", err);
+          }
+        };
+    
         fetchStudent();
+        fetchDropdownData();
       }, [studentCode]);
 
 
@@ -116,34 +140,30 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
             middleName: values.middleName,
             lastName: values.lastName,
             address: values.address,
-            birthDate: values.birthDate ? format(new Date(values.birthDate), "yyyy-MM-dd") : "",
+            birthDate: values.birthDate
+              ? format(new Date(values.birthDate), "yyyy-MM-dd")
+              : "",
             courseCode: values.courseCode,
+            courseDesc: courseList.find((c) => c.courseCode === values.courseCode)
+              ?.courseDesc || "",
             yearCode: values.yearCode,
+            yearDesc: yearList.find((y) => y.yearCode === values.yearCode)
+              ?.yearDesc || "",
             semCode: values.semCode,
+            semDesc: semList.find((s) => s.semCode === values.semCode)?.semDesc || "",
           };
     
-          const response = await axios.put(
+          await axios.put(
             `${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollment1`,
-            formattedValues,
+            formattedValues
           );
-          console.log("api", response);
-      
+    
           toast("Student details updated successfully.");
-      
-          const updatedStudent: studentProfile = {
-            pkCode: formattedValues.pkCode,
-            studentCode: formattedValues.studentCode,
-            firstName: formattedValues.firstName,
-            middleName: formattedValues.middleName,
-            lastName: formattedValues.lastName,
-            address: formattedValues.address,
+    
+          onSubmitSuccess({
+            ...formattedValues,
             birthDate: new Date(formattedValues.birthDate),
-            courseCode: formattedValues.courseCode,
-            yearCode: formattedValues.yearCode,
-            semCode: formattedValues.semCode,
-          };
-      
-          onSubmitSuccess(updatedStudent);
+          });
         } catch (error: any) {
           toast("Error updating student details.");
         }
@@ -152,17 +172,16 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
   if (loading) return <p>Loading student details...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
+
+
   return (
     <>
-      <h2 className="text-xl font-semibold mb-4">Edit Student</h2>
       <Form {...form}>
-        <form 
-        onSubmit={form.handleSubmit(onSubmit)} 
-        className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField name="firstName" control={form.control} render={({ field }) => (
             <FormItem>
               <FormLabel>First Name</FormLabel>
-              <FormControl><Input {...field} /></FormControl>
+              <FormControl><Input {...field} disabled={!isEditing} /></FormControl>
               <FormMessage />
             </FormItem>
           )} />
@@ -170,7 +189,7 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
           <FormField name="middleName" control={form.control} render={({ field }) => (
             <FormItem>
               <FormLabel>Middle Name</FormLabel>
-              <FormControl><Input {...field} /></FormControl>
+              <FormControl><Input {...field} disabled={!isEditing} /></FormControl>
               <FormMessage />
             </FormItem>
           )} />
@@ -178,52 +197,121 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
           <FormField name="lastName" control={form.control} render={({ field }) => (
             <FormItem>
               <FormLabel>Last Name</FormLabel>
-              <FormControl><Input {...field} /></FormControl>
+              <FormControl><Input {...field} disabled={!isEditing} /></FormControl>
               <FormMessage />
             </FormItem>
           )} />
 
-          <FormField name="birthDate" control={form.control} render={({ field }) => (
+<FormField name="birthDate" control={form.control} render={({ field }) => (
             <FormItem>
               <FormLabel>Birth Date</FormLabel>
-              <FormControl><Input type="date" {...field} /></FormControl>
+              <FormControl><Input type="date" {...field} disabled={!isEditing} /></FormControl>
               <FormMessage />
             </FormItem>
           )} />
 
-          <FormField name="address" control={form.control} render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address</FormLabel>
-              <FormControl><Input {...field} /></FormControl>
-              <FormMessage />
-            </FormItem>
-          )} />
+<FormField
+  control={form.control}
+  name="courseCode"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Course</FormLabel>
+      <Select onValueChange={field.onChange} value={field.value} disabled={!isEditing}>
+        <FormControl>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a course" />
+          </SelectTrigger>
+        </FormControl>
+        <SelectContent>
+          {courseList.length > 0 ? (
+            courseList.map((course) => (
+              <SelectItem key={course.courseCode} value={course.courseCode}>
+                {course.courseDesc}
+              </SelectItem>
+            ))
+          ) : (
+            <SelectItem disabled>No courses available</SelectItem>
+          )}
+        </SelectContent>
+      </Select>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
 
-          <FormField name="courseCode" control={form.control} render={({ field }) => (
-            <FormItem>
-              <FormLabel>Course Code</FormLabel>
-              <FormControl><Input {...field} /></FormControl>
-              <FormMessage />
-            </FormItem>
-          )} />
+<FormField
+  control={form.control}
+  name="yearCode"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Year</FormLabel>
+      <Select onValueChange={field.onChange} value={field.value} disabled={!isEditing}>
+        <FormControl>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a year" />
+          </SelectTrigger>
+        </FormControl>
+        <SelectContent>
+          {yearList.length > 0 ? (
+            yearList.map((year) => (
+              <SelectItem key={year.yearCode} value={year.yearCode}>
+                {year.yearDesc}
+              </SelectItem>
+            ))
+          ) : (
+            <SelectItem disabled>No years available</SelectItem>
+          )}
+        </SelectContent>
+      </Select>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
 
-          <FormField name="yearCode" control={form.control} render={({ field }) => (
-            <FormItem>
-              <FormLabel>Year Code</FormLabel>
-              <FormControl><Input {...field} /></FormControl>
-              <FormMessage />
-            </FormItem>
-          )} />
+<FormField
+  control={form.control}
+  name="semCode"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Semester</FormLabel>
+      <Select onValueChange={field.onChange} value={field.value} disabled={!isEditing}>
+        <FormControl>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a semester" />
+          </SelectTrigger>
+        </FormControl>
+        <SelectContent>
+          {semList.length > 0 ? (
+            semList.map((sem) => (
+              <SelectItem key={sem.semCode} value={sem.semCode}>
+                {sem.semDesc}
+              </SelectItem>
+            ))
+          ) : (
+            <SelectItem disabled>No semesters available</SelectItem>
+          )}
+        </SelectContent>
+      </Select>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
 
-          <FormField name="semCode" control={form.control} render={({ field }) => (
-            <FormItem>
-              <FormLabel>Semester Code</FormLabel>
-              <FormControl><Input {...field} /></FormControl>
-              <FormMessage />
-            </FormItem>
-          )} />
-
-          <Button type="submit" className="float-right">Update</Button>
+          {/* Buttons */}
+          <div className="flex justify-end space-x-2">
+            {!isEditing ? (
+              <Button type="button" onClick={() => setIsEditing(true)}>
+                Edit
+              </Button>
+            ) : (
+              <>
+                <Button type="button" onClick={() => setIsEditing(false)} variant="secondary">
+                  Cancel
+                </Button>
+                <Button type="submit">Update</Button>
+              </>
+            )}
+          </div>
         </form>
       </Form>
     </>
