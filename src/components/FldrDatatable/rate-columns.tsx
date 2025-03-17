@@ -1,16 +1,17 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, Pencil } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useState } from "react"
+import { EditRate } from "../FldrForm/editRate"
 
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+  DialogHeader
+} from "@/components/ui/dialog"
 
 export type RateCol = {
     rateCode: string
@@ -22,6 +23,7 @@ export type RateCol = {
     yearDesc: string
     courseDesc: string
     semDesc: string
+    rowNum: number
 }
 
 export const columns: ColumnDef<RateCol>[] = [
@@ -60,20 +62,11 @@ export const columns: ColumnDef<RateCol>[] = [
                 </Button>
             )
         },
-    },
-      {
-        accessorKey: "rowNum",
-        header: ({ column }) => {
+        cell: ({ row }) => {
             return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    RowNum
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
+                <span>{row.original.rateCode}-{row.original.rowNum}</span>
             )
-        },
+        }
     },
     {
         accessorKey: "subjectCode",
@@ -97,45 +90,45 @@ export const columns: ColumnDef<RateCol>[] = [
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Rate Type Code
+                    Type
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
     },
-    {
-        accessorKey: "noUnits",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    No. of Units
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    {
-        accessorKey: "rateAmount",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Rate Amount
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-            return (
-                <span>₱ {row.original.rateAmount}</span>
-            )
-        }
-    },
+    // {
+    //     accessorKey: "noUnits",
+    //     header: ({ column }) => {
+    //         return (
+    //             <Button
+    //                 variant="ghost"
+    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //             >
+    //                 Units
+    //                 <ArrowUpDown className="ml-2 h-4 w-4" />
+    //             </Button>
+    //         )
+    //     },
+    // },
+    // {
+    //     accessorKey: "rateAmount",
+    //     header: ({ column }) => {
+    //         return (
+    //             <Button
+    //                 variant="ghost"
+    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //             >
+    //                 Amount
+    //                 <ArrowUpDown className="ml-2 h-4 w-4" />
+    //             </Button>
+    //         )
+    //     },
+    //     cell: ({ row }) => {
+    //         return (
+    //             <span>₱ {row.original.rateAmount}</span>
+    //         )
+    //     }
+    // },
     {
         accessorKey: "courseDesc",
         header: ({ column }) => {
@@ -145,40 +138,86 @@ export const columns: ColumnDef<RateCol>[] = [
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Rate Description
+                    Course
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
     },
-    // {
-    //     id: "actions",
-    //     cell: ({ row }) => {
-    //         const Rate = row.original
-        
-    //         return (
-    //             <DropdownMenu>
-    //                 <DropdownMenuTrigger asChild>
-    //                     <Button variant="ghost" className="h-8 w-8 p-0">
-    //                         <span className="sr-only">Open menu</span>
-    //                         <MoreHorizontal className="h-4 w-4" />
-    //                     </Button>
-    //                 </DropdownMenuTrigger>
-    //                 <DropdownMenuContent align="end">
-    //                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-    //                     <DropdownMenuItem
-    //                         onClick={() => navigator.clipboard.writeText(Rate.rateCode)}
-    //                     >
-    //                         Copy payment ID
-    //                     </DropdownMenuItem>
-    //                     <DropdownMenuSeparator />
-    //                     <DropdownMenuItem>View customer</DropdownMenuItem>
-    //                     <DropdownMenuItem>View payment details</DropdownMenuItem>
-    //                 </DropdownMenuContent>
-    //             </DropdownMenu>
-    //         )
-    //     },
-    // },
+    {
+        accessorKey: "yearDesc",
+        header: ({ column }) => {
+            
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Year
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+    },
+    {
+        accessorKey: "semDesc",
+        header: ({ column }) => {
+            
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Semester
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+    },
+    {
+        id: "actions",
+        cell: ({ row }) => {
+            const [isDialogOpen, setIsDialogOpen] = useState(false);
+            
+            const [rateCode, setRateCode] = useState("");
+            const [rowNum, setRowNum] = useState("");
+
+
+            const closeModal = () => {
+            setIsDialogOpen(false)
+            }
+
+            const handleDialog = (rateCode: string, rowNum: string) => {
+            setRateCode(rateCode);
+            setRowNum(rowNum);
+            setIsDialogOpen(true)
+            }
+
+            const handleUpdate = (updatedRate) => {
+            console.log("Updated rate details:", updatedRate);
+            setIsDialogOpen(false);
+            };
+
+            return (
+            <>  
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialog(row.original.rateCode, row.original.rowNum)}>
+                        <span className="sr-only">Open menu</span>
+                        <Pencil className="h-4 w-4" />
+                    </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-h-[90vh] overflow-y-auto scrollbar-hidden" aria-labelledby="dialog-title">
+                        <DialogHeader>
+                        <DialogTitle className="mb-4">Edit Rate</DialogTitle>
+                        </DialogHeader>
+                        <EditRate rateCode={rateCode} rowNum={rowNum} onSubmitSuccess={handleUpdate}/>
+                    </DialogContent>
+                </Dialog>
+            </>
+            )
+        },
+        },
 ]
 
 
