@@ -158,34 +158,38 @@ export const columns: ColumnDef<studentProfile>[] = [
         cell: ({ row }) => {
             const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
             const [studentCode, setStudentCode] = useState("");
-          
+    
+            const status = row.getValue("enrollStatusCode"); // Get status from row
+    
             const handleProfileDialog = (studentCode: string) => {
-              console.log("Opening modal for student:", studentCode); // Debugging
-              setStudentCode(studentCode);
-              setTimeout(() => setIsProfileDialogOpen(true), 0);
+                console.log("Opening modal for student:", studentCode); 
+                setStudentCode(studentCode);
+                setTimeout(() => setIsProfileDialogOpen(true), 0);
             };
-          
+    
             const handleProfileUpdate = (updatedStudent) => {
-              console.log("Updated student details:", updatedStudent);
-              setIsProfileDialogOpen(false);
+                console.log("Updated student details:", updatedStudent);
+                setIsProfileDialogOpen(false);
             };
 
           return (
                 <>
-                <Dialog open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen}>
-                <DialogTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleProfileDialog(row.original.studentCode)}>
-                    <span className="sr-only">Open menu</span>
-                    <Eye className="h-4 w-4" />
-                </Button>
-                </DialogTrigger>
-                <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-                    <DialogHeader>
-                    <DialogTitle className="mb-4">View Student Profile</DialogTitle>
-                    </DialogHeader>
-                <EditStudent studentCode={studentCode} onSubmitSuccess={handleProfileUpdate} />
-                </DialogContent>
-            </Dialog>
+                {status !== "Pending" && (
+                    <Dialog open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleProfileDialog(row.original.studentCode)}>
+                                <span className="sr-only">Open menu</span>
+                                <Eye className="h-4 w-4" />
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+                            <DialogHeader>
+                                <DialogTitle className="mb-4">View Student Profile</DialogTitle>
+                            </DialogHeader>
+                            <EditStudent studentCode={studentCode} onSubmitSuccess={handleProfileUpdate} />
+                        </DialogContent>
+                    </Dialog>
+                )}
                 </>
             )
         },

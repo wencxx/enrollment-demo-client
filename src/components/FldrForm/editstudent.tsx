@@ -178,125 +178,132 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField name="firstName" control={form.control} render={({ field }) => (
+          {/* First Name & Middle Name */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField name="firstName" control={form.control} render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl><Input {...field} disabled={!isEditing} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+  
+            <FormField name="middleName" control={form.control} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Middle Name</FormLabel>
+                <FormControl><Input {...field} disabled={!isEditing} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+          </div>
+  
+          {/* Last Name & Birth Date */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField name="lastName" control={form.control} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl><Input {...field} disabled={!isEditing} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+  
+            <FormField name="birthDate" control={form.control} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Birth Date</FormLabel>
+                <FormControl><Input type="date" {...field} disabled={!isEditing} /></FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+          </div>
+  
+          {/* Address (Full Width) */}
+          <FormField name="address" control={form.control} render={({ field }) => (
             <FormItem>
-              <FormLabel>First Name</FormLabel>
+              <FormLabel>Address</FormLabel>
               <FormControl><Input {...field} disabled={!isEditing} /></FormControl>
               <FormMessage />
             </FormItem>
           )} />
-
-          <FormField name="middleName" control={form.control} render={({ field }) => (
+  
+          {/* Course (Full Width) */}
+          <FormField name="courseCode" control={form.control} render={({ field }) => (
             <FormItem>
-              <FormLabel>Middle Name</FormLabel>
-              <FormControl><Input {...field} disabled={!isEditing} /></FormControl>
+              <FormLabel>Course</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value} disabled={!isEditing}>
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a course" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {courseList.length > 0 ? (
+                    courseList.map((course) => (
+                      <SelectItem key={course.courseCode} value={course.courseCode}>
+                        {course.courseDesc}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem disabled>No courses available</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )} />
-
-          <FormField name="lastName" control={form.control} render={({ field }) => (
-            <FormItem>
-              <FormLabel>Last Name</FormLabel>
-              <FormControl><Input {...field} disabled={!isEditing} /></FormControl>
-              <FormMessage />
-            </FormItem>
-          )} />
-
-<FormField name="birthDate" control={form.control} render={({ field }) => (
-            <FormItem>
-              <FormLabel>Birth Date</FormLabel>
-              <FormControl><Input type="date" {...field} disabled={!isEditing} /></FormControl>
-              <FormMessage />
-            </FormItem>
-          )} />
-
-<FormField
-  control={form.control}
-  name="courseCode"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Course</FormLabel>
-      <Select onValueChange={field.onChange} value={field.value} disabled={!isEditing}>
-        <FormControl>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a course" />
-          </SelectTrigger>
-        </FormControl>
-        <SelectContent>
-          {courseList.length > 0 ? (
-            courseList.map((course) => (
-              <SelectItem key={course.courseCode} value={course.courseCode}>
-                {course.courseDesc}
-              </SelectItem>
-            ))
-          ) : (
-            <SelectItem disabled>No courses available</SelectItem>
-          )}
-        </SelectContent>
-      </Select>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-
-<FormField
-  control={form.control}
-  name="yearCode"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Year</FormLabel>
-      <Select onValueChange={field.onChange} value={field.value} disabled={!isEditing}>
-        <FormControl>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a year" />
-          </SelectTrigger>
-        </FormControl>
-        <SelectContent>
-          {yearList.length > 0 ? (
-            yearList.map((year) => (
-              <SelectItem key={year.yearCode} value={year.yearCode}>
-                {year.yearDesc}
-              </SelectItem>
-            ))
-          ) : (
-            <SelectItem disabled>No years available</SelectItem>
-          )}
-        </SelectContent>
-      </Select>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-
-<FormField
-  control={form.control}
-  name="semCode"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Semester</FormLabel>
-      <Select onValueChange={field.onChange} value={field.value} disabled={!isEditing}>
-        <FormControl>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a semester" />
-          </SelectTrigger>
-        </FormControl>
-        <SelectContent>
-          {semList.length > 0 ? (
-            semList.map((sem) => (
-              <SelectItem key={sem.semCode} value={sem.semCode}>
-                {sem.semDesc}
-              </SelectItem>
-            ))
-          ) : (
-            <SelectItem disabled>No semesters available</SelectItem>
-          )}
-        </SelectContent>
-      </Select>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-
+  
+          {/* Year & Semester */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField name="yearCode" control={form.control} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Year</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value} disabled={!isEditing}>
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a year" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {yearList.length > 0 ? (
+                      yearList.map((year) => (
+                        <SelectItem key={year.yearCode} value={year.yearCode}>
+                          {year.yearDesc}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem disabled>No years available</SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )} />
+  
+            <FormField name="semCode" control={form.control} render={({ field }) => (
+              <FormItem>
+                <FormLabel>Semester</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value} disabled={!isEditing}>
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a semester" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {semList.length > 0 ? (
+                      semList.map((sem) => (
+                        <SelectItem key={sem.semCode} value={sem.semCode}>
+                          {sem.semDesc}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem disabled>No semesters available</SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )} />
+          </div>
+  
           {/* Buttons */}
           <div className="flex justify-end space-x-2">
             {!isEditing ? (
@@ -315,5 +322,5 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
         </form>
       </Form>
     </>
-  );
+  );  
 }
