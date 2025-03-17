@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Edit, Save } from "lucide-react";
 
 
 type StudentFormData = z.infer<typeof studentEditSchema> & {
@@ -308,6 +309,7 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
           <div className="flex justify-end space-x-2">
             {!isEditing ? (
               <Button type="button" onClick={() => setIsEditing(true)}>
+                <Edit className="h-4 w-4" />
                 Edit
               </Button>
             ) : (
@@ -315,7 +317,10 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
                 <Button type="button" onClick={() => setIsEditing(false)} variant="secondary">
                   Cancel
                 </Button>
-                <Button type="submit">Update</Button>
+                <Button type="submit">
+                <Save className="h-4 w-4" />
+                  Update
+                  </Button>
               </>
             )}
           </div>

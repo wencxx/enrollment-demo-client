@@ -74,7 +74,7 @@ function Dashboard() {
         {
             title: 'Enrolled students',
             icon: UserCheck,
-            data: 800000 
+            data: studentCount.regular + studentCount.irregular
         },
         {
             title: 'Regular students',
