@@ -3,17 +3,16 @@ import {
   FileInput,
   ChartColumn,
   FileUser,
-  User
+  User,
+  ClipboardList
 } from "lucide-react"
-
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
-
 import { MenuMain } from "@/components/FldrMenu/menu-main"
-import { MenuDashboard } from "@/components/FldrMenu/menu-dashboard"
+import { SingleMenu } from "@/components/FldrMenu/menu-single"
 import { NavUser } from "@/components/FldrMenu/nav-user"
 import {
   Sidebar,
@@ -32,6 +31,23 @@ const data = {
       name: 'Dashboard',
       url: '/',
       icon: ChartColumn,
+    }
+  ],
+  menuStudent: [
+    {
+      name: 'Profile',
+      url: 'student/profile',
+      icon: User,
+    },
+    {
+      name: 'Application',
+      url: 'student/application',
+      icon: FileUser,
+    },
+    {
+      name: 'Grades',
+      url: 'student/grades',
+      icon: ClipboardList,
     }
   ],
   menuMain: [
@@ -85,19 +101,6 @@ const data = {
           authorizeUsers: ['Admin']
         },
       ],
-    },
-    {
-      title: "Student",
-      url: "#",
-      icon: User,
-      authorizeUsers: ['Student'],
-      items: [
-        {
-          title: "Application",
-          url: "student/application",
-          authorizeUsers: ['Student']
-        },
-      ],
     }
   ],
   // menuEnrollment: [
@@ -148,9 +151,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
-        { (user && (user.groupName === 'Admin')) && <MenuDashboard dashboard={data.menuDashboard} /> }
+        { (user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuDashboard} /> }
+        { (user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuStudent} title="Student" /> }
         {/* { (user && (user.groupName === 'Admin')) && <MenuEnrollment dashboard={data.menuEnrollment} /> } */}
-        { (user && (user.groupName === 'Admin'  || user.groupName === 'Student')) && <MenuMain items={data.menuMain} /> }
+        { (user && (user.groupName === 'Admin')) && <MenuMain items={data.menuMain} /> }
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

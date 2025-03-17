@@ -13,19 +13,22 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 
 export default function RateCourse() {
   const [data, setData] = useState<RateCourseCol[]>([]);
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const getRateCourse = async () => {
+    try {
+      setLoading(true)
+      const res = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListRateCourse`)
+      setData(res.data)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    axios
-      .get<RateCourseCol[]>(
-        `${plsConnect()}/API/WEBAPI/ListController/ListRateCourse`
-      )
-      .then((response) => {
-        setData(response.data);
-        console.log("plsConnect:", plsConnect);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+    getRateCourse()
   }, []);
 
   return (
@@ -45,7 +48,7 @@ export default function RateCourse() {
         </Dialog>
       </div>
       <div className="mt-4">
-        <DataTable columns={columns} data={data} title="course rates" />
+        <DataTable columns={columns} data={data} loading={loading} title="course rates" />
       </div>
       <Toaster />
     </>

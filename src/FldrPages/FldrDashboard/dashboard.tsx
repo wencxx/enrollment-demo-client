@@ -19,10 +19,10 @@ function Dashboard() {
             const applicant = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StudentCount/1`);
             const student = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StudentCount/2`);
             const irregular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/0`, {
-                params: { validated: 1 } 
+                params: { validated: 1 }
             });
             const regular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/1`, {
-                params: { validated: 1 } 
+                params: { validated: 1 }
             });
             setStudentCount({
                 applicant: applicant.data,
@@ -70,7 +70,7 @@ function Dashboard() {
         {
             title: 'Enrolled students',
             icon: UserCheck,
-            data: 800000 
+            data: 800000
         },
         {
             title: 'Regular students',
@@ -103,10 +103,10 @@ function Dashboard() {
                 </div>
                 <div className="grid auto-rows-min gap-4 lg:grid-cols-2">
                     <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
-                        <ChartMain chartData={studentsCount} />
+                        <ChartMain chartData={studentsCount} title="Number of students categorized by status" />
                     </Card>
                     <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
-                        <ChartMain chartData={studentsCount} defaultChart={'bar'} />
+                        <ChartMain chartData={studentsCount} defaultChart={'bar'} title="Number of students categorized by gende." />
                     </Card>
                 </div>
             </div>
