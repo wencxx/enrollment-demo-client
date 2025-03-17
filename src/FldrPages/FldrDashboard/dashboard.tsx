@@ -13,6 +13,10 @@ function Dashboard() {
         regular: 0,
     });
     const [studentsCount, setStudentsCount] = useState([]);
+    const [yearComparison, setYearComparison] = useState({
+        regularChange: 0,
+        irregularChange: 0
+    })
 
     const fetchCount = async () => {
         try {

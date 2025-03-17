@@ -81,24 +81,18 @@ export const enrollment2Schema = z.object({
 });
 
 export const rateSchema = z.object({
-  rateTypeCode: z.string()
-    .min(1, { message: "Select a rate type." }),
-  rateDesc: z.string()
-    .min(1, { message: "Enter a description." }),
-  noUnits: z
-    .string()
-    .min(1, { message: "Enter the number of units." })
-    .transform((val) => parseInt(val))
-    .refine((val) => Number.isInteger(val), { message: "Number of units must be an integer." })
-    .refine((val) => val > 0, { message: "Number of units must be a positive number." }),
-  rateAmount: z
-    .string()
-    .min(1, { message: "Enter the rate amount." })
-    .transform((val) => parseFloat(val))
-    .refine((val) => !isNaN(val), { message: "Rate amount must be a valid number." }),
-  pkCode: z.string()
-    .min(1, { message: "Select a rate course." })
-})
+  pkCode: z.string().min(1),
+  rows: z.array(
+    z.object({
+      rowNum: z.number(),
+      subjectCode: z.string().min(1),
+      rateTypeCode: z.string().min(1),
+      rateAmount: z.string().min(1),
+      noUnits: z.string().min(1),
+    })
+  ),
+});
+
 
 // DIAZ: this is for entryRateCourse
 export const entryRateSchema = z.object({
@@ -126,6 +120,30 @@ export const applicationSchema = z.object({
   birthDate: z.union([z.string(), z.date()]).optional(),
 })
 
+export const studentEditSchema = z.object ({
+  firstName: z.string().min(2, {
+    message: "First name at least 2 characters.",
+  }),
+  middleName: z.string().min(2, {
+    message: "Middle name at least 2 characters.",
+  }),
+  lastName: z.string().min(2, {
+    message: "Last name at least 2 characters.",
+  }),
+  birthDate: z.union([z.string(), z.date()]).optional(),
+
+  address: z.string().min(2, {
+    message: "Address invalid.",
+  }),
+  semCode: z.string()
+    .min(1, { message: "Select a semester." }),
+    yearCode: z.string()
+    .min(1, { message: "Select a year." }),
+  courseCode: z.string()
+    .min(1, { message: "Select a course." }),
+  studentCode: z.string()
+   .min(1, { message: "Select a student." }),
+})
 export const voidSchema = z.object({
   void: z.boolean(),
 });

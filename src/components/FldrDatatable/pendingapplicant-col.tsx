@@ -109,7 +109,7 @@ export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
                     <Stamp className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+                <DialogContent className="max-h-[90vh] overflow-y-auto scrollbar-hidden" aria-labelledby="dialog-title">
                   <DialogHeader>
                     <DialogTitle className="mb-4">Begin student enrollment</DialogTitle>
                   </DialogHeader>
