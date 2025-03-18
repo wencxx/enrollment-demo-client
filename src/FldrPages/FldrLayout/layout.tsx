@@ -67,9 +67,9 @@ function Layout() {
   const isAuthorized = () => {
     const path = location.pathname.split('/')[2] || '/'
     const authorizedPaths: Record<string, string[]> = {
-      'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/'],
+      'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/', 'grades', 'profile'],
       // Students should not access enrollment
-      'Student': ['application']
+      'Student': ['application', 'grades', 'profile']
     }
     return user && authorizedPaths[user.groupName]?.includes(path)
   }

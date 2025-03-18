@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 function Dashboard() {
     const [studentCount, setStudentCount] = useState({
         applicant: 0,
-        student: 0,
         irregular: 0,
         regular: 0,
     });
@@ -21,16 +20,18 @@ function Dashboard() {
     const fetchCount = async () => {
         try {
             const applicant = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StudentCount/1`);
-            const student = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StudentCount/2`);
+            // const applicant = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/0`, {
+            //     params: { validated: 0 }
+            // });
             const irregular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/0`, {
-                params: { validated: 1 } 
+                params: { validated: 1 }
             });
             const regular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/1`, {
-                params: { validated: 1 } 
+                params: { validated: 1 }
             });
             setStudentCount({
                 applicant: applicant.data,
-                student: student.data,
+
                 irregular: irregular.data,
                 regular: regular.data,
             })

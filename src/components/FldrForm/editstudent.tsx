@@ -174,7 +174,6 @@ export function EditStudent({ studentCode, onSubmitSuccess }: StudentFormProps) 
   if (error) return <p className="text-red-500">{error}</p>;
 
 
-
   return (
     <>
       <Form {...form}>

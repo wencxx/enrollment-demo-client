@@ -9,21 +9,25 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarGroupLabel
 } from "@/components/ui/sidebar"
 
-export function MenuDashboard({
-  dashboard,
+export function SingleMenu({
+  data,
+  title,
 }: {
-  dashboard: {                                                              
+  data: {                                                              
     name: string
     url: string
     icon: LucideIcon,
-  }[]
+  }[],
+  title?: string
 }) {
   return (
     <SidebarGroup>
+      {title && <SidebarGroupLabel>{title}</SidebarGroupLabel>}
       <SidebarMenu>
-        {dashboard.map((item) => (
+        {data.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
               <NavLink to={item.url}>
