@@ -147,3 +147,10 @@ export const studentEditSchema = z.object ({
 export const voidSchema = z.object({
   void: z.boolean(),
 });
+
+export const editRateSchema = z.object({
+  subjectCode: z.string().min(1, 'Subject code is required'),
+  noUnits: z.number().min(1, 'Number of units must be at least 1'),
+  rateAmount: z.number().min(0, 'Rate amount must be greater than 0'),
+  rateTypeCode: z.string().min(1, 'Rate type is required'),
+});

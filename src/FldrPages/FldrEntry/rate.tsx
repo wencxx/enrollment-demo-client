@@ -19,36 +19,45 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 export default function Rate() {
   const [rates, setRate] = useState<RateCol[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
   const fetchRate = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await axios.get<RateCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListRate`);
       setRate(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchRate();
   }, []);
+
+  const handleAddRate = async () => {
+    await fetchRate();
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+  };
   
   return (
     <>
       <div className="space-x-2">
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline">
               <Plus />
               Add Rate
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[80dvw] lg:!max-w-[70dvw]" aria-labelledby="dialog-title">
+          <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[80dvw] lg:!max-w-[70dvw] scrollbar-hidden" aria-labelledby="dialog-title">
             <DialogTitle id="dialog-title" className="text-lg font-medium">Add new rate</DialogTitle>
-            <RateForm />
+            <RateForm onSubmitSuccess={handleCloseDialog} onAddRate={handleAddRate} />
           </DialogContent>
         </Dialog>
       </div>

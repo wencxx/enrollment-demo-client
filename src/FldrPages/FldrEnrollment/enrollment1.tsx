@@ -1,12 +1,4 @@
-import { Enrollment1Form } from "@/components/FldrForm/entryenrollment1"
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
-import { Plus } from 'lucide-react'
 import { useState, useEffect } from "react"
 import { PendingApplicantCol } from "@/FldrTypes/pendingapplicant"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
@@ -14,7 +6,6 @@ import axios from "axios"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { columnsPending } from "@/components/FldrDatatable/pendingapplicant-col"
 import { DataTable } from "@/components/FldrDatatable/data-table";
-import { DialogTitle } from "@radix-ui/react-dialog"
 export default function Enrollment1() {
   // applicants who are "Pending"
   const [pending, setPending] = useState<PendingApplicantCol[]>([]);

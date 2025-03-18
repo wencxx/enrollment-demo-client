@@ -158,7 +158,6 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
 
           return (
             <>  
-                {/* void modal */}
                 <Dialog open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen}>
                     <DialogTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleProfileDialog(row.original.studentCode)}>
@@ -170,8 +169,7 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
                         <DialogHeader>
                         <DialogTitle className="mb-4">View Student Profile</DialogTitle>
                         </DialogHeader>
-                    <EditStudent studentCode={studentCode} onSubmitSuccess={handleProfileUpdate} />
-                        {/* <PendingApplicantEnrollment1Form studentCode={studentCode} /> */}
+                        <EditStudent studentCode={studentCode} onSubmitSuccess={handleProfileUpdate} />
                     </DialogContent>
                 </Dialog>
 
@@ -189,8 +187,6 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
                         <VoidEnrolledForm studentCode={studentCode} closeModal={closeModal}/>
                     </DialogContent>
                 </Dialog>
-
-                {/* HI ANDREA PLS ADD UR VIEW DETAILS MODAL (i like to use the dialog component from shadcn, like above.) HERE. MINE IS UP THERE.  */}
             </>
           )
         },
