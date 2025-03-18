@@ -161,8 +161,6 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
                         <VoidEnrolledForm studentCode={studentCode} closeModal={closeModal}/>
                     </DialogContent>
                 </Dialog>
-
-                {/* HI ANDREA PLS ADD UR VIEW DETAILS MODAL (i like to use the dialog component from shadcn, like above.) HERE. MINE IS UP THERE.  */}
             </>
           )
         },
