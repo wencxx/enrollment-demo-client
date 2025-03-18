@@ -13,6 +13,7 @@ import RateCourse from "@/FldrPages/FldrEntry/ratecourse"
 import Application from "./FldrPages/FldrStudent/application"
 import Grades from "./FldrPages/FldrStudent/grades"
 import StudenPofile from "./FldrPages/FldrStudent/profile"
+import StatementOfAccount from "./FldrPages/FldrStudent/statement-of-account"
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
             <Route path="student/application" element={<Application />} />
             <Route path="student/grades" element={<Grades />} />
             <Route path="student/profile" element={<StudenPofile />} />
+            <Route path="student/statement-of-account" element={<StatementOfAccount />} />
           </Route>
           <Route path="/unauthorize" element={<Unauhtorize />} />
         </Routes>

@@ -4,7 +4,8 @@ import {
   ChartColumn,
   FileUser,
   User,
-  ClipboardList
+  ClipboardList,
+  ReceiptText
 } from "lucide-react"
 import {
   Avatar,
@@ -48,6 +49,11 @@ const data = {
       name: 'Grades',
       url: 'student/grades',
       icon: ClipboardList,
+    },
+    {
+      name: 'Statement of Account',
+      url: 'student/statement-of-account',
+      icon: ReceiptText,
     }
   ],
   menuMain: [
