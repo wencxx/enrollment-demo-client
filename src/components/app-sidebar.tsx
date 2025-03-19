@@ -4,6 +4,8 @@ import {
   ChartColumn,
   FileUser,
   User,
+  Users,
+  Route,
   ClipboardList,
   ReceiptText
 } from "lucide-react"
@@ -55,6 +57,18 @@ const data = {
       url: 'student/statement-of-account',
       icon: ReceiptText,
     }
+  ],
+  menuPersmissions: [
+    {
+      name: 'Users',
+      url: 'permissions/users',
+      icon: Users,
+    },
+    {
+      name: 'Routes',
+      url: 'permissions/route-lists',
+      icon: Route,
+    },
   ],
   menuMain: [
     {
@@ -134,33 +148,34 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const store = useAuthStore()
   const user = store.currentUser
-  
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-            <SidebarMenuButton
-                size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg ">
-                  <Avatar className="rounded-lg">
-                    <AvatarImage src='/cbytelogo.jpg' alt='logo' />
-                    <AvatarFallback className="rounded-lg">CB</AvatarFallback>
-                  </Avatar>
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                    Cbyte programming
-                </span>
-                <span className="truncate text-xs">Enterprise</span>
-                </div>
-            </SidebarMenuButton>
+        <SidebarMenuButton
+          size="lg"
+          className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+        >
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg ">
+            <Avatar className="rounded-lg">
+              <AvatarImage src='/cbytelogo.jpg' alt='logo' />
+              <AvatarFallback className="rounded-lg">CB</AvatarFallback>
+            </Avatar>
+          </div>
+          <div className="grid flex-1 text-left text-sm leading-tight">
+            <span className="truncate font-semibold">
+              CBytes University
+            </span>
+            <span className="truncate text-xs">Foundation</span>
+          </div>
+        </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
-        { (user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuDashboard} /> }
-        { (user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuStudent} title="Student" /> }
+        {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuDashboard} />}
+        {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuStudent} title="Student" />}
         {/* { (user && (user.groupName === 'Admin')) && <MenuEnrollment dashboard={data.menuEnrollment} /> } */}
-        { (user && (user.groupName === 'Admin')) && <MenuMain items={data.menuMain} /> }
+        {(user && (user.groupName === 'Admin')) && <MenuMain items={data.menuMain} />}
+        {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuPersmissions} title="Permissions" />}
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

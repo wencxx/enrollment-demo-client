@@ -1,8 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { School } from "lucide-react"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
 
-// Sample data - in a real app, this would come from an API or database
+// Sample data - this would come from an API or database
 const studentInfo = {
   number: "0000001",
   name: "Wency Aldas Baterna",
@@ -44,22 +49,25 @@ export default function SOAComponent() {
   }
 
   return (
-    <Card className="mb-8 overflow-hidden border-t-4 border-t-green-600 print:border print:shadow-none">
+    <Card className="mb-8 overflow-hidden border-t-4 border-t-[#2596be] print:border print:shadow-none">
       <CardContent className="p-0">
         {/* Header */}
         <div className="border-b bg-white dark:bg-transparent p-6">
           <div className="flex flex-col items-center justify-center text-center md:flex-row md:justify-start md:text-left">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-600 text-white md:mb-0 md:mr-6">
-              <School className="h-8 w-8" />
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border text-white md:mb-0 md:mr-6">
+              <Avatar className="rounded-full w-13 h-13">
+                <AvatarImage src='/cbytelogo.jpg' alt='logo' />
+                <AvatarFallback className="rounded-lg">CB</AvatarFallback>
+              </Avatar>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-green-800 md:text-2xl">Carlos Hilado Memorial State University</h1>
-              <p className="text-sm text-gray-500">Brgy. Alijis, Bacolod City, Philippines</p>
-              <p className="text-sm text-gray-500">Tel: (02) 8123-4567 | Email: registrar@chmsu.edu.ph</p>
+              <h1 className="text-xl font-bold text-[#2596be] md:text-2xl">CBytes University</h1>
+              <p className="text-sm text-gray-500">Room 304, 3rd Floor, Yusay Building, Araneta St., Bacolod City</p>
+              <p className="text-sm text-gray-500">Tel: (02) 8123-4567 | Email: registrar@cbyte.edu.ph</p>
             </div>
           </div>
         </div>
-        
+
 
         {/* Statement Title */}
         <div className="border-b bg-gray-50 dark:bg-transparent p-4 text-center">
@@ -203,7 +211,7 @@ export default function SOAComponent() {
             </p>
             <p className="mb-2">Please present this statement when making payments at the Cashier's Office.</p>
             <p>
-              For inquiries, please contact the Accounting Office at accounting@chmsu.edu.ph or call (02) 8123-4567 local
+              For inquiries, please contact the Accounting Office at accounting@cbyte.edu.ph or call (02) 8123-4567 local
               123.
             </p>
           </div>

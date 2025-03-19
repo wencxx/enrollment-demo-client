@@ -2,7 +2,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-import { NavLink } from "react-router-dom"
+import { NavLink, useLocation } from "react-router-dom"
 
 import {
   SidebarGroup,
@@ -23,6 +23,9 @@ export function SingleMenu({
   }[],
   title?: string
 }) {
+
+  const location = useLocation()
+
   return (
     <SidebarGroup>
       {title && <SidebarGroupLabel>{title}</SidebarGroupLabel>}
@@ -30,7 +33,7 @@ export function SingleMenu({
         {data.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <NavLink to={item.url}>
+              <NavLink to={item.url} className={`${item.url === location.pathname.slice(1) && 'bg-gray-200 hover:!bg-gray-200'}`}>
                 {item.icon && <item.icon />}
                 <span>{item.name}</span>
               </NavLink>
