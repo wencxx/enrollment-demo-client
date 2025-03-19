@@ -45,7 +45,7 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table"
-import { RateType } from "@/FldrTypes/rate"
+import { RateType } from "@/FldrTypes/rate-type"
 import { Input } from "../ui/input"
 
 type RateFormData = z.infer<typeof rateSchema>
@@ -124,12 +124,12 @@ export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
   };
 
   const handleRemoveRow = (index: number) => {
+    remove(index);
     fields.forEach((_, i) => {
       if (i !== index) {
         setValue(`rows[${i}].rowNum`, i + 1);
       }
     });
-    remove(index);
   };
   
 

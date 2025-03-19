@@ -111,7 +111,7 @@ function Dashboard() {
                         <ChartMain chartData={studentsCount} title="Number of students categorized by status" />
                     </Card>
                     <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
-                        <ChartMain chartData={studentsCount} defaultChart={'bar'} title="Number of students categorized by gende." />
+                        <ChartMain chartData={studentsCount} defaultChart={'bar'} title="Number of students categorized by gender" />
                     </Card>
                 </div>
             </div>

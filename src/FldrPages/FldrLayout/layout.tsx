@@ -67,9 +67,9 @@ function Layout() {
   const isAuthorized = () => {
     const path = location.pathname.split('/')[2] || '/'
     const authorizedPaths: Record<string, string[]> = {
-      'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/', 'grades', 'profile'],
+      'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/', 'grades', 'profile', 'application', 'statement-of-account'],
       // Students should not access enrollment
-      'Student': ['application', 'grades', 'profile']
+      'Student': ['application', 'grades', 'profile', 'statement-of-account']
     }
     return user && authorizedPaths[user.groupName]?.includes(path)
   }
@@ -81,13 +81,13 @@ function Layout() {
     <SidebarProvider  >
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 print:hidden">
           <div className="flex items-center justify-between gap-2 px-4 w-full">
             <div className='flex items-center gap-x-2'>
               <SidebarTrigger className="-ml-1" />
               <Breadcrumb className='capitalize'>
                 <BreadcrumbList>
-                  {location.pathname.split('/')[1] && (
+                  {location.pathname.split('/')[1] && location.pathname.split('/')[1] !== 'student' && (
                     <>
                       <BreadcrumbItem className="hidden md:block">
                         <BreadcrumbLink>
@@ -104,7 +104,7 @@ function Layout() {
                   </BreadcrumbItem>
                   {location.pathname.split('/')[1] && <BreadcrumbSeparator className="hidden md:block" />}
                   <BreadcrumbItem>
-                    <BreadcrumbPage>{location.pathname.split('/')[2] || null}</BreadcrumbPage>
+                    <BreadcrumbPage>{location.pathname.split('/')[2]?.split('-').join(' ') || null}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>

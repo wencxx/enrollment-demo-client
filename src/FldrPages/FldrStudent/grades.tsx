@@ -299,7 +299,7 @@ const academicData = {
 }
 
 export default function Grades() {
-  const [selectedYear, setSelectedYear] = useState("2023-2024")
+  const [selectedYear, setSelectedYear] = useState("2022-2023")
   const yearData = academicData[selectedYear as keyof typeof academicData]
 
   return (
