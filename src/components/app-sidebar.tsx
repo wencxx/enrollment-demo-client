@@ -7,7 +7,8 @@ import {
   Users,
   Route,
   ClipboardList,
-  ReceiptText
+  ReceiptText,
+  Calendar1
 } from "lucide-react"
 import {
   Avatar,
@@ -34,6 +35,11 @@ const data = {
       name: 'Dashboard',
       url: '/',
       icon: ChartColumn,
+    },
+    {
+      name: 'Schedules',
+      url: '/schedules',
+      icon: Calendar1,
     }
   ],
   menuStudent: [
@@ -66,7 +72,7 @@ const data = {
     },
     {
       name: 'Routes',
-      url: 'permissions/route-lists',
+      url: 'permissions/routes',
       icon: Route,
     },
   ],
