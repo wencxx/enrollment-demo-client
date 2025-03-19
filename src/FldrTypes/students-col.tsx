@@ -18,4 +18,5 @@ export type StudentCol = {
     Address: string
     enrollStatusCode: number
     enrollRemarks: string
+    pkCode: string
 }
