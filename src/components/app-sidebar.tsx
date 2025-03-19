@@ -6,6 +6,7 @@ import {
   User,
   Users,
   Route,
+  KeyRound,
   ClipboardList,
   ReceiptText,
   Calendar1
@@ -71,9 +72,9 @@ const data = {
       icon: Users,
     },
     {
-      name: 'Routes',
+      name: 'Grant Permission',
       url: 'permissions/routes',
-      icon: Route,
+      icon: KeyRound,
     },
   ],
   menuMain: [

@@ -16,7 +16,7 @@ import Grades from "./FldrPages/FldrStudent/grades"
 import StudenPofile from "./FldrPages/FldrStudent/profile"
 import StatementOfAccount from "./FldrPages/FldrStudent/statement-of-account"
 import Users from "./FldrPages/FldrPermissions/users"
-import RoutesPage from "./FldrPages/FldrPermissions/routes"
+import RoutesPage from "./FldrPages/FldrPermissions/assign-permission"
 
 function App() {
 
