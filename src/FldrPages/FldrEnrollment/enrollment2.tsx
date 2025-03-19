@@ -17,6 +17,7 @@ import { DataTable } from "@/components/FldrDatatable/data-table";
 import { DialogTitle } from "@radix-ui/react-dialog"
 
 export default function Enrollment1() {
+  const [isDialogOpen, setDialogOpen] = useState(false)
   // enrolled students
   const [list, setList] = useState<Enrollment1Col[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -43,7 +44,7 @@ export default function Enrollment1() {
 
   return (
     <>
-      <Dialog>
+      <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
           <Button variant="outline">
             <Plus />
@@ -52,7 +53,7 @@ export default function Enrollment1() {
         </DialogTrigger>
         <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[60dvw] lg:!max-w-[50dvw]" aria-labelledby="dialog-title">
           <DialogTitle id="dialog-title" className="text-lg font-medium">Enrollment 2</DialogTitle>
-          <Enrollment2Form />
+          <Enrollment2Form closeModal={() => setDialogOpen(false)}/>
         </DialogContent>
       </Dialog>
 
