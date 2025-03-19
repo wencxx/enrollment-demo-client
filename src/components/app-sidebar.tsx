@@ -150,7 +150,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
             </SidebarMenuButton>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="scrollbar-hidden">
         { (user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuDashboard} /> }
         { (user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuStudent} title="Student" /> }
         {/* { (user && (user.groupName === 'Admin')) && <MenuEnrollment dashboard={data.menuEnrollment} /> } */}

@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { Plus, Minus } from 'lucide-react'
+import { Plus, Minus, ChevronsUpDown, Check } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -24,71 +24,59 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import useAuthStore from "@/FldrStore/auth"
 import { RateCol } from "@/components/FldrDatatable/rate-columns";
 import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-
-type RateFormData = {
-  rateCode: string;
-  rateDesc: string;
-  units: number;
-  amount: number;
-};
+  import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+  } from "@/components/ui/popover"
+  import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+  } from "@/components/ui/command"
+  import { cn } from "@/lib/utils"
 
 type Enrollment2FormData = {
-  studentCode: string;
-  rates: RateFormData[];
+  pkCode: string;
+  rateCode: string;
+  amount: number;
+  rowNum: number;
 };
 
-export function Enrollment2Form() {
+interface Enrollment2FormProps {
+  closeModal: () => void;
+}
+
+export function Enrollment2Form({ closeModal }: Enrollment2FormProps) {
   const form = useForm<Enrollment2FormData>({
     resolver: zodResolver(enrollment2Schema),
     defaultValues: {
-      studentCode: "",
-      rates: [],
+      pkCode: "",
+      rowNum: 0,
+      rateCode: "",
+      amount: 0,
     },
     mode: 'onChange',
   });
 
   const [student, setStudent] = useState<StudentCol[]>([])
-  const [studentSearch, setStudentSearch] = useState("");
-
-  const handleStudentSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStudentSearch(event.target.value);
-  };
-
-  const filteredStudents = student.filter((student) => {
-    return (
-      student.firstName.toLowerCase().includes(studentSearch.toLowerCase()) ||
-      student.lastName.toLowerCase().includes(studentSearch.toLowerCase()) ||
-      student.middleName.toLowerCase().includes(studentSearch.toLowerCase())
-    );
-  });
-
 
   async function fetchStudent() {
     try {
       const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`)
-      //console.log("Fetched students:", response.data);
-      setStudent(response.data)
+      const mappedStudent = response.data.map((item: StudentCol) => ({
+          label: `${item.firstName} ${item.middleName} ${item.lastName}`,
+          value: item.pkCode,
+      }))
+      setStudent(mappedStudent)
     } catch (error: any) {
-      console.error("Error fetching students:", error)
+        console.error("Error fetching students:", error)
     }
   }
 
@@ -96,9 +84,13 @@ export function Enrollment2Form() {
 
   const fetchRate = async () => {
     try {
-      const response = await axios.get<RateCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListRate`);
-      setRate(response.data);
-    } catch (error) {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListDistinctRate`);
+      const mappedRate = response.data.map((item: RateCol) => ({
+        label: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc}`,
+        value: item.rateCode,
+      }))
+      setRate(mappedRate)
+    } catch (error: any) {
       console.error("Error fetching data:", error);
     }
   };
@@ -108,228 +100,237 @@ export function Enrollment2Form() {
     fetchRate();
   }, [])
 
-  const { currentUser } = useAuthStore.getState();
+const [amount, setAmount] = useState<number>(0);
+const [rateCode, setRateCode] = useState<string>('');
 
-  if (!currentUser) {
-    toast("User not logged in.");
-    return;
-  }
+  useEffect(() => {
+      const fetchRateAmountSum = async () => {
+          try {
+              if (rateCode) {
+                  console.log("Rate Code:", rateCode)
+                  const response = await axios.get(`${plsConnect()}/api/Enrollment2/SumRateAmount/${rateCode}`);
+                  
+                  setAmount(response.data);
+                  form.setValue("amount", response.data);
+              }
+          } catch (error) {
+              console.error("Error fetching sum of RateAmounts:", error);
+          }
+      };
+      fetchRateAmountSum();
+  }, [rateCode]);
 
-  const handleRateChange = (rateCode: string, index: number) => {
-    const selectedRate = rates.find(rate => rate.rateCode === rateCode);
-    if (selectedRate) {
-      form.setValue(`rates.${index}.rateDesc`, selectedRate.rateDesc);
-      form.setValue(`rates.${index}.units`, selectedRate.noUnits);
-      form.setValue(`rates.${index}.amount`, selectedRate.rateAmount);
+  const [rowNum, setRowNum] = useState<number>(1);
+  const [pkCode, setPkCode] = useState<string>('');
+
+useEffect(() => {
+  const checkExistingEnrollment = async (pkCode: string) => {
+    try {
+      const response = await axios.get(`${plsConnect()}/api/Enrollment2/CheckEnrollment/${pkCode}`);
+      const newRowNum = response.data;
+      setRowNum(newRowNum);
+    } catch (error) {
+      console.error("Error checking enrollment:", error);
     }
-    form.setValue(`rates.${index}.rateCode`, rateCode);
   };
+
+  if (pkCode) {
+    checkExistingEnrollment(pkCode);
+  }
+}, [pkCode]);
+
+useEffect(() => {
+  const currentPkCode = form.watch("pkCode");
+  if (currentPkCode && currentPkCode !== pkCode) {
+    setPkCode(currentPkCode);
+  }
+}, [form.watch("pkCode")]);
+
 
   const onSubmit = async (values: Enrollment2FormData) => {
-    console.log("Form values before submit:", values);
-    // console.log(values)
-    // const currentDate = new Date();
+    const enrollment2FormData = {
+      pkCode: values.pkCode,
+      rateCode: values.rateCode,
+      amount: values.amount,
+      rowNum: rowNum,
+    };
 
-    // const enrollment2Data = {
-    //   ...values,
-    //   userCode: currentUser.userCode,
-    //   tDate: currentDate,
-    //   dateEncoded: currentDate,
-    // }
-
-    // try {
-    //   const postResponse = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertEnrollment1`, enrollment2Data)
-
-    //   const putResponse = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollmentStatus`, enrollment2Data)
-
-    //   console.log("Data submitted successfully:", postResponse)
-    //   console.log("Data submitted successfully:", putResponse)
-    //   toast("Success.")
-    // } catch (error) {
-    //   if (axios.isAxiosError(error)) {
-    //     toast("Error submitting form.")
-    //   } else {
-    //     console.error("Network error:", error)
-    //     toast("Network error.")
-    //   }
-    // }
-  }
-
-  const [rows, setRows] = useState<RateFormData[]>([]);
-
-  const addRow = () => {
-    if (!form.getValues("studentCode")) {
-      toast("Please select a student first.");
-      return;
+    try {
+      const response = await axios.post(`${plsConnect()}/api/Enrollment2/AddEnrollment2`, enrollment2FormData)
+      toast("Success.")
+      closeModal();
+      console.log("Values:", enrollment2FormData);
+      console.log("Response:", response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast("Error submitting form.")
+      } else {
+        console.error("Network error:", error)
+        toast("Network error.")
+      }
     }
-    setRows([...rows, { rateCode: "", rateDesc: "", units: 0, amount: 0 }]);
-  };
-
-  const removeRow = (index: number) => {
-    setRows(rows.filter((_, i) => i !== index));
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 grid grid-cols-2 gap-2">
-
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 gap-2">
         <FormField
-          control={form.control}
-          name="studentCode"
-          render={({ field }) => (
-            <FormItem className="col-span-2">
-              <FormLabel>Student</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Pending applicant" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <div className="p-2">
-                    <input
-                      type="text"
-                      className="w-full px-3 py-2 border rounded text-sm"
-                      placeholder="Search for a student"
-                      value={studentSearch}
-                      onChange={handleStudentSearchChange}
-                    />
-                  </div>
-                  {filteredStudents.length > 0 ? (
-                    filteredStudents.map((student) => (
-                      <SelectItem key={student.studentCode} value={student.studentCode}>
-                        {student.firstName} {student.lastName}, {student.middleName}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem disabled>No students available</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
+            control={form.control}
+            name="pkCode"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Student</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value
+                          ? student.find(
+                              (student) => student.value === field.value
+                            )?.label
+                          : "Select student"}
+                        <ChevronsUpDown className="opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput
+                        placeholder="Search..."
+                        className="h-9"
+                      />
+                      <CommandList>
+                        <CommandEmpty>None found.</CommandEmpty>
+                        <CommandGroup>
+                          {student.map((student) => (
+                            <CommandItem
+                              value={student.label}
+                              key={student.value}
+                              onSelect={() => {
+                                  form.setValue("pkCode", student.value);
+                                  field.onChange(student.value);
+                              }}
+                            >
+                              {student.label}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  student.value === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+              
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="rateCode"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Rate</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value
+                          ? rates.find(
+                              (rates) => rates.value === field.value
+                            )?.label
+                          : "Select rate"}
+                        <ChevronsUpDown className="opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput
+                        placeholder="Search..."
+                        className="h-9"
+                      />
+                      <CommandList>
+                        <CommandEmpty>None found.</CommandEmpty>
+                        <CommandGroup>
+                          {rates.map((rates) => (
+                            <CommandItem
+                              value={rates.label}
+                              key={rates.value}
+                              onSelect={() => {
+                                  form.setValue("rateCode", rates.value);
+                                  field.onChange(rates.value);
+                                  setRateCode(rates.value);
+                              }}
+                            >
+                              {rates.label}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  rates.value === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField name="amount" control={form.control} render={({ field }) => (
+            <FormItem className="flex items-center">
+              <FormLabel className="mr-2">Amount</FormLabel>
+              <FormControl className="flex justify-end">
+                <span className="text-sm font-medium">
+                  {new Intl.NumberFormat('en-PH', {style: 'currency', currency: 'PHP',
+                  }).format(amount)}
+                </span>
+              </FormControl>
               <FormMessage />
             </FormItem>
-          )}
-        />
+          )} />
 
-        <div className="col-span-2">
-          <Table>
-            <TableCaption>
-              <Button type="button" variant="ghost" size="sm" onClick={addRow}>
-                <Plus />
-              </Button>
-            </TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Code</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Units</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                {/* <TableHead></TableHead> */}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium w-[200px]">
-                    <FormField
-                      control={form.control}
-                      name={`rates.${index}.rateCode`}
-                      render={({ field }) => (
-                        <FormItem className="col-span-2">
-                          <Select
-                            onValueChange={(value) => handleRateChange(value, index)}
-                            value={rates.length > 0 ? field.value : ""}
-                          >
-                            <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select code" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {rates.length > 0 ? (
-                                rates.map((rate) => (
-                                  <SelectItem key={rate.rateCode} value={rate.rateCode}>
-                                    {rate.rateCode} - {rate.rateDesc}
-                                  </SelectItem>
-                                ))
-                              ) : (
-                                <SelectItem disabled>No rates available</SelectItem>
-                              )}
-                            </SelectContent>
-                          </Select>
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell className="w-[300px]">
-                    <FormField
-                      control={form.control}
-                      name={`rates.${index}.rateDesc`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input {...field} readOnly />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell className="w-[100px]">
-                    <FormField
-                      control={form.control}
-                      name={`rates.${index}.units`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input {...field} readOnly />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right w-[100px]">
-                    <FormField
-                      control={form.control}
-                      name={`rates.${index}.amount`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input {...field} readOnly className="text-end" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button variant="ghost" onClick={() => removeRow(index)}>
-                            <Minus />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Remove row</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={3}>Total</TableCell>
-                <TableCell className="text-right">$2,500.00</TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </div>
+          <FormField
+                control={form.control}
+                name="rowNum"
+                render={({ field }) => (
+                  <input
+                    type="hidden"
+                    {...field}
+                    value={rowNum}
+                  />
+                )}
+              />
 
-        {/* no voucher na */}
         <div className="col-span-2">
           <Button type="submit" className="w-full sm:w-20 float-right">Submit</Button>
         </div>
