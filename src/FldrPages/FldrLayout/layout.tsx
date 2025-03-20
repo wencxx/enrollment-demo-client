@@ -104,7 +104,7 @@ function Layout() {
                   </BreadcrumbItem>
                   {location.pathname.split('/')[1] && <BreadcrumbSeparator className="hidden md:block" />}
                   <BreadcrumbItem>
-                    <BreadcrumbPage>{location.pathname.split('/')[2].split('-').join(' ') || null}</BreadcrumbPage>
+                    <BreadcrumbPage>{location.pathname.split('/')[2]?.split('-').join(' ') || null}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
