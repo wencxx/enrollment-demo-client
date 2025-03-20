@@ -41,7 +41,6 @@ type StudentFormData = z.infer<typeof studentEditSchema> & {
   semDesc: string;
 };
 
-
 interface StudentFormProps {
   studentCode: string;
   onSubmitSuccess: (updatedStudent: studentProfile) => void;
@@ -73,6 +72,7 @@ export const EditStudent: React.FC<StudentFormProps> = React.memo(
     const form = useForm<StudentFormData>({
       resolver: zodResolver(studentEditSchema),
     });
+
 
     useEffect(() => {
       if (!studentCode) return;
@@ -141,16 +141,17 @@ export const EditStudent: React.FC<StudentFormProps> = React.memo(
             : "",
           courseCode: values.courseCode,
           courseDesc:
-            dropdownData.courseList.find((c) => c.courseCode === values.courseCode)
-              ?.courseDesc || "",
+            dropdownData.courseList.find(
+              (c) => c.courseCode === values.courseCode
+            )?.courseDesc || "",
           yearCode: values.yearCode,
           yearDesc:
             dropdownData.yearList.find((y) => y.yearCode === values.yearCode)
               ?.yearDesc || "",
           semCode: values.semCode,
           semDesc:
-            dropdownData.semList.find((s) => s.semCode === values.semCode)?.semDesc ||
-            "",
+            dropdownData.semList.find((s) => s.semCode === values.semCode)
+              ?.semDesc || "",
         };
 
         await axios.put(
@@ -272,7 +273,10 @@ export const EditStudent: React.FC<StudentFormProps> = React.memo(
                   <SelectContent>
                     {dropdownData.courseList.length > 0 ? (
                       dropdownData.courseList.map((course) => (
-                        <SelectItem key={course.courseCode} value={course.courseCode}>
+                        <SelectItem
+                          key={course.courseCode}
+                          value={course.courseCode}
+                        >
                           {course.courseDesc}
                         </SelectItem>
                       ))

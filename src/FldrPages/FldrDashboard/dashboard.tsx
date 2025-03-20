@@ -20,9 +20,6 @@ function Dashboard() {
     const fetchCount = async () => {
         try {
             const applicant = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StudentCount/1`);
-            // const applicant = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/0`, {
-            //     params: { validated: 0 }
-            // });
             const irregular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/0`, {
                 params: { validated: 1 }
             });
@@ -31,7 +28,6 @@ function Dashboard() {
             });
             setStudentCount({
                 applicant: applicant.data,
-
                 irregular: irregular.data,
                 regular: regular.data,
             })
@@ -44,7 +40,6 @@ function Dashboard() {
         try {
             const response = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCountChart`);
 
-            // Transform data to match expected format
             const formattedData = response.data.map((item: any) => ({
                 year: item?.year ?? 0,
                 regular: item?.regular ?? 0,
