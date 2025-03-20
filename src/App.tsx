@@ -3,6 +3,7 @@ import Login from '@/FldrPages/login'
 import Register from '@/FldrPages/register'
 import Layout from '@/FldrPages/FldrLayout/layout'
 import Dashboard from "@/FldrPages/FldrDashboard/dashboard"
+import Schedules from "@/FldrPages/FldrSchedules/schedule"
 import Course from "@/FldrPages/FldrEntry/course"
 import Student from "./FldrPages/FldrEntry/student"
 import Rate from "./FldrPages/FldrEntry/rate"
@@ -15,8 +16,28 @@ import Grades from "./FldrPages/FldrStudent/grades"
 import StudenPofile from "./FldrPages/FldrStudent/profile"
 import StatementOfAccount from "./FldrPages/FldrStudent/statement-of-account"
 import Users from "./FldrPages/FldrPermissions/users"
+import RoutesPage from "./FldrPages/FldrPermissions/assign-permission"
+import { useEffect } from "react";
+
+const useTabVisibility = () => {
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        document.title = "B4l1K n@ b@bY! 😢";
+      } else {
+        document.title = "Enrollment System";
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+};
 
 function App() {
+  useTabVisibility()
 
   return (
     <div className="font-inter">
@@ -26,6 +47,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
+            <Route path="schedules" element={<Schedules />} />
             <Route path="entry/course" element={<Course />} />
             <Route path="entry/student" element={<Student />} />
             <Route path="entry/rate" element={<Rate />} />
@@ -37,6 +59,7 @@ function App() {
             <Route path="student/profile" element={<StudenPofile />} />
             <Route path="student/statement-of-account" element={<StatementOfAccount />} />
             <Route path="permissions/users" element={<Users />} />
+            <Route path="permissions/routes" element={<RoutesPage />} />
           </Route>
           <Route path="/unauthorize" element={<Unauhtorize />} />
         </Routes>

@@ -31,7 +31,7 @@ export default function ParentsStep({ form }: ParentsStepProps) {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                   <div className="space-y-0.5">
-                    <FormLabel>Mother is alive</FormLabel>
+                    <FormLabel>alive</FormLabel>
                   </div>
                   <FormControl>
                     <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -48,7 +48,7 @@ export default function ParentsStep({ form }: ParentsStepProps) {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                   <div className="space-y-0.5">
-                    <FormLabel>Mother is an alumnus</FormLabel>
+                    <FormLabel>alumnus</FormLabel>
                   </div>
                   <FormControl>
                     <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -217,7 +217,7 @@ export default function ParentsStep({ form }: ParentsStepProps) {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                   <div className="space-y-0.5">
-                    <FormLabel>Father is alive</FormLabel>
+                    <FormLabel>alive</FormLabel>
                   </div>
                   <FormControl>
                     <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -234,7 +234,7 @@ export default function ParentsStep({ form }: ParentsStepProps) {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                   <div className="space-y-0.5">
-                    <FormLabel>Father is an alumnus</FormLabel>
+                    <FormLabel>alumnus</FormLabel>
                   </div>
                   <FormControl>
                     <Switch checked={field.value} onCheckedChange={field.onChange} />
