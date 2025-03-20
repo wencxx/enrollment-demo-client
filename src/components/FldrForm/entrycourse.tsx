@@ -31,12 +31,12 @@ export function CourseForm() {
   })
 
   const onSubmit = async (values: CourseFormData) => {
-    const courseData = {
-      courseDesc: values.courseDesc,
-    }
+    // const courseData = {
+    //   courseDesc: values.courseDesc,
+    // }
 
     try {
-      const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertCourse`, courseData)
+      const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertCourse`, values)
 
       console.log("Data submitted successfully:", response.data)
       toast("Course entered successfully.")

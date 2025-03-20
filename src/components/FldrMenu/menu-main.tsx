@@ -1,5 +1,5 @@
 import { ChevronRight, type LucideIcon } from "lucide-react"
-import { NavLink } from "react-router-dom"
+import { NavLink, useLocation } from "react-router-dom"
 
 import {
   Collapsible,
@@ -36,7 +36,8 @@ export function MenuMain({
 }) {
 
   const store = useAuthStore()
-
+  const location = useLocation()
+  
   const user = store.currentUser
 
   return (
@@ -48,7 +49,7 @@ export function MenuMain({
             key={item.title}
             asChild
             defaultOpen={item.isActive}
-            className={`group/collapsible ${user && !item.authorizeUsers?.includes(user.groupName) && 'hidden' }`}
+            className={`group/collapsible ${user && !item.authorizeUsers?.includes(user.groupName) && 'hidden'}`}
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -61,9 +62,9 @@ export function MenuMain({
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem className={`${user && !subItem.authorizeUsers?.includes(user.groupName) && 'hidden' }`} key={subItem.title}>
+                    <SidebarMenuSubItem className={`${user && !subItem.authorizeUsers?.includes(user.groupName) && 'hidden'}`} key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <NavLink to={subItem.url}>
+                        <NavLink to={subItem.url} className={`${subItem.url === location.pathname.slice(1) && 'bg-gray-100'}`}>
                           <span>{subItem.title}</span>
                         </NavLink>
                       </SidebarMenuSubButton>

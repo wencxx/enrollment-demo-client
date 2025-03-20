@@ -10,3 +10,8 @@ export type User = {
     cnCode: string,
     active: boolean
 }
+
+export type user2 = {
+    fullName: string,
+    userName: string
+}
