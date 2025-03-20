@@ -17,8 +17,27 @@ import StudenPofile from "./FldrPages/FldrStudent/profile"
 import StatementOfAccount from "./FldrPages/FldrStudent/statement-of-account"
 import Users from "./FldrPages/FldrPermissions/users"
 import RoutesPage from "./FldrPages/FldrPermissions/assign-permission"
+import { useEffect } from "react";
+
+const useTabVisibility = () => {
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        document.title = "B4l1K n@ b@bY! 😢";
+      } else {
+        document.title = "Enrollment System";
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+};
 
 function App() {
+  useTabVisibility()
 
   return (
     <div className="font-inter">

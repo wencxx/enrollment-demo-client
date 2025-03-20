@@ -7,10 +7,11 @@ import { Progress } from "@/components/ui/progress"
 import { ArrowDown, ArrowUp, BarChart, BookOpen, GraduationCap } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-// Sample data for Philippine grading system
 const academicData = {
   "2022-2023": {
-    cumulativeGWA: 1.75, // General Weighted Average
+    cumulativeGWA: 1.75, 
+    year: 2,
+    section: "D",
     semesters: {
       semester1: {
         name: "First Semester 2022-2023",
@@ -139,6 +140,8 @@ const academicData = {
   },
   "2023-2024": {
     cumulativeGWA: 1.6,
+    year: 3,
+    section: "D",
     semesters: {
       semester1: {
         name: "First Semester 2023-2024",
@@ -226,6 +229,8 @@ const academicData = {
   },
   "2024-2025": {
     cumulativeGWA: 1.5,
+    year: 4,
+    section: "C",
     semesters: {
       semester1: {
         name: "First Semester 2024-2025",
@@ -301,13 +306,14 @@ const academicData = {
 export default function Grades() {
   const [selectedYear, setSelectedYear] = useState("2022-2023")
   const yearData = academicData[selectedYear as keyof typeof academicData]
+  const { year, section } = academicData[selectedYear as keyof typeof academicData]
 
   return (
     <>
       <header className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Student Grade Report</h1>
-          <p className="text-muted-foreground mt-1">Student Number: 0000001 | BS Information Technology</p>
+          <p className="text-muted-foreground mt-1">Student Number: 0000001 | BS Information Technology | {year}-{section}</p>
         </div>
         <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
           <Select value={selectedYear} onValueChange={setSelectedYear}>
