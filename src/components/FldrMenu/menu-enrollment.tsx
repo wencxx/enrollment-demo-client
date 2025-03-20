@@ -2,7 +2,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-import { NavLink } from "react-router-dom"
+import { NavLink, useLocation } from "react-router-dom"
 import useAuthStore from "@/FldrStore/auth"
 
 import {
@@ -25,6 +25,7 @@ export function MenuEnrollment({
 }) {
 
   const store = useAuthStore()
+  const location = useLocation()
 
   const user = store.currentUser
 
@@ -33,9 +34,9 @@ export function MenuEnrollment({
       <SidebarGroupLabel>Enrollment</SidebarGroupLabel>
       <SidebarMenu>
         {dashboard.map((item) => (
-          <SidebarMenuItem className={`${user && !item.authorizeUsers?.includes(user.groupName) && 'hidden' }`} key={item.name}>
+          <SidebarMenuItem className={`${user && !item.authorizeUsers?.includes(user.groupName) && 'hidden'}`} key={item.name}>
             <SidebarMenuButton asChild>
-              <NavLink to={item.url}>
+              <NavLink to={item.url} className={`${item.url === location.pathname.slice(1) && 'bg-gray-100'}`}>
                 {item.icon && <item.icon />}
                 <span>{item.name}</span>
               </NavLink>

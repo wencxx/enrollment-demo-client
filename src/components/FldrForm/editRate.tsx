@@ -1,19 +1,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState, useRef } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Check, ChevronsUpDown, Plus, Trash } from "lucide-react"
+import { cn } from "@/lib/utils"
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  // FormMessage,
 } from "@/components/ui/form";
 import {
     Select,
@@ -22,170 +24,289 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select";
-import { editRateSchema } from "@/FldrSchema/userSchema";
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+  } from "@/components/ui/command"
+  import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+  } from "@/components/ui/popover"
+  import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+  } from "@/components/ui/table"
+import { RateType } from "@/FldrTypes/rate-type"
+import { RateCourseCol } from "@/FldrTypes/ratecourse-col"
+import { rateSchema } from "@/FldrSchema/userSchema";
 import { Rate } from "@/FldrTypes/rate";
 
 
-type RateFormData = z.infer<typeof editRateSchema>;
+type RateFormData = z.infer<typeof rateSchema>;
 
 interface RateFormProps {
   rateCode: string;
-  rowNum: string;
   onSubmitSuccess: (updatedRate: Rate) => void;
 }
 
-export function EditRate({ rateCode, rowNum, onSubmitSuccess }: RateFormProps) {
-    const form = useForm<RateFormData>({
-      resolver: zodResolver(editRateSchema),
-      defaultValues: {
+export function EditRate({ rateCode, onSubmitSuccess }: RateFormProps) {
+const form = useForm<RateFormData>({
+        resolver: zodResolver(rateSchema),
+        defaultValues: {
+          pkCode: "",
+          rows: [],
+        },
+        mode: 'onChange',
+      })
+
+  const { control, handleSubmit } = form;
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "rows",
+  });
+
+  const [rateCourse, setRateCourse] = useState<RateCourseCol>({
+    pkCode: '',
+    yearDesc: '',
+    semDesc: '',
+    courseDesc: ''
+  });
+  const isFetchedRef = useRef(false);
+  
+  useEffect(() => {
+    if (!rateCode || isFetchedRef.current) return;
+  
+    async function fetchData() {
+      try {
+        const rateCourseResponse = await axios.get(
+          `${plsConnect()}/API/WEBAPI/ListController/ListSpecificRateCourse/${rateCode}`
+        );
+        const rateCourse = rateCourseResponse.data[0];
+        setRateCourse(rateCourse);
+  
+        const rateDataResponse = await axios.get(
+          `${plsConnect()}/API/WEBAPI/ListController/GetRate/${rateCode}`
+        );
+  
+        form.reset({
+          pkCode: rateCourse.pkCode,
+          rows: rateDataResponse.data.map((row: any) => ({
+            subjectCode: row.subjectCode,
+            rateTypeCode: row.rateTypeCode,
+            rateAmount: row.rateAmount.toString(),
+            noUnits: row.noUnits.toString(),
+            rowNum: row.rowNum,
+          }))
+        });
+
+        isFetchedRef.current = true;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast("Error fetching rate data or course.");
+      }
+    }
+    fetchData();
+  }, [rateCode, form]);
+
+  const [rateType, setRateType] = useState<RateType[]>([])
+
+  useEffect(() => {
+    async function fetchRateType() {
+      try {
+        const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListRateType`) 
+        setRateType(response.data) 
+        } catch (error: any) {
+            console.error("Error fetching rate types:", error)
+        }
+        }
+
+        fetchRateType()
+  }, [])
+
+  const handleAddRow = () => {
+    const nextRowNum = fields.length > 0 ? fields[fields.length - 1].rowNum + 1 : 1;
+      append({
         subjectCode: "",
         rateTypeCode: "",
-        noUnits: 0,
-        rateAmount: 0,
-      },
-      },
-    );
+        rateAmount: "",
+        noUnits: "",
+        rowNum: nextRowNum,
+      });
+    };
 
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [rateTypes, setRateTypes] = useState<{ rateTypeCode: string, rateTypeDesc: string }[]>([]);
+  const handleRemoveRow = (index: number) => {
+    remove(index);
+  };
 
-    const fetchRate = async () => {
-        try {
-            if (!rateCode || !rowNum){
-                toast("Missing details.");
-                return;
-            };
+  const onSubmit = async (values: any) => {
+    try {
+      const updatedRateData = values.rows.map((row: any) => ({
+        pkCode: values.pkCode,
+        rateCode: rateCode,
+        subjectCode: row.subjectCode,
+        rateTypeCode: row.rateTypeCode,
+        noUnits: parseInt(row.noUnits),
+        rateAmount: parseFloat(row.rateAmount),
+        rowNum: row.rowNum,
+      }));
 
-            const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/GetRate/${rateCode}/${rowNum}`);
-
-            // console.log(response.data);
-
-            form.setValue("subjectCode", response.data.subjectCode || "");
-            form.setValue("noUnits", Number(response.data.noUnits) || 0);
-            form.setValue("rateAmount", Number(response.data.rateAmount) || 0);
-            form.setValue("rateTypeCode", response.data.rateTypeCode || "");
-
-            console.log(response.data);
-
-            const rateTypeResponse = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListRateType`);
-                if (rateTypeResponse.data) {
-                    setRateTypes(rateTypeResponse.data);
-                }
-            
-            setLoading(false);
-        } catch (error: any) {
-            setError("Failed to fetch rate details");
-            setLoading(false);
-        }
+      await axios.put(`${plsConnect()}/API/WEBAPI/UpdateRate`, updatedRateData);
+      onSubmitSuccess(updatedRateData);
+      toast("Rate updated successfully.");
+      console.log("sent:", updatedRateData);
+    } catch (error) {
+      console.error("Error updating rate:", error);
+      toast("Error updating rate.");
     }
-
-    useEffect(() => {
-        fetchRate();
-      }, [rateCode, rowNum])
-
-    const onSubmit = async (values: RateFormData) => {
-        try {
-            const updatedRate = {
-                rateCode,
-                rowNum,
-                subjectCode: values.subjectCode,
-                noUnits: values.noUnits,
-                rateAmount: values.rateAmount,
-                rateTypeCode: values.rateTypeCode,
-              };
-            
-            const response = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateRate`, updatedRate);
-            console.log("Submit: ", response.data)
-
-            
-
-            onSubmitSuccess(response.data);
-            toast("Rate updated.")
-
-        } catch (error: any) {
-            toast("Something went wrong: ", error)
-        }
-    }
-
-    if (loading) return <p>Loading rate details...</p>;
-    if (error) return <p className="text-red-500">{error}</p>;
+  };
 
 return (
     <>
-    <Form {...form}>
-    <form 
-    onSubmit={form.handleSubmit(onSubmit)} 
-    className="space-y-4">
-        <FormField name="subjectCode" control={form.control} render={({ field }) => (
-        <FormItem>
-            <FormLabel>Subject Code</FormLabel>
-            <FormControl><Input {...field} /></FormControl>
-            <FormMessage />
-        </FormItem>
-        )} />
+<Form {...form}>
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full">
 
-        <FormField name="noUnits" control={form.control} render={({ field }) => (
-        <FormItem>
-            <FormLabel>Number of Units</FormLabel>
-            <FormControl>
-                <Input
-                {...field}
-                type="number"
-                value={field.value}
-                onChange={(e) => {
-                field.onChange(e.target.value ? Number(e.target.value) : 0);
-                }}
-                />
-            </FormControl>
-            <FormMessage />
-        </FormItem>
-        )} />
+        <div className="col-span-2">
 
-        <FormField name="rateAmount" control={form.control} render={({ field }) => (
-        <FormItem>
-            <FormLabel>Rate Amount</FormLabel>
-            <FormControl>
-            <Input
-                {...field}
-                type="number"
-                value={field.value}
-                onChange={(e) => {
-                field.onChange(e.target.value ? Number(e.target.value) : 0);
-                }}
-            />
-            </FormControl>
-            <FormMessage />
-        </FormItem>
-        )} />
-
-        <FormField
-            control={form.control}
-            name="rateTypeCode"
+            <FormField control={control}
+            name="pkCode"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Rate Type</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {rateTypes.map((rateType) => (
-                        <SelectItem key={rateType.rateTypeCode} value={rateType.rateTypeCode}>
-                        {rateType.rateTypeDesc}
-                        </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
+                <FormLabel>Course, Year, and Semester</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="hidden"
+                    value={rateCourse.pkCode}
+                  />
+                </FormControl>
               </FormItem>
-            )}
-          />
+              )}
+            />
+        </div>
+        <div className="mt-2 text-white-400">
+            {`${rateCourse.courseDesc} - ${rateCourse.yearDesc} - ${rateCourse.semDesc}`}
+          </div>
 
-        <Button type="submit" className="float-right" disabled={loading}>Update</Button>
-    </form>
+        <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Subject Code</TableHead>
+                <TableHead>Number of Units</TableHead>
+                <TableHead>Rate Type</TableHead>
+                <TableHead className="text-right">Rate Amount</TableHead>
+                <TableHead className="text-center"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {fields.map((item, index) => (
+                <TableRow key={item.id}>
+                  <TableCell className="text-right w-[100px]">
+                    <FormField
+                      control={control}
+                      name={`rows[${index}].subjectCode`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Ex. ITPFL6" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right w-[100px]">
+                    <FormField
+                      control={control}
+                      name={`rows[${index}].noUnits`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Ex. 3" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right w-[100px]">
+                    <FormField
+                      control={control}
+                      name={`rows[${index}].rateTypeCode`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select rate type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {rateType.length > 0 ? (
+                                  rateType.map((rateType) => (
+                                    <SelectItem key={rateType.rateTypeCode} value={rateType.rateTypeCode}>
+                                      {rateType.rateTypeDesc}
+                                    </SelectItem>
+                                  ))
+                                ) : (
+                                  <SelectItem disabled>No rate types available</SelectItem>
+                                )}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right w-[100px]">
+                    <FormField
+                      control={control}
+                      name={`rows[${index}].rateAmount`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Ex. 5000" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell className="text-center w-[50px]">
+                      <Button 
+                        type="button"
+                        variant="ghost"
+                        onClick={() => {
+                          handleRemoveRow(index);
+                        }}
+                        className="text-red-500"
+                      >
+                        <Trash size={16} />
+                      </Button>
+                    </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          <div className="col-span-2 flex justify-center">
+            <Button type="button" onClick={handleAddRow} variant="ghost" className="w-full sm:w-10">
+              <Plus />
+            </Button>
+          </div>
+
+        <div className="col-span-2">
+        <Button type="submit" className="w-full sm:w-20 float-right">
+            Submit
+        </Button>
+        </div>
+      </form>
     </Form>
     </>
     )

@@ -18,13 +18,16 @@ export const registerSchema = z.object({
     required_error: "Please enter a password"
   }).min(8, "Password must be atleast 8 characters").max(50, "Password must not exceed 50 characters").regex(/[0-9]/, "Password must have a number").regex(/^(?=.*[a-z])(?=.*[A-Z]).*$/, 'Password must have upper and lowercase'),
   firstName: z.string({
-    required_error: "Please enter your first name"
+    required_error: "Please enter users first name"
   }).min(3),
   middleName: z.string({
-    required_error: "Please enter your middle name"
+    required_error: "Please enter users middle name"
   }).min(2),
   lastName: z.string({
-    required_error: "Please enter your last name"
+    required_error: "Please enter users last name"
+  }).min(2),
+  groupCode: z.string({
+    required_error: "Please enter group name"
   }).min(2)
 })
 

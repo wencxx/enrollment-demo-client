@@ -10,10 +10,11 @@ import Enrollment1 from "./FldrPages/FldrEnrollment/enrollment1"
 import Enrollment2 from "./FldrPages/FldrEnrollment/enrollment2"
 import Unauhtorize from "@/FldrPages/redirects/unauthorized"
 import RateCourse from "@/FldrPages/FldrEntry/ratecourse"
-import Application from "./FldrPages/FldrStudent/application"
+import Application from "./FldrPages/FldrStudent/application/application"
 import Grades from "./FldrPages/FldrStudent/grades"
 import StudenPofile from "./FldrPages/FldrStudent/profile"
 import StatementOfAccount from "./FldrPages/FldrStudent/statement-of-account"
+import Users from "./FldrPages/FldrPermissions/users"
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
             <Route path="student/grades" element={<Grades />} />
             <Route path="student/profile" element={<StudenPofile />} />
             <Route path="student/statement-of-account" element={<StatementOfAccount />} />
+            <Route path="permissions/users" element={<Users />} />
           </Route>
           <Route path="/unauthorize" element={<Unauhtorize />} />
         </Routes>

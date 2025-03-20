@@ -67,7 +67,7 @@ function Layout() {
   const isAuthorized = () => {
     const path = location.pathname.split('/')[2] || '/'
     const authorizedPaths: Record<string, string[]> = {
-      'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/', 'grades', 'profile', 'application', 'statement-of-account'],
+      'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/', 'grades', 'profile', 'application', 'statement-of-account', 'users'],
       // Students should not access enrollment
       'Student': ['application', 'grades', 'profile', 'statement-of-account']
     }
@@ -98,9 +98,15 @@ function Layout() {
                     </>
                   )}
                   <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink>
-                      {location.pathname.split('/')[1] || 'Dashboard'}
-                    </BreadcrumbLink>
+                    {location.pathname.split('/')[1] ? (
+                      <BreadcrumbLink>
+                        {location.pathname.split('/')[1]}
+                      </BreadcrumbLink>
+                    ) : (
+                      <BreadcrumbPage>
+                        Dashboard
+                      </BreadcrumbPage>
+                    )}
                   </BreadcrumbItem>
                   {location.pathname.split('/')[1] && <BreadcrumbSeparator className="hidden md:block" />}
                   <BreadcrumbItem>
