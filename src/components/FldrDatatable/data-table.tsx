@@ -38,13 +38,15 @@ interface DataTableProps<TData, TValue> {
     data: TData[],
     title: string,
     loading?: boolean,
+    onRefresh?: () => void,
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
     title,
-    loading
+    loading,
+    onRefresh
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -72,6 +74,9 @@ export function DataTable<TData, TValue>({
         },
         onGlobalFilterChange: setGlobalFilter,
         globalFilterFn: 'includesString',
+        meta: {
+            refreshData: onRefresh  // Make sure this is passed to the table meta
+        },
     })
 
     return (

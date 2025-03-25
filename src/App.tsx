@@ -15,6 +15,7 @@ import Grades from "./FldrPages/FldrStudent/grades"
 import StudenPofile from "./FldrPages/FldrStudent/profile"
 import StatementOfAccount from "./FldrPages/FldrStudent/statement-of-account"
 import Users from "./FldrPages/FldrPermissions/users"
+import Subject from "./FldrPages/FldrEntry/subject-prerequisite"
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
             <Route path="entry/course" element={<Course />} />
             <Route path="entry/student" element={<Student />} />
             <Route path="entry/rate" element={<Rate />} />
+            <Route path="entry/subject-prerequisite" element={<Subject />} />
             <Route path="entry/ratecourse" element={<RateCourse />} />
             <Route path="enrollment/enrollment1" element={<Enrollment1 />} />
             <Route path="enrollment/enrollment2" element={<Enrollment2 />} />

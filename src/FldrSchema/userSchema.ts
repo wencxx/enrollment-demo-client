@@ -152,3 +152,13 @@ export const editRateSchema = z.object({
   rateAmount: z.number().min(0, 'Rate amount must be greater than 0'),
   rateTypeCode: z.string().min(1, 'Rate type is required'),
 });
+
+export const subjectSchema = z.object({
+  subjectCode: z.string().min(1, 'Subject code is required'),
+  subjectDesc: z.string().min(1, 'Subject description is required'),
+});
+
+export const prerequisiteSchema = z.object({
+  subjectCode: z.string().min(1, 'Subject code is required'),
+  prerequisiteCode: z.string().min(1, 'Subject prerequisite is required'),
+});
