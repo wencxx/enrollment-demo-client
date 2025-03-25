@@ -54,7 +54,7 @@ const form = useForm<RateFormData>({
         mode: 'onChange',
       })
 
-  const { control, handleSubmit } = form;
+  const { control, handleSubmit, setError, clearErrors } = form;
   const { fields, append, remove } = useFieldArray({
     control,
     name: "rows",
@@ -133,8 +133,37 @@ const form = useForm<RateFormData>({
     remove(index);
   };
 
+  const validateSubjectCode = async (subjectCode: string) => {
+    try {
+      const response = await axios.get(
+        `${plsConnect()}/API/WEBAPI/ListController/CheckSubjectCode/${subjectCode}`
+      );
+      return response.data.exists;
+    } catch (error) {
+      console.error("Error validating subject code:", error);
+      return false;
+    }
+  };
+
   const onSubmit = async (values: any) => {
     try {
+      for (const row of values.rows) {
+        // FOR CHECKING IF IT'S IN tblEntrySubject
+        if (row.rateTypeCode === "1") {
+          const isValid = await validateSubjectCode(row.subjectCode);
+          if (!isValid) {
+            setError(`rows.${row.rowNum - 1}.subjectCode`, {
+              type: "manual",
+              message: "Subject code does not exist.",
+            });
+            toast("Subject code does not exist.");
+            return;
+          } else {
+            clearErrors(`rows.${row.rowNum - 1}.subjectCode`);
+          }
+        }
+      }
+
       const updatedRateData = values.rows.map((row: any) => ({
         pkCode: values.pkCode,
         rateCode: rateCode,
@@ -185,9 +214,9 @@ return (
         <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Rate Type</TableHead>
                 <TableHead>Subject Code</TableHead>
                 <TableHead>Number of Units</TableHead>
-                <TableHead>Rate Type</TableHead>
                 <TableHead className="text-right">Rate Amount</TableHead>
                 <TableHead className="text-center"></TableHead>
               </TableRow>
@@ -195,32 +224,6 @@ return (
             <TableBody>
               {fields.map((item, index) => (
                 <TableRow key={item.id}>
-                  <TableCell className="text-right w-[100px]">
-                    <FormField
-                      control={control}
-                      name={`rows[${index}].subjectCode`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input placeholder="Ex. ITPFL6" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right w-[100px]">
-                    <FormField
-                      control={control}
-                      name={`rows[${index}].noUnits`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input placeholder="Ex. 3" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
                   <TableCell className="text-right w-[100px]">
                     <FormField
                       control={control}
@@ -246,6 +249,32 @@ return (
                                 )}
                               </SelectContent>
                             </Select>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right w-[100px]">
+                    <FormField
+                      control={control}
+                      name={`rows[${index}].subjectCode`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Ex. ITPFL6" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right w-[100px]">
+                    <FormField
+                      control={control}
+                      name={`rows[${index}].noUnits`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Ex. 3" {...field} />
                           </FormControl>
                         </FormItem>
                       )}

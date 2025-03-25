@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Pencil } from "lucide-react"
+import { ArrowUpDown, Edit } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useState } from "react"
@@ -191,7 +191,7 @@ export const columns: ColumnDef<RateCol>[] = [
                     <DialogTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialog(row.original.rateCode)}>
                         <span className="sr-only">Open menu</span>
-                        <Pencil className="h-4 w-4" />
+                        <Edit className="h-4 w-4" />
                     </Button>
                     </DialogTrigger>
                     <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[80dvw] lg:!max-w-[70dvw] scrollbar-hidden" aria-labelledby="dialog-title">
