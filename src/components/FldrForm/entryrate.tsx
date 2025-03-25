@@ -150,7 +150,8 @@ export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
         onSubmitSuccess()
         onAddRate()
         toast("Added new rate successfully.")
-        console.log("Data:", response)
+        console.log("Submitted:", rateData)
+        console.log("Response:", response)
       } catch (error) {
         if (axios.isAxiosError(error)) {
           toast("Error submitting form.")
@@ -235,9 +236,9 @@ export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
         <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Rate Type</TableHead>
                 <TableHead>Subject Code</TableHead>
                 <TableHead>Number of Units</TableHead>
-                <TableHead>Rate Type</TableHead>
                 <TableHead className="text-right">Rate Amount</TableHead>
                 <TableHead className="text-center"></TableHead>
               </TableRow>
@@ -245,33 +246,7 @@ export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
             <TableBody>
               {fields.map((item, index) => (
                 <TableRow key={item.id}>
-                  <TableCell className="text-right w-[100px]">
-                    <FormField
-                      control={control}
-                      name={`rows[${index}].subjectCode`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input placeholder="Ex. ITPFL6" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right w-[100px]">
-                    <FormField
-                      control={control}
-                      name={`rows[${index}].noUnits`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input placeholder="Ex. 3" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right w-[100px]">
+                                    <TableCell className="text-right w-[100px]">
                     <FormField
                       control={control}
                       name={`rows[${index}].rateTypeCode`}
@@ -296,6 +271,32 @@ export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
                                 )}
                               </SelectContent>
                             </Select>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right w-[100px]">
+                    <FormField
+                      control={control}
+                      name={`rows[${index}].subjectCode`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Ex. ITPFL6" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right w-[100px]">
+                    <FormField
+                      control={control}
+                      name={`rows[${index}].noUnits`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Ex. 3" {...field} />
                           </FormControl>
                         </FormItem>
                       )}

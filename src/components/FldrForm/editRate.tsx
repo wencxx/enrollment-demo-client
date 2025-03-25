@@ -7,8 +7,7 @@ import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Check, ChevronsUpDown, Plus, Trash } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Plus, Trash } from "lucide-react"
 import {
   Form,
   FormControl,
@@ -24,19 +23,6 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select";
-import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-  } from "@/components/ui/command"
-  import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-  } from "@/components/ui/popover"
   import {
     Table,
     TableBody,
@@ -90,7 +76,7 @@ const form = useForm<RateFormData>({
         const rateCourseResponse = await axios.get(
           `${plsConnect()}/API/WEBAPI/ListController/ListSpecificRateCourse/${rateCode}`
         );
-        const rateCourse = rateCourseResponse.data[0];
+        const rateCourse = rateCourseResponse.data;
         setRateCourse(rateCourse);
   
         const rateDataResponse = await axios.get(
@@ -162,7 +148,7 @@ const form = useForm<RateFormData>({
       await axios.put(`${plsConnect()}/API/WEBAPI/UpdateRate`, updatedRateData);
       onSubmitSuccess(updatedRateData);
       toast("Rate updated successfully.");
-      console.log("sent:", updatedRateData);
+      console.log("sent:", updatedRateData); // no delete of existing rows yet, only update
     } catch (error) {
       console.error("Error updating rate:", error);
       toast("Error updating rate.");
