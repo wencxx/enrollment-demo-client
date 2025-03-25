@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { StudentsCount } from "@/FldrTypes/students-count"
 import LineChartComponent from "./line";
 import BarChartComponent from "./bar";

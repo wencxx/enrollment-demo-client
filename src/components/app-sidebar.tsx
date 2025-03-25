@@ -5,9 +5,10 @@ import {
   FileUser,
   User,
   Users,
-  Route,
+  KeyRound,
   ClipboardList,
-  ReceiptText
+  ReceiptText,
+  Calendar1
 } from "lucide-react"
 import {
   Avatar,
@@ -34,6 +35,11 @@ const data = {
       name: 'Dashboard',
       url: '/',
       icon: ChartColumn,
+    },
+    {
+      name: 'Schedules',
+      url: '/schedules',
+      icon: Calendar1,
     }
   ],
   menuStudent: [
@@ -65,9 +71,9 @@ const data = {
       icon: Users,
     },
     {
-      name: 'Routes',
-      url: 'permissions/route-lists',
-      icon: Route,
+      name: 'Grant Permission',
+      url: 'permissions/routes',
+      icon: KeyRound,
     },
   ],
   menuMain: [
