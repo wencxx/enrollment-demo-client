@@ -58,8 +58,7 @@ const fetchPkCode = async (studentCode: string) => {
   }
 };
 
-export const EditStudent: React.FC<StudentFormProps> = React.memo(
-  ({ studentCode, onSubmitSuccess }) => {
+export const EditStudent =  ({ studentCode, onSubmitSuccess }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [dropdownData, setDropdownData] = useState({
@@ -386,4 +385,4 @@ export const EditStudent: React.FC<StudentFormProps> = React.memo(
       </Form>
     );
   }
-);
+

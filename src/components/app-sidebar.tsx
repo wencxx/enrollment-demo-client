@@ -89,6 +89,12 @@ const data = {
           authorizeUsers: ['Admin']
         },
         {
+          title: "Subject",
+          url: "entry/subject-prerequisite",
+          authorizeUsers: ['Admin']
+        },
+
+        {
           title: "Course",
           url: "entry/course",
           authorizeUsers: ['Admin']

@@ -160,7 +160,7 @@ export default function SOAComponent() {
             <TableBody>
               {groupedStatements.subjects.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell>{item.subjectCode}</TableCell>
+                  <TableCell>{item.subjectCode }</TableCell>
                   <TableCell>{item.noUnits}</TableCell>
                   <TableCell className="text-right">{formatCurrency(item.rateAmount)}</TableCell>
                 </TableRow>
