@@ -3,6 +3,7 @@ import { enrollment1Schema } from "@/FldrSchema/userSchema.ts"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { AcademicYear } from "@/FldrTypes/academic-year"
 import { Year } from "@/FldrTypes/year"
 import { Sem } from "@/FldrTypes/sem"
 import { CourseCol } from "@/FldrTypes/course.col"
@@ -57,6 +58,7 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
       studentCode,
       date: new Date(),
       enrollStatusCode: "",
+      aYearCode: 0,
     },
     mode: 'onChange',
   })
@@ -65,6 +67,7 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
   const [sem, setSem] = useState<Sem[]>([])
   const [course, setCourse] = useState<CourseCol[]>([])
   const [status, setStatus] = useState<EnrollmentStatus[]>([])
+  const [academicYear, setAcademicYear] = useState<AcademicYear[]>([])
 
   async function fetchYears() {
     try {
@@ -93,24 +96,38 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
     }
   }
 
-      async function fetchCourse() {
-        try {
-          const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
-              const mappedCourseCode = response.data.map((item: CourseCol) => ({
-                  label: item.courseDesc,
-                  value: item.courseCode,
-              }))
-              setCourse(mappedCourseCode)
-          } catch (error: any) {
-              console.error("Error fetching courses:", error)
-          }
-          }
+  async function fetchCourse() {
+    try {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
+          const mappedCourseCode = response.data.map((item: CourseCol) => ({
+              label: item.courseDesc,
+              value: item.courseCode,
+          }))
+          setCourse(mappedCourseCode)
+      } catch (error: any) {
+          console.error("Error fetching courses:", error)
+      }
+      }
+
+  async function fetchAYears() {
+    try {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListAcademicYear`)
+          const mappedAcadYear = response.data.map((item: AcademicYear) => ({
+              label: `${item.ayStart} to ${item.ayEnd}`,
+              value: item.aYearCode,
+          }))
+          setAcademicYear(mappedAcadYear)
+      } catch (error: any) {
+          console.error("Error fetching courses:", error)
+      }
+      }
 
   useEffect(() => {
     fetchYears()
     fetchSem()
     fetchCourse()
     fetchStatus()
+    fetchAYears()
   }, [])
 
   const { currentUser } = useAuthStore.getState();
@@ -135,6 +152,7 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
       const putResponse = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollmentStatus`, enrollment1Data)
       console.log("Data submitted successfully:", postResponse)
       console.log("Data submitted successfully:", putResponse)
+      // console.log("Data submitted successfully:", enrollment1Data)
       closeModal()
       toast("Success.")
     } catch (error) {
@@ -305,6 +323,71 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
                                       className={cn(
                                         "ml-auto",
                                         course.value === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="aYearCode"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Academic Year</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-full justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? academicYear.find(
+                                    (academicYear) => academicYear.value === field.value
+                                  )?.label
+                                : "Select academic year"}
+                              <ChevronsUpDown className="opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0">
+                          <Command>
+                            <CommandInput
+                              placeholder="Search..."
+                              className="h-9"
+                            />
+                            <CommandList>
+                              <CommandEmpty>None found.</CommandEmpty>
+                              <CommandGroup>
+                                {academicYear.map((academicYear) => (
+                                  <CommandItem
+                                    value={academicYear.label}
+                                    key={academicYear.value}
+                                    onSelect={() => {
+                                        form.setValue("aYearCode", academicYear.value);
+                                        field.onChange(academicYear.value);
+                                    }}
+                                  >
+                                    {academicYear.label}
+                                    <Check
+                                      className={cn(
+                                        "ml-auto",
+                                        academicYear.value === field.value
                                           ? "opacity-100"
                                           : "opacity-0"
                                       )}
