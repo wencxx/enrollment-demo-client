@@ -54,23 +54,6 @@ export default function Student() {
 
   return (
     <>
-      <div className="space-x-2">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="outline">
-              <Plus />
-              Add new student
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-auto scrollbar-hidden" aria-labelledby="dialog-title">
-            <DialogTitle className="text-lg font-medium">Add new student</DialogTitle>
-            <StudentForm onSubmitSuccess={addNewStudent} />
-          </DialogContent>
-        </Dialog>
-        {/* <Button variant="outline" onClick={() => reactToPrintFn()}>
-          Print
-        </Button> */}
-      </div>
       <DataTable columns={columns} data={data} title="students" loading={loading} />
       {/* <div className="hidden print:block" ref={contentRef}>this is the content to print</div> */}
       <Toaster />

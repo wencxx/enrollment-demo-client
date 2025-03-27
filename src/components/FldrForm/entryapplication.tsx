@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/popover"
 import { Input } from "@/components/ui/input"
 import { applicationSchema } from "@/FldrSchema/userSchema.ts"
+import useAuthStore from "@/FldrStore/auth"
 
 type ApplicationFormData = z.infer<typeof applicationSchema>
 
@@ -40,17 +41,26 @@ export function ApplicationForm() {
     },  
   })
 
+  const { currentUser } = useAuthStore.getState();
+  
+    if (!currentUser) {
+      toast("User not logged in.");
+      return;
+    }
+
   const onSubmit = async (values: ApplicationFormData) => {
 
     const applicationData = {
         ...values,
+        userCode: currentUser.userCode,
       }
 
     try {
 
-      const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertStudent`, applicationData)
+      // const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertStudent`, applicationData)
 
-      console.log("Data submitted:", response)
+      // console.log("Data submitted:", response)
+      console.log("Data submitted:", applicationData)
       toast("Application registered successfully.")
 
     } catch (error) {

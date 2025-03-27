@@ -25,10 +25,10 @@ export const registerSchema = z.object({
   }).min(2),
   lastName: z.string({
     required_error: "Please enter users last name"
-  }).min(2),
-  groupCode: z.string({
-    required_error: "Please enter group name"
   }).min(2)
+  // groupCode: z.string({
+  //   required_error: "Please enter group name"
+  // }).min(2)
 })
 
 export const studentSchema = z.object({
@@ -68,7 +68,8 @@ export const enrollment1Schema = z.object({
   date: z.date()
     .refine((val) => val <= new Date(), { message: "Date must be today or earlier." }),
   enrollStatusCode: z.string()
-    .min(1, { message: "Please confirm status." })
+    .min(1, { message: "Please confirm status." }),
+    aYearCode: z.number().min(1, { message: "Select an academic year." }),
 })
 
 export const enrollment2Schema = z.object({
@@ -151,4 +152,14 @@ export const editRateSchema = z.object({
   noUnits: z.number().min(1, 'Number of units must be at least 1'),
   rateAmount: z.number().min(0, 'Rate amount must be greater than 0'),
   rateTypeCode: z.string().min(1, 'Rate type is required'),
+});
+
+export const subjectSchema = z.object({
+  subjectCode: z.string().min(1, 'Subject code is required'),
+  subjectDesc: z.string().min(1, 'Subject description is required'),
+});
+
+export const prerequisiteSchema = z.object({
+  subjectCode: z.string().min(1, 'Subject code is required'),
+  prerequisiteCode: z.string().min(1, 'Subject prerequisite is required'),
 });

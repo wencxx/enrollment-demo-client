@@ -104,7 +104,7 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
                   variant="ghost"
                   onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
               >
-                  Enrollment
+                  Enrollment Status
                   <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
           )
@@ -112,7 +112,7 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
       cell: ({ row }) => {
            let variantType: "approve" | "disapprove" = "disapprove";
           const status: boolean = row.getValue("void");
-          const displayStatus = status ? "Void" : "Enrolled";
+          const displayStatus = status ? "Void" : "Approved";
           //reused custom badge colors: disapprove (red) and approve (green)
           if (status === true) {
               variantType = "disapprove";
@@ -145,34 +145,8 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
           const closeModal = () => {
             setIsVoidDialogOpen(false)
           }
-
-          const handleProfileDialog = (studentCode: string) => {
-            setStudentCode(studentCode);
-            setIsProfileDialogOpen(true)
-          }
-
-          const handleProfileUpdate = (updatedStudent) => {
-            console.log("Updated student details:", updatedStudent);
-            setIsProfileDialogOpen(false);
-          };
-
           return (
             <>  
-                <Dialog open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen}>
-                    <DialogTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleProfileDialog(row.original.studentCode)}>
-                        <span className="sr-only">Open menu</span>
-                        <Eye className="h-4 w-4" />
-                    </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-h-[90vh] overflow-y-auto scrollbar-hidden" aria-labelledby="dialog-title">
-                        <DialogHeader>
-                        <DialogTitle className="mb-4">View Student Profile</DialogTitle>
-                        </DialogHeader>
-                        <EditStudent studentCode={studentCode} onSubmitSuccess={handleProfileUpdate} />
-                    </DialogContent>
-                </Dialog>
-
                 <Dialog open={isVoidDialogOpen} onOpenChange={setIsVoidDialogOpen}>
                     <DialogTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.studentCode)}>

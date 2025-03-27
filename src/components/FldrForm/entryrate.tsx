@@ -47,6 +47,7 @@ import {
   } from "@/components/ui/table"
 import { RateType } from "@/FldrTypes/rate-type"
 import { Input } from "../ui/input"
+import { SubjectCol } from "@/FldrTypes/subject-prerequisite"
 
 type RateFormData = z.infer<typeof rateSchema>
 
@@ -73,7 +74,7 @@ export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
         mode: 'onChange',
       })
 
-    const { control, handleSubmit, setValue } = form;
+    const { control, handleSubmit, setValue, watch } = form;
 
     const { fields, append, remove } = useFieldArray({
       control,
@@ -82,35 +83,34 @@ export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
 
     const [rateCourse, setRateCourse] = useState<RateCourseCol[]>([])
     const [rateType, setRateType] = useState<RateType[]>([])
+    const [subject, setSubject] = useState<SubjectCol[]>([])
 
-  useEffect(() => {
-    async function fetchRateCourse() {
-      try {
-        const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListRateCourse`)
-            const mappedRateCourseCode = response.data.map((item: RateCourseCol) => ({
-                label: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc}`,
-                value: item.pkCode,
-            }))
-            setRateCourse(mappedRateCourseCode)
-        } catch (error: any) {
-            console.error("Error fetching courses:", error)
-        }
-        }
-        fetchRateCourse()
-  }, [])
+    useEffect(() => {
+      async function fetchData() {
+        try {
+          const rateCourseResponse = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListRateCourse`)
+          const mappedRateCourseCode = rateCourseResponse.data.map((item: RateCourseCol) => ({
+            label: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc}`,
+            value: item.pkCode,
+          }))
+          setRateCourse(mappedRateCourseCode)
 
-  useEffect(() => {
-    async function fetchRateType() {
-      try {
-        const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListRateType`) 
-        setRateType(response.data) 
-        } catch (error: any) {
-            console.error("Error fetching rate types:", error)
-        }
-        }
+          const subjectResponse = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListSubject`)
+          const mappedSubjectCode = subjectResponse.data.map((item: SubjectCol) => ({
+            label: item.subjectDesc,
+            value: item.subjectCode,
+          }))
+          setSubject(mappedSubjectCode)
 
-        fetchRateType()
-  }, [])
+          const rateTypeResponse = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListRateType`)
+          setRateType(rateTypeResponse.data)
+        } catch (error) {
+          console.error("Error fetching data:", error)
+          toast("Error fetching data.")
+        }
+      }
+      fetchData()
+    }, [])
 
   const handleAddRow = () => {
   const nextRowNum = fields.length > 0 ? fields[fields.length - 1].rowNum + 1 : 1;
@@ -150,7 +150,8 @@ export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
         onSubmitSuccess()
         onAddRate()
         toast("Added new rate successfully.")
-        console.log("Data:", response)
+        console.log("Submitted:", rateData)
+        console.log("Response:", response)
       } catch (error) {
         if (axios.isAxiosError(error)) {
           toast("Error submitting form.")
@@ -235,87 +236,146 @@ export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
         <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Rate Type</TableHead>
                 <TableHead>Subject Code</TableHead>
                 <TableHead>Number of Units</TableHead>
-                <TableHead>Rate Type</TableHead>
                 <TableHead className="text-right">Rate Amount</TableHead>
                 <TableHead className="text-center"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {fields.map((item, index) => (
-                <TableRow key={item.id}>
-                  <TableCell className="text-right w-[100px]">
-                    <FormField
-                      control={control}
-                      name={`rows[${index}].subjectCode`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input placeholder="Ex. ITPFL6" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right w-[100px]">
-                    <FormField
-                      control={control}
-                      name={`rows[${index}].noUnits`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input placeholder="Ex. 3" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right w-[100px]">
-                    <FormField
-                      control={control}
-                      name={`rows[${index}].rateTypeCode`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Select onValueChange={field.onChange} value={field.value}>
+              {fields.map((item, index) => {
+                const selectedRateType = watch(`rows[${index}].rateTypeCode`);
+                return (
+                  <TableRow key={item.id}>
+                    <TableCell className="text-right w-[20%]">
+                      <FormField
+                        control={control}
+                        name={`rows[${index}].rateTypeCode`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select rate type" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {rateType.length > 0 ? (
+                                    rateType.map((rateType) => (
+                                      <SelectItem key={rateType.rateTypeCode} value={rateType.rateTypeCode}>
+                                        {rateType.rateTypeDesc}
+                                      </SelectItem>
+                                    ))
+                                  ) : (
+                                    <SelectItem disabled>No rate types available</SelectItem>
+                                  )}
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+                    <TableCell className="text-right w-[40%]">
+                      <FormField
+                        control={form.control}
+                        name={`rows[${index}].subjectCode`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            {selectedRateType === "1" ? (
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant="outline"
+                                      role="combobox"
+                                      className={cn(
+                                        "w-full justify-between",
+                                        !field.value && "text-muted-foreground"
+                                      )}
+                                    >
+                                      {field.value
+                                        ? subject.find(
+                                            (subject) => subject.value === field.value
+                                          )?.label
+                                        : "Select subject"}
+                                      <ChevronsUpDown className="opacity-50" />
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-full p-0">
+                                  <Command>
+                                    <CommandInput
+                                      placeholder="Search..."
+                                      className="h-9"
+                                    />
+                                    <CommandList>
+                                      <CommandEmpty>None found.</CommandEmpty>
+                                      <CommandGroup>
+                                        {subject.map((subject) => (
+                                          <CommandItem
+                                            value={subject.label}
+                                            key={subject.value}
+                                            onSelect={() => {
+                                              form.setValue("subjectCode", subject.value);
+                                              field.onChange(subject.value);
+                                            }}
+                                          >
+                                            {subject.label}
+                                            <Check
+                                              className={cn(
+                                                "ml-auto",
+                                                subject.value === field.value
+                                                  ? "opacity-100"
+                                                  : "opacity-0"
+                                              )}
+                                            />
+                                          </CommandItem>
+                                        ))}
+                                      </CommandGroup>
+                                    </CommandList>
+                                  </Command>
+                                </PopoverContent>
+                              </Popover>
+                            ) : (
                               <FormControl>
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Select rate type" />
-                                </SelectTrigger>
+                                <Input placeholder="Enter subject code" {...field} />
                               </FormControl>
-                              <SelectContent>
-                                {rateType.length > 0 ? (
-                                  rateType.map((rateType) => (
-                                    <SelectItem key={rateType.rateTypeCode} value={rateType.rateTypeCode}>
-                                      {rateType.rateTypeDesc}
-                                    </SelectItem>
-                                  ))
-                                ) : (
-                                  <SelectItem disabled>No rate types available</SelectItem>
-                                )}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right w-[100px]">
-                    <FormField
-                      control={control}
-                      name={`rows[${index}].rateAmount`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input placeholder="Ex. 5000" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell className="text-center w-[50px]">
-                      <Button 
+                            )}
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+                    <TableCell className="text-right w-[20%]">
+                      <FormField
+                        control={control}
+                        name={`rows[${index}].noUnits`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input placeholder="Ex. 3" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+                    <TableCell className="text-right w-[20%]">
+                      <FormField
+                        control={control}
+                        name={`rows[${index}].rateAmount`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input placeholder="Ex. 5000" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+                    <TableCell className="text-center w-[50px]">
+                      <Button
                         type="button"
                         variant="ghost"
                         onClick={() => {
@@ -326,8 +386,9 @@ export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
                         <Trash size={16} />
                       </Button>
                     </TableCell>
-                </TableRow>
-              ))}
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
 

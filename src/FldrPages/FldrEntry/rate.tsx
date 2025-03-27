@@ -24,7 +24,7 @@ export default function Rate() {
   const fetchRate = async () => {
     try {
       setLoading(true);
-      const response = await axios.get<RateCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListRate`);
+      const response = await axios.get<RateCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListDistinctRate`);
       setRate(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);

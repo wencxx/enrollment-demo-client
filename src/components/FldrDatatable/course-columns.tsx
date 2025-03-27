@@ -94,7 +94,7 @@ export const columns: ColumnDef<CourseCol>[] = [
                     </DialogTrigger>
                     <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
                         <DialogHeader>
-                        <DialogTitle className="mb-4">View Course</DialogTitle>
+                        {/* <DialogTitle className="mb-4">View Course</DialogTitle> */}
                         </DialogHeader>
                     <EditCourse courseCode={courseCode} onSubmitSuccess={handleCourseUpdate} />
                         {/* <PendingApplicantEnrollment1Form studentCode={studentCode} /> */}

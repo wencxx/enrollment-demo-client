@@ -1,11 +1,17 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { School } from "lucide-react"
+
+import { StatementOfAccountCol } from "@/FldrTypes/statementofaccount"
+import { useState, useEffect } from "react"
+
+
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+
 
 // Sample data - this would come from an API or database
 const studentInfo = {
@@ -39,6 +45,8 @@ const totalFees = fees.reduce((sum, fee) => sum + fee.amount, 0)
 const totalPayments = payments.reduce((sum, payment) => sum + payment.amount, 0)
 const balance = totalFees - totalPayments
 
+
+
 export default function SOAComponent() {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-PH", {
@@ -46,6 +54,34 @@ export default function SOAComponent() {
       currency: "PHP",
       minimumFractionDigits: 2,
     }).format(amount)
+  }
+
+  const [statements, setStatements] = useState<StatementOfAccountCol[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+    const fetchStatementOfAccount = async () => {
+      try {
+        const response = await fetch("https://localhost:7092/api/WEBAPI/StatementOfAccount/GroupFees")
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`)
+        }
+        const data: StatementOfAccountCol[] = await response.json()
+        setStatements(data)
+      } catch (err) {
+        console.error("Error: ", err);
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchStatementOfAccount()
+  }, [])
+
+  const groupedStatements = {
+    subjects: statements.filter(item => item.rateTypeDesc === "Subjects"),
+    laboratory: statements.filter(item => item.rateTypeDesc === "Laboratory"),
+    miscellaneous: statements.filter(item => item.rateTypeDesc === "Miscellaneous"),
+    others: statements.filter(item => item.rateTypeDesc === "Others"),
   }
 
   return (
@@ -116,24 +152,124 @@ export default function SOAComponent() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-3/4">Description</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="w-3/4">Subject Fees</TableHead>
+                <TableHead className="w-3/4">noUnits</TableHead>
+                <TableHead className="text-right">Rate Amount</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {fees.map((fee, index) => (
+              {groupedStatements.subjects.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell>{fee.description}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(fee.amount)}</TableCell>
+                  <TableCell>{item.subjectCode }</TableCell>
+                  <TableCell>{item.noUnits}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(item.rateAmount)}</TableCell>
                 </TableRow>
               ))}
-              <TableRow>
-                <TableCell className="font-bold">TOTAL FEES</TableCell>
-                <TableCell className="text-right font-bold">{formatCurrency(totalFees)}</TableCell>
-              </TableRow>
+              <TableHead className="w-3/4">Laboratory Fees</TableHead>
+                {groupedStatements.laboratory.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item.subjectCode}</TableCell>
+                  <TableCell>{item.noUnits}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(item.rateAmount)}</TableCell>
+                </TableRow>
+              ))}
+          <TableHead className="w-3/4">Miscellaneous Fees</TableHead>
+                            {groupedStatements.miscellaneous.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item.subjectCode}</TableCell>
+                  <TableCell>{item.noUnits}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(item.rateAmount)}</TableCell>
+                </TableRow>
+              ))}
+          <TableHead className="w-3/4">Other Fees</TableHead>
+          {groupedStatements.others.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item.subjectCode}</TableCell>
+                  <TableCell>{item.noUnits}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(item.rateAmount)}</TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>
+
+        {/* Laboratory
+        <div className="border-b p-4">
+          <h3 className="mb-3 font-semibold">LABORATORY</h3>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-3/4">Subject Code</TableHead>
+                <TableHead className="w-3/4">noUnits</TableHead>
+                <TableHead className="text-right">Rate Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {groupedStatements.laboratory.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item.subjectCode}</TableCell>
+                  <TableCell>{item.noUnits}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(item.rateAmount)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div> */}
+
+        {/* Miscellaneous
+        <div className="border-b p-4">
+          <h3 className="mb-3 font-semibold">MISCELLANEOUS</h3>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-3/4">Subject Code</TableHead>
+                <TableHead className="w-3/4">noUnits</TableHead>
+                <TableHead className="text-right">Rate Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {groupedStatements.miscellaneous.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item.subjectCode}</TableCell>
+                  <TableCell>{item.noUnits}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(item.rateAmount)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div> */}
+
+        {/* Others
+        <div className="border-b p-4">
+          <h3 className="mb-3 font-semibold">OTHERS</h3>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-3/4">Subject Code</TableHead>
+                <TableHead className="w-3/4">noUnits</TableHead>
+                <TableHead className="text-right">Rate Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {groupedStatements.others.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>{item.subjectCode}</TableCell>
+                  <TableCell>{item.noUnits}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(item.rateAmount)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div> */}
+
+        <div className="flex justify-between mt-4 px-4 font-semibold">
+    <span>Total</span>
+    <span className="text-right">
+
+      {formatCurrency(statements.reduce((total, item) => total + item.rateAmount, 0))}
+    </span>
+  </div>
+
 
         {/* Payments */}
         <div className="border-b p-4">
@@ -236,3 +372,64 @@ export default function SOAComponent() {
   )
 }
 
+// import { useEffect, useState } from "react";
+// import axios from "axios";
+
+// interface StatementOfAccount {
+//   noUnits: number;
+//   rateAmount: number;
+//   entryRowNum: number;
+//   subjectCode: string; 
+// }
+
+// const StatementOfAccount = () => {
+//   const [data, setData] = useState<StatementOfAccount[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     const fetchStatementOfAccount = async () => {
+//       try {
+//         const response = await axios.get("https://localhost:7092/api/WEBAPI/StatementOfAccount/Fees");
+//         setData(response.data);
+//       } catch (err) {
+//         setError("Error fetching data");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchStatementOfAccount();
+//   }, []);
+
+//   if (loading) return <p>Loading...</p>;
+//   if (error) return <p>{error}</p>;
+
+//   return (
+//     <div style={{ padding: "20px" }}>
+//       <h2>Statement of Account</h2>
+//       <table border={1} cellPadding={10} style={{ borderCollapse: "collapse", width: "100%" }}>
+//         <thead>
+//           <tr>
+//             <th>No. of Units</th>
+//             <th>Rate Amount</th>
+//             <th>Entry Row Num</th>
+//             <th>Subject Code</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {data.map((item, index) => (
+//             <tr key={index}>
+//               <td>{item.noUnits}</td>
+//               <td>{item.rateAmount}</td>
+//               <td>{item.entryRowNum}</td>
+//               <td>{item.subjectCode}</td>
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+//     </div>
+//   );
+// };
+
+// export default StatementOfAccount;

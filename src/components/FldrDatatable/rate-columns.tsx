@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Pencil } from "lucide-react"
+import { ArrowUpDown, Edit } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useState } from "react"
@@ -62,40 +62,35 @@ export const columns: ColumnDef<RateCol>[] = [
                 </Button>
             )
         },
-        cell: ({ row }) => {
-            return (
-                <span>{row.original.rateCode}-{row.original.rowNum}</span>
-            )
-        }
     },
-    {
-        accessorKey: "subjectCode",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Subject Code
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    {
-        accessorKey: "rateTypeDesc",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Type
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
+    // {
+    //     accessorKey: "subjectCode",
+    //     header: ({ column }) => {
+    //         return (
+    //             <Button
+    //                 variant="ghost"
+    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //             >
+    //                 Subject Code
+    //                 <ArrowUpDown className="ml-2 h-4 w-4" />
+    //             </Button>
+    //         )
+    //     },
+    // },
+    // {
+    //     accessorKey: "rateTypeDesc",
+    //     header: ({ column }) => {
+    //         return (
+    //             <Button
+    //                 variant="ghost"
+    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //             >
+    //                 Type
+    //                 <ArrowUpDown className="ml-2 h-4 w-4" />
+    //             </Button>
+    //         )
+    //     },
+    // },
     // {
     //     accessorKey: "noUnits",
     //     header: ({ column }) => {
@@ -178,22 +173,14 @@ export const columns: ColumnDef<RateCol>[] = [
         id: "actions",
         cell: ({ row }) => {
             const [isDialogOpen, setIsDialogOpen] = useState(false);
-            
             const [rateCode, setRateCode] = useState("");
-            const [rowNum, setRowNum] = useState("");
 
-
-            const closeModal = () => {
-            setIsDialogOpen(false)
-            }
-
-            const handleDialog = (rateCode: string, rowNum: string) => {
+            const handleDialog = (rateCode: string) => {
             setRateCode(rateCode);
-            setRowNum(rowNum);
             setIsDialogOpen(true)
             }
 
-            const handleUpdate = (updatedRate) => {
+            const handleUpdate = (updatedRate: any) => {
             console.log("Updated rate details:", updatedRate);
             setIsDialogOpen(false);
             };
@@ -202,16 +189,16 @@ export const columns: ColumnDef<RateCol>[] = [
             <>  
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialog(row.original.rateCode, row.original.rowNum)}>
+                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialog(row.original.rateCode)}>
                         <span className="sr-only">Open menu</span>
-                        <Pencil className="h-4 w-4" />
+                        <Edit className="h-4 w-4" />
                     </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-h-[90vh] overflow-y-auto scrollbar-hidden" aria-labelledby="dialog-title">
+                    <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[80dvw] lg:!max-w-[70dvw] scrollbar-hidden" aria-labelledby="dialog-title">
                         <DialogHeader>
                         <DialogTitle className="mb-4">Edit Rate</DialogTitle>
                         </DialogHeader>
-                        <EditRate rateCode={rateCode} rowNum={rowNum} onSubmitSuccess={handleUpdate}/>
+                        <EditRate rateCode={rateCode} onSubmitSuccess={handleUpdate}/>
                     </DialogContent>
                 </Dialog>
             </>

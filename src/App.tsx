@@ -18,6 +18,8 @@ import StatementOfAccount from "./FldrPages/FldrStudent/statement-of-account"
 import Users from "./FldrPages/FldrPermissions/users"
 import GrantPermission from "./FldrPages/FldrPermissions/assign-permission"
 import RoutePage from "./FldrPages/FldrPermissions/routes"
+import Subject from "./FldrPages/FldrEntry/subject-prerequisite"
+import RoutesPage from "./FldrPages/FldrPermissions/assign-permission"
 import { useEffect } from "react";
 
 const useTabVisibility = () => {
@@ -52,6 +54,7 @@ function App() {
             <Route path="entry/course" element={<Course />} />
             <Route path="entry/student" element={<Student />} />
             <Route path="entry/rate" element={<Rate />} />
+            <Route path="entry/subject-prerequisite" element={<Subject />} />
             <Route path="entry/ratecourse" element={<RateCourse />} />
             <Route path="enrollment/enrollment1" element={<Enrollment1 />} />
             <Route path="enrollment/enrollment2" element={<Enrollment2 />} />
