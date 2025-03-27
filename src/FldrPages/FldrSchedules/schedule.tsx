@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScheduleDisplay } from "@/FldrPages/FldrSchedules/schedule-display"
@@ -6,83 +6,53 @@ import { AddScheduleForm } from "@/FldrPages/FldrSchedules/add-schedule-form"
 import { FilterControls } from "@/FldrPages/FldrSchedules/filter-controls"
 import type { Schedule, ScheduleItem } from "@/FldrTypes/schedule"
 import { toast } from "sonner"
+import axios from "axios"
+import { plsConnect } from '@/FldrClass/ClsGetConnection'
 
-const initialSchedule: Schedule = [
-  {
-    id: "1",
-    course: "BSIT",
-    section: "1A",
-    subject: "Computer Programming 1",
-    day: "Monday",
-    startTime: "08:00",
-    endTime: "09:30",
-    room: "ComLab 1",
-    professor: "Prof. Santos",
-  },
-  {
-    id: "2",
-    course: "BSIT",
-    section: "1A",
-    subject: "Mathematics in the Modern World",
-    day: "Monday",
-    startTime: "10:00",
-    endTime: "11:30",
-    room: "Room 101",
-    professor: "Prof. Reyes",
-  },
-  {
-    id: "3",
-    course: "BSCS",
-    section: "1B",
-    subject: "Data Structures and Algorithms",
-    day: "Tuesday",
-    startTime: "13:00",
-    endTime: "14:30",
-    room: "ComLab 2",
-    professor: "Prof. Cruz",
-  },
-  {
-    id: "4",
-    course: "BSIT",
-    section: "2A",
-    subject: "Web Development",
-    day: "Wednesday",
-    startTime: "15:00",
-    endTime: "16:30",
-    room: "ComLab 1",
-    professor: "Prof. Garcia",
-  },
-  {
-    id: "5",
-    course: "BSCS",
-    section: "2B",
-    subject: "Database Management",
-    day: "Thursday",
-    startTime: "09:00",
-    endTime: "10:30",
-    room: "ComLab 3",
-    professor: "Prof. Mendoza",
-  },
-]
+interface Courses {
+  courseCode: string
+  courseDesc: string
+}
+
+interface Subjects {
+  subjectCode: string
+  subjectDesc: string
+  prerequisiteCode: string | null
+}
 
 export default function Schedules() {
-  const [schedule, setSchedule] = useState<Schedule>(initialSchedule)
+  const [schedule, setSchedule] = useState<Schedule>([])
   const [filters, setFilters] = useState({
-    course: "",
+    courseCode: "",
     section: "",
-    subject: "",
+    subjectCode: "",
   })
 
+  // get schedule
+  const getSchedules = async () => {
+    try {
+      const res = await axios.get(`${plsConnect()}/api/Schedule`)
+
+      setSchedule(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getSchedules()
+  }, [])
+
   // Check for scheduling conflicts
-  const hasScheduleConflict = (newItem: Omit<ScheduleItem, "id">) => {
-    return schedule.some((item) => {
+  const hasScheduleConflict = (newItem: Omit<ScheduleItem, "scheduleCode">) => {
+    const conflict = schedule.some((item) => {
       // Check if same day and room
-      if (item.day === newItem.day && item.room === newItem.room) {
+      if (item.day === newItem.day && item.roomCode === newItem.roomCode) {
         // Convert times to minutes for easier comparison
-        const existingStart = timeToMinutes(item.startTime)
-        const existingEnd = timeToMinutes(item.endTime)
-        const newStart = timeToMinutes(newItem.startTime)
-        const newEnd = timeToMinutes(newItem.endTime)
+        const existingStart = timeToMinutes(item.timeStart)
+        const existingEnd = timeToMinutes(item.timeEnd)
+        const newStart = timeToMinutes(newItem.timeStart)
+        const newEnd = timeToMinutes(newItem.timeEnd)
 
         // Check for overlap
         return (
@@ -93,6 +63,12 @@ export default function Schedules() {
       }
       return false
     })
+
+    if (conflict) {
+      console.error("Conflict detected:", newItem)
+    }
+
+    return conflict
   }
 
   // Convert time string (HH:MM) to minutes
@@ -101,36 +77,68 @@ export default function Schedules() {
     return hours * 60 + minutes
   }
 
-  const addScheduleItem = (newItem: Omit<ScheduleItem, "id">) => {
+  const addScheduleItem = async (newItem: Omit<ScheduleItem, "scheduleCode">) => {
     // Check for conflicts
     if (hasScheduleConflict(newItem)) {
       toast("Scheduling Conflict", {
-        description: `Room ${newItem.room} is already booked during this time on ${newItem.day}.`,
+        description: `Room ${newItem.roomCode} is already booked during this time on ${newItem.day}.`,
       })
       return false
     }
 
-    const id = Math.random().toString(36).substring(2, 9)
-    setSchedule([...schedule, { ...newItem, id }])
+    try {
+      const res = await axios.post(`${plsConnect()}/api/Schedule`, newItem)
 
-    toast("Schedule added", {
-      description: `Successfully added ${newItem.subject} for ${newItem.course} ${newItem.section}.`,
-    })
-    return true
-  } 
+      // Update local schedule state
+      // setSchedule((prev) => [
+      //   ...prev,
+      //   { ...newItem, id: res.data.id }, // Assuming the API returns the new item's ID
+      // ])
+
+      toast("Added schedule successfully")
+      return true
+    } catch (error) {
+      toast("Failed adding schedule")
+      return false
+    }
+  }
 
   const filteredSchedule = schedule.filter((item) => {
     return (
-      (filters.course === "" || item.course === filters.course) &&
+      (filters.courseCode === "" || item.courseCode === filters.courseCode) &&
       (filters.section === "" || item.section === filters.section) &&
-      (filters.subject === "" || item.subject.toLowerCase().includes(filters.subject.toLowerCase()))
+      (filters.subjectCode === "" || item.subjectCode.toLowerCase().includes(filters.subjectCode.toLowerCase()))
     )
   })
 
   // Get unique values for filters
-  const courses = Array.from(new Set(schedule.map((item) => item.course)))
-  const sections = Array.from(new Set(schedule.map((item) => item.section)))
+  const [courses, setCourses] = useState<Courses[]>([])
+  const [subjects, setSubjects] = useState<Subjects[]>([])
 
+  const getCourses = async () => {
+    try {
+      const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListCourse`)
+
+      setCourses(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getSubjects = async () => {
+    try {
+      const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListSubject`)
+
+      setSubjects(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getCourses()
+    getSubjects()
+  }, [])
   return (
     <>
       <h1 className="text-3xl font-bold mb-6">Class Schedule</h1>
@@ -146,7 +154,7 @@ export default function Schedules() {
               <CardTitle>Class Schedule (7:30 AM - 10:00 PM)</CardTitle>
             </CardHeader>
             <CardContent>
-              <FilterControls filters={filters} setFilters={setFilters} courses={courses} sections={sections} />
+              <FilterControls filters={filters} setFilters={setFilters} courses={courses}  subjects={subjects} />
 
               <div className="mt-6">
                 <ScheduleDisplay schedule={filteredSchedule} />

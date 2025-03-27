@@ -28,7 +28,6 @@ import useAuthStore from "@/FldrStore/auth"
 
 type ApplicationFormData = z.infer<typeof applicationSchema>
 
-
 export function ApplicationForm() {
 
   const form = useForm<ApplicationFormData>({
@@ -39,7 +38,7 @@ export function ApplicationForm() {
       lastName: "",
       address: "",
       birthDate: "",
-    },
+    },  
   })
 
   const { currentUser } = useAuthStore.getState();

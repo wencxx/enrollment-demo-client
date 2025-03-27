@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Edit, ArrowUpDown, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { routes } from "@/FldrTypes/routes"
+import { grantedPermissions } from "@/FldrTypes/routes"
 import {
     Dialog,
     DialogContent,
@@ -11,7 +11,7 @@ import {
     DialogHeader
 } from "@/components/ui/dialog"
 
-export const columns: ColumnDef<routes>[] = [
+export const columns: ColumnDef<grantedPermissions>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -35,13 +35,13 @@ export const columns: ColumnDef<routes>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "objectName",
+        accessorKey: "groupCode",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Route Name
+                Group Code
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),

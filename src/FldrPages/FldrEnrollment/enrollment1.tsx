@@ -4,7 +4,7 @@ import { PendingApplicantCol } from "@/FldrTypes/pendingapplicant"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { columnsPending } from "@/components/FldrDatatable/pendingapplicant-col"
+import { columnsPending } from "@/components/FldrDatatable/pendingapplicant-columns"
 import { DataTable } from "@/components/FldrDatatable/data-table";
 export default function Enrollment1() {
   // applicants who are "Pending"

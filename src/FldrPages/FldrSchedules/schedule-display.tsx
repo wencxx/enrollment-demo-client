@@ -55,7 +55,7 @@ export function ScheduleDisplay({ schedule }: ScheduleDisplayProps) {
   const [activeSection, setActiveSection] = useState<string>("")
 
   // Get all unique sections
-  const sections = Array.from(new Set(schedule.map((item) => `${item.course} ${item.section}`)))
+  const sections = Array.from(new Set(schedule.map((item) => `${item.courseDesc} -  ${item.yearCode}${item.section}`)))
 
   // If no active section is set but we have sections, set the first one
   if (activeSection === "" && sections.length > 0 && activeView === "section") {
@@ -66,15 +66,15 @@ export function ScheduleDisplay({ schedule }: ScheduleDisplayProps) {
     return schedule.filter((item) => {
       // Apply section filter if in section view
       if (sectionFilter) {
-        const itemSectionString = `${item.course} ${item.section}`
+        const itemSectionString = `${item.courseCode} ${item.yearCode}${item.section}`
         if (itemSectionString !== sectionFilter) return false
       }
 
       if (item.day !== day) return false
 
       const [slotHour, slotMinute] = timeSlot.split(":").map(Number)
-      const [startHour, startMinute] = item.startTime.split(":").map(Number)
-      const [endHour, endMinute] = item.endTime.split(":").map(Number)
+      const [startHour, startMinute] = item.timeStart.split(":").map(Number)
+      const [endHour, endMinute] = item.timeEnd.split(":").map(Number)
 
       const slotTime = slotHour * 60 + slotMinute
       const startTime = startHour * 60 + startMinute
@@ -109,12 +109,12 @@ export function ScheduleDisplay({ schedule }: ScheduleDisplayProps) {
 
         {activeView === "section" && sections.length > 0 && (
           <Select value={activeSection} onValueChange={(value) => setActiveSection(value)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select a section" />
+            <SelectTrigger className="w-[250px]">
+              <SelectValue placeholder="Select a course, year, and section" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Sections</SelectLabel>
+                <SelectLabel>Course, Year, and Sections</SelectLabel>
                 {sections.map((section) => (
                   <SelectItem key={section} value={section}>{section}</SelectItem>
                 ))}
@@ -149,15 +149,15 @@ export function ScheduleDisplay({ schedule }: ScheduleDisplayProps) {
                     <div key={day} className="p-1 border-l min-h-[50px]">
                       {items.map((item) => (
                         <div
-                          key={item.id}
+                          key={item.scheduleCode}
                           className="bg-primary/10 text-primary p-1 text-xs rounded mb-1 overflow-hidden"
-                          title={`${item.subject} - ${item.professor} - ${item.room}`}
+                          title={`${item.subjectCode} - ${item.professor} - ${item.roomCode}`}
                         >
-                          <div className="font-medium truncate w-[100px] lg:w-[150px]">{item.subject}</div>
+                          <div className="font-medium truncate w-[100px] lg:w-[150px]">{item.subjectCode}</div>
                           <div className="flex items-center gap-1 text-[10px] font-medium">
-                              {item.course} {item.section}
+                              {item.courseDesc} - {item.yearCode} {item.section}
                           </div>
-                          <div className="truncate text-[10px]">{item.room}</div>
+                          <div className="truncate text-[10px]">{item.roomName}</div>
                         </div>
                       ))}
                     </div>
@@ -184,15 +184,15 @@ export function ScheduleDisplay({ schedule }: ScheduleDisplayProps) {
                 <div className="p-2 text-sm text-center">{formatTime(timeSlot)}</div>
                 <div className="p-1 border-l min-h-[60px]">
                   {items.map((item) => (
-                    <div key={item.id} className="bg-primary/10 text-primary p-2 text-sm rounded mb-1">
-                      <div className="font-medium">{item.subject}</div>
+                    <div key={item.scheduleCode} className="bg-primary/10 text-primary p-2 text-sm rounded mb-1">
+                      <div className="font-medium">{item.subjectCode}</div>
                       <div className="flex items-center gap-1 mt-1 text-[13px]">
-                          {item.course} {item.section}
+                          {item.courseDesc} - {item.yearCode}{item.section}
                       </div>
                       <div className="text-xs mt-1">
-                        {formatTime(item.startTime)} - {formatTime(item.endTime)}
+                        {formatTime(item.timeStart)} - {formatTime(item.timeEnd)}
                       </div>
-                      <div className="text-xs">Room: {item.room}</div>
+                      <div className="text-xs">Room: {item.roomName}</div>
                       <div className="text-xs">Prof: {item.professor}</div>
                     </div>
                   ))}
@@ -225,12 +225,12 @@ export function ScheduleDisplay({ schedule }: ScheduleDisplayProps) {
                   <div key={day} className="p-1 border-l min-h-[50px]">
                     {items.map((item) => (
                       <div
-                        key={item.id}
+                        key={item.scheduleCode}
                         className="bg-primary/10 text-primary p-1 text-xs rounded mb-1 overflow-hidden"
-                        title={`${item.subject} - ${item.professor} - ${item.room}`}
+                        title={`${item.subjectCode} - ${item.professor} - ${item.roomCode}`}
                       >
-                        <div className="font-medium truncate w-[100px] lg:w-[150px]">{item.subject}</div>
-                        <div className="truncate text-[10px]">{item.room}</div>
+                        <div className="font-medium truncate w-[100px] lg:w-[150px]">{item.subjectCode}</div>
+                        <div className="truncate text-[10px]">{item.roomName}</div>
                         <div className="truncate text-[10px]">{item.professor}</div>
                       </div>
                     ))}
