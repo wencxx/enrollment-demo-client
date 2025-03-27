@@ -1,5 +1,5 @@
 import type React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -8,24 +8,83 @@ import type { Schedule, ScheduleItem } from "@/FldrTypes/schedule"
 import { toast } from "sonner"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
+import axios from "axios"
+import { plsConnect } from "@/FldrClass/ClsGetConnection"
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-const COURSES = ["BSIT", "BSCS", "BSECE", "BSCpE", "BSBA", "BSA", "BEED", "BSED"]
 
 interface AddScheduleFormProps {
-  onAddSchedule: (newItem: Omit<ScheduleItem, "id">) => boolean
+  onAddSchedule: (newItem: Omit<ScheduleItem, "scheduleCode">) => Promise<boolean>
   existingSchedule: Schedule
 }
 
+interface Courses {
+  courseCode: string
+  courseDesc: string
+}
+
+interface Years {
+  yearCode: string
+  yearDesc: string
+}
+
+interface Subjects {
+  subjectCode: string
+  subjectDesc: string
+  prerequisiteCode: string | null
+}
+
 export function AddScheduleForm({ onAddSchedule, existingSchedule }: AddScheduleFormProps) {
+  const [courses, setCourses] = useState<Courses[]>([])
+  const [years, setYears] = useState<Years[]>([])
+  const [subjects, setSubjects] = useState<Subjects[]>([])
+
+  const getCourses = async () => {
+    try {
+      const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListCourse`)
+
+      setCourses(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getYears = async () => {
+    try {
+      const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListYear`)
+
+      setYears(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getSubjects = async () => {
+    try {
+      const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListSubject`)
+
+      setSubjects(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getCourses()
+    getYears()
+    getSubjects()
+  }, [])
+
+  // add schedule logic
   const [formData, setFormData] = useState({
-    course: "",
+    courseCode: "",
+    yearCode: "",
     section: "",
-    subject: "",
+    subjectCode: "",
     day: "",
-    startTime: "",
-    endTime: "",
-    room: "",
+    timeStart: "",
+    timeEnd: "",
+    roomCode: "",
     professor: "",
   })
 
@@ -50,30 +109,50 @@ export function AddScheduleForm({ onAddSchedule, existingSchedule }: AddSchedule
     }
   }
 
-  // Check for potential conflicts based on room and day
+  // Check for potential conflicts based on room, day, and time
   const checkPotentialConflicts = (data: typeof formData) => {
-    if (!data.room || !data.day) {
+    if (!data.roomCode || !data.day || !data.timeStart || !data.timeEnd) {
       setPotentialConflicts([])
       return
     }
 
-    const conflicts = existingSchedule.filter((item) => item.room === data.room && item.day === data.day)
+    const conflicts = existingSchedule.filter((item) => {
+      if (item.roomCode === data.roomCode && item.day === data.day) {
+        const existingStart = item.timeStart.split(":").map(Number)
+        const existingEnd = item.timeEnd.split(":").map(Number)
+        const newStart = data.timeStart.split(":").map(Number)
+        const newEnd = data.timeEnd.split(":").map(Number)
+
+        const existingStartMinutes = existingStart[0] * 60 + existingStart[1]
+        const existingEndMinutes = existingEnd[0] * 60 + existingEnd[1]
+        const newStartMinutes = newStart[0] * 60 + newStart[1]
+        const newEndMinutes = newEnd[0] * 60 + newEnd[1]
+
+        return (
+          (newStartMinutes >= existingStartMinutes && newStartMinutes < existingEndMinutes) ||
+          (newEndMinutes > existingStartMinutes && newEndMinutes <= existingEndMinutes) ||
+          (newStartMinutes <= existingStartMinutes && newEndMinutes >= existingEndMinutes)
+        )
+      }
+      return false
+    })
 
     setPotentialConflicts(conflicts)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     // Basic validation
     if (
-      !formData.course ||
+      !formData.courseCode ||
+      !formData.yearCode ||
       !formData.section ||
-      !formData.subject ||
+      !formData.subjectCode ||
       !formData.day ||
-      !formData.startTime ||
-      !formData.endTime ||
-      !formData.room ||
+      !formData.timeStart ||
+      !formData.timeEnd ||
+      !formData.roomCode ||
       !formData.professor
     ) {
       toast("Error", {
@@ -83,8 +162,8 @@ export function AddScheduleForm({ onAddSchedule, existingSchedule }: AddSchedule
     }
 
     // Time validation
-    const startTime = formData.startTime.split(":").map(Number)
-    const endTime = formData.endTime.split(":").map(Number)
+    const startTime = formData.timeStart.split(":").map(Number)
+    const endTime = formData.timeEnd.split(":").map(Number)
     const startMinutes = startTime[0] * 60 + startTime[1]
     const endMinutes = endTime[0] * 60 + endTime[1]
 
@@ -95,89 +174,118 @@ export function AddScheduleForm({ onAddSchedule, existingSchedule }: AddSchedule
       return
     }
 
+    // Prevent submission if there are conflicts
+    if (potentialConflicts.length > 0) {
+      toast("Error", {
+        description: "There are scheduling conflicts. Please resolve them before submitting.",
+      })
+      return
+    }
+
     // Try to add the schedule
-    const success = onAddSchedule(formData)
+    const success = await onAddSchedule(formData)
 
     // If successful, reset form
     if (success) {
       setFormData({
-        course: "",
+        courseCode: "",
+        yearCode: "",
         section: "",
-        subject: "",
+        subjectCode: "",
         day: "",
-        startTime: "",
-        endTime: "",
-        room: "",
+        timeStart: "",
+        timeEnd: "",
+        roomCode: "",
         professor: "",
       })
       setPotentialConflicts([])
     }
   }
 
-  // Get unique sections for the selected course
-  const getSectionsForCourse = () => {
-    if (!formData.course) return []
-
-    const sections = existingSchedule.filter((item) => item.course === formData.course).map((item) => item.section)
-
-    return Array.from(new Set(sections))
-  }
-
   // Get unique rooms
-  const rooms = Array.from(new Set(existingSchedule.map((item) => item.room)))
+  const rooms = [
+    {
+      roomCode: 'R0001',
+      roomName: 'Comlab 1',
+      status: 'Available',
+    },
+    {
+      roomCode: 'R0002',
+      roomName: 'Comlab 2',
+      status: 'Available',
+    }
+  ]
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="course">Course</Label>
-          <Select value={formData.course} onValueChange={(value) => handleSelectChange("course", value)}>
+          <Select value={formData.courseCode} onValueChange={(value) => handleSelectChange("courseCode", value)}>
             <SelectTrigger className="w-full" id="course">
               <SelectValue placeholder="Select Course" />
             </SelectTrigger>
             <SelectContent>
-              {COURSES.map((course) => (
-                <SelectItem key={course} value={course}>
-                  {course}
+              {courses.map((course) => (
+                <SelectItem key={course.courseCode} value={course.courseCode}>
+                  {course.courseDesc}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="section">Section</Label>
-          <div className="flex gap-2">
-            <Select value={formData.section} onValueChange={(value) => handleSelectChange("section", value)}>
-              <SelectTrigger id="section" className="flex-1">
-                <SelectValue placeholder="Select Section" />
-              </SelectTrigger>
-              <SelectContent>
-                {getSectionsForCourse().length > 0
-                  ? getSectionsForCourse().map((section) => (
-                      <SelectItem key={section} value={section}>
-                        {section}
-                      </SelectItem>
-                    ))
-                  : ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B"].map((section) => (
-                      <SelectItem key={section} value={section}>
-                        {section}
-                      </SelectItem>
-                    ))}
-              </SelectContent>
-            </Select>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="year">Year</Label>
+            <div className="flex gap-2">
+              <Select value={formData.yearCode} onValueChange={(value) => handleSelectChange("yearCode", value)}>
+                <SelectTrigger id="year" className="flex-1">
+                  <SelectValue placeholder="Select Year" />
+                </SelectTrigger>
+                <SelectContent>
+                  {years.map((year) => (
+                    <SelectItem key={year.yearCode} value={year.yearCode}>
+                      {year.yearDesc}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="section">Section</Label>
+            <div className="flex gap-2">
+              <Select value={formData.section} onValueChange={(value) => handleSelectChange("section", value)}>
+                <SelectTrigger id="section" className="flex-1">
+                  <SelectValue placeholder="Select Section" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["A", "B", "C", "D"].map((section) => (
+                    <SelectItem key={section} value={section}>
+                      {section}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="subject">Subject</Label>
-          <Input
-            id="subject"
-            name="subject"
-            value={formData.subject}
-            onChange={handleChange}
-            placeholder="e.g. Computer Programming 1"
-          />
+          <Select value={formData.subjectCode} onValueChange={(value) => handleSelectChange("subjectCode", value)}>
+            <SelectTrigger id="subject" className="flex-1 w-full">
+              <SelectValue placeholder="Select Subjects" />
+            </SelectTrigger>
+            <SelectContent>
+              {subjects.map((subject) => (
+                <SelectItem key={subject.subjectCode} value={subject.subjectCode}>
+                  {subject.subjectDesc}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
@@ -212,11 +320,11 @@ export function AddScheduleForm({ onAddSchedule, existingSchedule }: AddSchedule
             <Label htmlFor="startTime">Start Time</Label>
             <Input
               id="startTime"
-              name="startTime"
+              name="timeStart"
               type="time"
               min="07:30"
               max="22:00"
-              value={formData.startTime}
+              value={formData.timeStart}
               onChange={handleChange}
             />
           </div>
@@ -225,11 +333,11 @@ export function AddScheduleForm({ onAddSchedule, existingSchedule }: AddSchedule
             <Label htmlFor="endTime">End Time</Label>
             <Input
               id="endTime"
-              name="endTime"
+              name="timeEnd"
               type="time"
               min="07:30"
               max="22:00"
-              value={formData.endTime}
+              value={formData.timeEnd}
               onChange={handleChange}
             />
           </div>
@@ -238,14 +346,14 @@ export function AddScheduleForm({ onAddSchedule, existingSchedule }: AddSchedule
         <div className="space-y-2">
           <Label htmlFor="room">Room</Label>
           <div className="flex gap-2">
-            <Select value={formData.room} onValueChange={(value) => handleSelectChange("room", value)}>
+            <Select value={formData.roomCode} onValueChange={(value) => handleSelectChange("roomCode", value)}>
               <SelectTrigger id="room" className="flex-1">
                 <SelectValue placeholder="Select Room" />
               </SelectTrigger>
               <SelectContent>
                 {rooms.map((room) => (
-                  <SelectItem key={room} value={room}>
-                    {room}
+                  <SelectItem key={room.roomCode} value={room.roomCode}>
+                    {room.roomName}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -263,7 +371,7 @@ export function AddScheduleForm({ onAddSchedule, existingSchedule }: AddSchedule
             <ul className="mt-2 text-sm">
               {potentialConflicts.map((conflict) => (
                 <li key={conflict.id} className="mb-1">
-                  {conflict.startTime} - {conflict.endTime}: {conflict.subject} ({conflict.course} {conflict.section})
+                  {conflict.timeStart} - {conflict.timeEnd}: {conflict.subjectCode} ({conflict.courseCode} {conflict.section})
                 </li>
               ))}
             </ul>

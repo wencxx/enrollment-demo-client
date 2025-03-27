@@ -27,7 +27,6 @@ import { applicationSchema } from "@/FldrSchema/userSchema.ts"
 
 type ApplicationFormData = z.infer<typeof applicationSchema>
 
-
 export function ApplicationForm() {
 
   const form = useForm<ApplicationFormData>({
@@ -38,7 +37,7 @@ export function ApplicationForm() {
       lastName: "",
       address: "",
       birthDate: "",
-    },
+    },  
   })
 
   const onSubmit = async (values: ApplicationFormData) => {

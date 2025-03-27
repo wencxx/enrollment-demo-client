@@ -9,14 +9,15 @@ import Student from "./FldrPages/FldrEntry/student"
 import Rate from "./FldrPages/FldrEntry/rate"
 import Enrollment1 from "./FldrPages/FldrEnrollment/enrollment1"
 import Enrollment2 from "./FldrPages/FldrEnrollment/enrollment2"
-import Unauhtorize from "@/FldrPages/redirects/unauthorized"
+import Unauthorized from "@/FldrPages/redirects/unauthorized"
 import RateCourse from "@/FldrPages/FldrEntry/ratecourse"
 import Application from "./FldrPages/FldrStudent/application/application"
 import Grades from "./FldrPages/FldrStudent/grades"
-import StudenPofile from "./FldrPages/FldrStudent/profile"
+import StudentProfile from "./FldrPages/FldrStudent/profile"
 import StatementOfAccount from "./FldrPages/FldrStudent/statement-of-account"
 import Users from "./FldrPages/FldrPermissions/users"
-import RoutesPage from "./FldrPages/FldrPermissions/assign-permission"
+import GrantPermission from "./FldrPages/FldrPermissions/assign-permission"
+import RoutePage from "./FldrPages/FldrPermissions/routes"
 import { useEffect } from "react";
 
 const useTabVisibility = () => {
@@ -56,12 +57,13 @@ function App() {
             <Route path="enrollment/enrollment2" element={<Enrollment2 />} />
             <Route path="student/application" element={<Application />} />
             <Route path="student/grades" element={<Grades />} />
-            <Route path="student/profile" element={<StudenPofile />} />
+            <Route path="student/profile" element={<StudentProfile />} />
             <Route path="student/statement-of-account" element={<StatementOfAccount />} />
             <Route path="permissions/users" element={<Users />} />
-            <Route path="permissions/routes" element={<RoutesPage />} />
+            <Route path="permissions/grant-permission" element={<GrantPermission />} />
+            <Route path="permissions/routes" element={<RoutePage />} />
           </Route>
-          <Route path="/unauthorize" element={<Unauhtorize />} />
+          <Route path="/unauthorize" element={<Unauthorized />} />
         </Routes>
       </Router>
     </div>

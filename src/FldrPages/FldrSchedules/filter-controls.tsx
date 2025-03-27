@@ -6,27 +6,33 @@ import { X } from "lucide-react"
 
 interface FilterControlsProps {
   filters: {
-    course: string
+    courseCode: string
     section: string
-    subject: string
+    subjectCode: string
   }
   setFilters: React.Dispatch<
     React.SetStateAction<{
-      course: string
+      courseCode: string
       section: string
-      subject: string
+      subjectCode: string
     }>
   >
-  courses: string[]
-  sections: string[]
+  courses: {
+    courseCode: string
+    courseDesc: string
+  }[]
+  subjects: {
+    subjectCode: string
+    subjectDesc: string
+  }[]
 }
 
-export function FilterControls({ filters, setFilters, courses, sections }: FilterControlsProps) {
+export function FilterControls({ filters, setFilters, courses, subjects }: FilterControlsProps) {
   const clearFilters = () => {
     setFilters({
-      course: "",
+      courseCode: "",
       section: "",
-      subject: "",
+      subjectCode: "",
     })
   }
 
@@ -37,15 +43,15 @@ export function FilterControls({ filters, setFilters, courses, sections }: Filte
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
           <Label htmlFor="course-filter">Course</Label>
-          <Select value={filters.course} onValueChange={(value) => setFilters({ ...filters, course: value })}>
+          <Select value={filters.courseCode} onValueChange={(value) => setFilters({ ...filters, courseCode: value })}>
             <SelectTrigger className="w-full" id="course-filter">
               <SelectValue placeholder="All Courses" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Courses</SelectItem>
               {courses.map((course) => (
-                <SelectItem key={course} value={course}>
-                  {course}
+                <SelectItem key={course.courseCode} value={course.courseCode}>
+                  {course.courseDesc}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -60,7 +66,7 @@ export function FilterControls({ filters, setFilters, courses, sections }: Filte
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Sections</SelectItem>
-              {sections.map((section) => (
+              {['A', 'B', 'C', 'D'].map((section) => (
                 <SelectItem key={section} value={section}>
                   {section}
                 </SelectItem>
@@ -71,23 +77,25 @@ export function FilterControls({ filters, setFilters, courses, sections }: Filte
 
         <div className="space-y-2">
           <Label htmlFor="subject-filter">Subject</Label>
-          <Select value={filters.subject} onValueChange={(value) => setFilters({ ...filters, subject: value })}>
-            <SelectTrigger className="w-full" id="section-filter">
+          <Select value={filters.subjectCode} onValueChange={(value) => setFilters({ ...filters, subjectCode: value })}>
+            <SelectTrigger className="w-full" id="subject-filter">
               <SelectValue placeholder="All Subjects" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>All Subjects</SelectLabel>
-                <SelectItem value="Computer Programming 1">Computer Programming 1</SelectItem>
-                <SelectItem value="Database Management">Database Management</SelectItem>
-                <SelectItem value="Mathematics in the Modern World">Mathematics in the Modern World</SelectItem>
+                {subjects.map((subject) => (
+                  <SelectItem key={subject.subjectCode} value={subject.subjectCode}>
+                    {subject.subjectDesc}
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      {(filters.course || filters.section || filters.subject) && (
+      {(filters.courseCode || filters.section || filters.subjectCode) && (
         <div className="flex justify-end">
           <Button variant="outline" size="sm" onClick={clearFilters} className="flex items-center gap-1">
             <X className="h-4 w-4" />

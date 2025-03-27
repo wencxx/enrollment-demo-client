@@ -18,6 +18,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { Toaster } from "@/components/ui/sonner"
 
 function Layout() {
   const [theme, setTheme] = useState(localStorage.getItem('theme'))
@@ -28,26 +29,22 @@ function Layout() {
   const toggleMode = () => {
     const htmlElement = document.documentElement;
 
-    htmlElement.style.removeProperty("--sidebar");
-    htmlElement.style.removeProperty("--sidebar-foreground");
-    htmlElement.style.removeProperty("--primary");
-    htmlElement.style.removeProperty("--chart-1");
-    htmlElement.style.removeProperty("--chart-2");
-
-    localStorage.removeItem('color');
-    localStorage.removeItem('primary');
-    localStorage.removeItem('chart1');
-    localStorage.removeItem('chart2');
-    localStorage.removeItem('text');
-
     if (htmlElement.classList.contains('dark')) {
       htmlElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
       setTheme('light')
+      htmlElement.style.setProperty("--sidebar", 'oklch(0.985 0.001 106.423)');
+      localStorage.setItem('color', 'oklch(0.985 0.001 106.423)');
+      htmlElement.style.setProperty("--sidebar-foreground", 'oklch(0.147 0.004 49.25)');
+      localStorage.setItem('text', 'oklch(0.147 0.004 49.25)');
     } else {
       htmlElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
       setTheme('dark')
+      htmlElement.style.setProperty("--sidebar", 'oklch(0.216 0.006 56.043)');
+      localStorage.setItem('color', 'oklch(0.216 0.006 56.043)');
+      htmlElement.style.setProperty("--sidebar-foreground", 'oklch(0.985 0.001 106.423)');
+      localStorage.setItem('text', 'oklch(0.985 0.001 106.423)');
     }
   }
 
@@ -65,15 +62,14 @@ function Layout() {
 
   // Check if the user is authorized to access the current route
   const isAuthorized = () => {
-    const path = location.pathname.split('/')[2] || location.pathname.split('/')[1] || '/'
+    const path = location.pathname.split('/')[2] || '/'
     const authorizedPaths: Record<string, string[]> = {
-      'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/', 'grades', 'profile', 'application', 'statement-of-account', 'users', 'schedules', 'routes'],
-      // Students should not access enrollment
-      'Student': ['application', 'grades', 'profile', 'statement-of-account']
+      'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/'],
+      'Student': ['enrollment1', 'enrollment2']
     }
     return user && authorizedPaths[user.groupName]?.includes(path)
   }
-
+ 
   if (!authenticated) return <Navigate to='/login' />
   if (!isAuthorized()) return <Navigate to='/unauthorize' />
 
@@ -81,13 +77,13 @@ function Layout() {
     <SidebarProvider  >
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 print:hidden">
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center justify-between gap-2 px-4 w-full">
             <div className='flex items-center gap-x-2'>
               <SidebarTrigger className="-ml-1" />
               <Breadcrumb className='capitalize'>
                 <BreadcrumbList>
-                  {location.pathname.split('/')[1] && location.pathname.split('/')[1] !== 'student' && (
+                  {location.pathname.split('/')[1] && (
                     <>
                       <BreadcrumbItem className="hidden md:block">
                         <BreadcrumbLink>
@@ -98,19 +94,13 @@ function Layout() {
                     </>
                   )}
                   <BreadcrumbItem className="hidden md:block">
-                    {location.pathname.split('/')[1] ? (
-                      <BreadcrumbLink>
-                        {location.pathname.split('/')[1]}
-                      </BreadcrumbLink>
-                    ) : (
-                      <BreadcrumbPage>
-                        Dashboard
-                      </BreadcrumbPage>
-                    )}
+                    <BreadcrumbLink>
+                      {location.pathname.split('/')[1] || 'Dashboard'}
+                    </BreadcrumbLink>
                   </BreadcrumbItem>
                   {location.pathname.split('/')[1] && <BreadcrumbSeparator className="hidden md:block" />}
                   <BreadcrumbItem>
-                    <BreadcrumbPage>{location.pathname.split('/')[2]?.split('-').join(' ') || null}</BreadcrumbPage>
+                    <BreadcrumbPage>{location.pathname.split('/')[2] || null}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
@@ -122,6 +112,7 @@ function Layout() {
         </header>
         <main className="w-full h-full p-5">
           <Outlet />
+          <Toaster />
         </main>
       </SidebarInset>
     </SidebarProvider>
