@@ -116,6 +116,11 @@ const data = {
           url: "entry/ratecourse",
           authorizeUsers: ['Admin']
         },
+        {
+          title: "Academic Year",
+          url: "entry/AY",
+          authorizeUsers: ['Admin']
+        },
       ],
     },
     {

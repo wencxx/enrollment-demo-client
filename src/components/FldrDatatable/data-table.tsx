@@ -80,7 +80,7 @@ export function DataTable<TData, TValue>({
     })
 
     return (
-        <div className="mt-8">
+        <div className="mt-0">
             <h1 className="mb-4">List of {title}</h1>
             <div className="flex items-center mb-4 gap-x-5 md:gap-x-0">
                 <Input

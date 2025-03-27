@@ -163,3 +163,15 @@ export const prerequisiteSchema = z.object({
   subjectCode: z.string().min(1, 'Subject code is required'),
   prerequisiteCode: z.string().min(1, 'Subject prerequisite is required'),
 });
+
+export const acadYearSchema = z.object({
+  ayStart: z.number()
+    .min(2000, { message: "Year must be 2000 or later." })
+    .max(4000, { message: "Year must be 4000 or earlier." }),
+  ayEnd: z.number()
+    .min(2000, { message: "Year must be 2000 or later." })
+    .max(4000, { message: "Year must be 4000 or earlier." }),
+}).refine((data) => data.ayEnd > data.ayStart, {
+  message: "Ending year cannot be the same or before the starting year.",
+  path: ["ayEnd"],
+});
