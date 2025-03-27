@@ -61,7 +61,9 @@ export default function Rate() {
           </DialogContent>
         </Dialog>
       </div>
-      <DataTable columns={columns} data={rates} loading={loading} title="rates" />
+      <div className="mt-4">
+        <DataTable columns={columns} data={rates} loading={loading} title="rates" />
+      </div>
       <Toaster />
     </>
 

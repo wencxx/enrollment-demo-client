@@ -19,6 +19,7 @@ import Users from "./FldrPages/FldrPermissions/users"
 import GrantPermission from "./FldrPages/FldrPermissions/assign-permission"
 import RoutePage from "./FldrPages/FldrPermissions/routes"
 import Subject from "./FldrPages/FldrEntry/subject-prerequisite"
+import AcademicYearPage from "./FldrPages/FldrEntry/academicyear"
 import RoutesPage from "./FldrPages/FldrPermissions/assign-permission"
 import { useEffect } from "react";
 
@@ -56,6 +57,7 @@ function App() {
             <Route path="entry/rate" element={<Rate />} />
             <Route path="entry/subject-prerequisite" element={<Subject />} />
             <Route path="entry/ratecourse" element={<RateCourse />} />
+            <Route path="entry/AY" element={<AcademicYearPage />} />
             <Route path="enrollment/enrollment1" element={<Enrollment1 />} />
             <Route path="enrollment/enrollment2" element={<Enrollment2 />} />
             <Route path="student/application" element={<Application />} />
