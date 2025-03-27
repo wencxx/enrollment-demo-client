@@ -50,7 +50,7 @@ interface StudentFormProps {
 const fetchPkCode = async (studentCode: string) => {
   try {
     const response = await axios.get(
-      `${plsConnect()}/API/WEBAPI/GetEnrollmentByStudent/${studentCode}`
+      `${plsConnect()}/API/WEBAPI/StudentController/GetEnrollmentByStudent/${studentCode}`
     );
     return response.data.pkCode;
   } catch (error) {
@@ -154,7 +154,7 @@ export const EditStudent =  ({ studentCode, onSubmitSuccess }) => {
         };
 
         await axios.put(
-          `${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollment1`,
+          `${plsConnect()}/API/WEBAPI/StudentController/UpdateStudentEnrollment1`,
           formattedValues
         );
 

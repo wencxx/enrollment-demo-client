@@ -11,7 +11,7 @@ import {
     DialogHeader
   } from "@/components/ui/dialog"
 import { useState } from "react"
-import { EditCourse } from "../FldrForm/editcourse"
+import { CourseForm } from "../FldrForm/entrycourse"
 
 export const columns: ColumnDef<CourseCol>[] = [
     {
@@ -65,7 +65,7 @@ export const columns: ColumnDef<CourseCol>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) => {
+        cell: ({ row, table }) => {
           const [isCourseDialogOpen, setIsCourseDialogOpen] = useState(false);
           const [courseCode, setCourseCode] = useState("");
 
@@ -74,33 +74,33 @@ export const columns: ColumnDef<CourseCol>[] = [
             setIsCourseDialogOpen(true);
           };
 
-        //   const closeModal = () => {
-        //     setIsCourseDialogOpen(false)
-        //   }
-
-          const handleCourseUpdate = (updatedCourse) => {
-            console.log("Updated course details:", updatedCourse);
+          const handleCourseUpdate = () => {
             setIsCourseDialogOpen(false);
+            // Call refresh function from table meta if available
+            const onRefresh = table.options.meta?.refreshData;
+            if (typeof onRefresh === 'function') {
+              console.log("Refreshing course data after update");
+              onRefresh();
+            }
           };
 
-
-            return (
-                <Dialog open={isCourseDialogOpen} onOpenChange={setIsCourseDialogOpen}>
-                    <DialogTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.courseCode)}>
-                        <span className="sr-only">Open menu</span>
-                        <Edit className="h-4 w-4" />
-                    </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-                        <DialogHeader>
-                        {/* <DialogTitle className="mb-4">View Course</DialogTitle> */}
-                        </DialogHeader>
-                    <EditCourse courseCode={courseCode} onSubmitSuccess={handleCourseUpdate} />
-                        {/* <PendingApplicantEnrollment1Form studentCode={studentCode} /> */}
-                    </DialogContent>
-                </Dialog>
-            )
+          return (
+            <Dialog open={isCourseDialogOpen} onOpenChange={setIsCourseDialogOpen}>
+                <DialogTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.courseCode)}>
+                    <span className="sr-only">Edit course</span>
+                    <Edit className="h-4 w-4" />
+                </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md" aria-labelledby="dialog-title">
+                    <CourseForm 
+                      editMode={true}
+                      courseToEdit={courseCode} 
+                      onCancel={handleCourseUpdate}
+                    />
+                </DialogContent>
+            </Dialog>
+          );
         },
     },
 ]

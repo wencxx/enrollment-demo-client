@@ -6,11 +6,9 @@ import {
     Dialog,
     DialogContent,
     DialogTrigger,
-    DialogTitle,
-    DialogHeader
-  } from "@/components/ui/dialog"
+} from "@/components/ui/dialog"
 import { useState } from "react"
-import { PrerequisiteCol, SubjectCol } from "@/FldrTypes/subject-prerequisite"
+import { PrerequisiteCol } from "@/FldrTypes/subject-prerequisite"
 import { PrerequisiteForm } from "@/components/FldrForm/entryprerequisite"
 
 export const prerequisiteColumns: ColumnDef<PrerequisiteCol>[] = [
@@ -52,20 +50,6 @@ export const prerequisiteColumns: ColumnDef<PrerequisiteCol>[] = [
         enableHiding: false,
     },
 
-
-    {
-        accessorKey: "prerequisiteCode",
-        header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                Prerequisite Code
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-    },
-
     {
         accessorKey: "subjectCode",
         header: ({ column }) => (
@@ -73,16 +57,43 @@ export const prerequisiteColumns: ColumnDef<PrerequisiteCol>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Subject Code
+                Subject
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
+        cell: ({ row }) => (
+            <div>
+                <div className="font-medium">{row.original.subjectCode}</div>
+                {row.original.subjectDesc && (
+                    <div className="text-sm text-muted-foreground">{row.original.subjectDesc}</div>
+                )}
+            </div>
+        ),
     },
     
-
+    {
+        accessorKey: "prerequisiteCode",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Prerequisite
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ row }) => (
+            <div>
+                <div className="font-medium">{row.original.prerequisiteCode}</div>
+                {row.original.prerequisiteDesc && (
+                    <div className="text-sm text-muted-foreground">{row.original.prerequisiteDesc}</div>
+                )}
+            </div>
+        ),
+    },
     {
         id: "actions",
-        cell: ({ row }) => {
+        cell: ({ row, table }) => {
           const [isPrerequisiteDialogOpen, setIsPrerequisiteDialogOpen] = useState(false);
           const [subjectCode, setSubjectCode] = useState("");
 
@@ -93,24 +104,27 @@ export const prerequisiteColumns: ColumnDef<PrerequisiteCol>[] = [
 
           const handlePrerequisiteUpdate = () => {
             setIsPrerequisiteDialogOpen(false);
+            // Call refresh function from table meta if available
+            const onRefresh = table.options.meta?.refreshData;
+            if (typeof onRefresh === 'function') {
+              console.log("Refreshing prerequisite data after update");
+              onRefresh();
+            }
           };
 
           return (
             <Dialog open={isPrerequisiteDialogOpen} onOpenChange={setIsPrerequisiteDialogOpen}>
                 <DialogTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.subjectCode)}>
-                    <span className="sr-only">Open menu</span>
+                    <span className="sr-only">Edit prerequisite</span>
                     <Edit className="h-4 w-4" />
                 </Button>
                 </DialogTrigger>
-                <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-                    {/* <DialogHeader>
-                        <DialogTitle id="dialog-title">Edit Prerequisite</DialogTitle>
-                    </DialogHeader> */}
+                <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden">
                     <PrerequisiteForm 
                         editMode={true}
                         subjectToEdit={subjectCode} 
-                        onCancel={handlePrerequisiteUpdate} 
+                        onCancel={handlePrerequisiteUpdate}
                     />
                 </DialogContent>
             </Dialog>

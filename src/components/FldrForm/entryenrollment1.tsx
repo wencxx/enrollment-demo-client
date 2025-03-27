@@ -160,7 +160,7 @@ export function Enrollment1Form() {
     try {
       const postResponse = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertEnrollment1`, enrollment1Data)
 
-      const putResponse = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollmentStatus`, enrollment1Data)
+      const putResponse = await axios.put(`${plsConnect()}/API/WEBAPI/StudentController/UpdateStudentEnrollmentStatus`, enrollment1Data)
 
       console.log("Data submitted successfully:", postResponse)
       console.log("Data submitted successfully:", putResponse)
