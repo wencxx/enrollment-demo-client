@@ -175,3 +175,7 @@ export const acadYearSchema = z.object({
   message: "Ending year cannot be the same or before the starting year.",
   path: ["ayEnd"],
 });
+
+export const gradeEditSchema = z.object({
+  // subjectCode: z.string().min(1, 'Subject code is required'),
+});
