@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -6,6 +6,12 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Progress } from "@/components/ui/progress"
 import { ArrowDown, ArrowUp, BarChart, BookOpen, GraduationCap } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import useAuthStore from "@/FldrStore/auth"
+import { toast } from "sonner"
+import { StudentDetails } from "@/FldrTypes/students-col"
+import axios from "axios"
+import { plsConnect } from "@/FldrClass/ClsGetConnection"
+import { AcademicYear } from "@/FldrTypes/academic-year"
 
 const academicData = {
   "2022-2023": {
@@ -303,28 +309,74 @@ const academicData = {
   },
 }
 
+
 export default function Grades() {
   const [selectedYear, setSelectedYear] = useState("2022-2023")
   const yearData = academicData[selectedYear as keyof typeof academicData]
   const { year, section } = academicData[selectedYear as keyof typeof academicData]
 
+  const { currentUser } = useAuthStore.getState();
+  
+  const [student, setStudent] = useState<StudentDetails | null>(null);
+  const [acadYears, setAcadYears] = useState<AcademicYear[]>([])
+
+  const userCode = currentUser?.userCode;
+
+  async function fetchStudent() {
+      try {
+        const response = await axios.get(`${plsConnect()}/GradesController/GetStudentDetails/${userCode}`)
+        console.log(response.data)
+        setStudent(response.data)
+      } catch (error: any) {
+        console.error("Error fetching students:", error)
+      }
+    }
+    useEffect(() => {
+        fetchStudent();
+    }, []); 
+
+    const studentCode = student?.studentCode;
+
+    async function fetchAcadYears() {
+      if (!studentCode) return;
+      try {
+        console.log(studentCode)
+        const response = await axios.get(`${plsConnect()}/GradesController/GetAcadYearActive/${studentCode}`)
+        console.log(response.data)
+        setAcadYears(response.data)
+      } catch (error: any) {
+        console.error("Error fetching years:", error)
+      }
+    }
+    useEffect(() => {
+      fetchAcadYears();
+    }, [studentCode]); 
+  
+    if (!currentUser) {
+      toast("User not logged in.");
+      return;
+    }
+    
   return (
     <>
       <header className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Student Grade Report</h1>
-          <p className="text-muted-foreground mt-1">Student Number: 0000001 | BS Information Technology | {year}-{section}</p>
+          <p className="text-muted-foreground mt-1">User: {currentUser.userCode} | Student Number: {student?.studentCode} | {student?.courseDesc} | {year}-{section}</p>
         </div>
         <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
           <Select value={selectedYear} onValueChange={setSelectedYear}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select Year" />
             </SelectTrigger>
+            {/* limit to what the student has in enrollment1, needs a default */}
             <SelectContent>
-              <SelectItem value="2022-2023">2022-2023</SelectItem>
-              <SelectItem value="2023-2024">2023-2024</SelectItem>
-              <SelectItem value="2024-2025">2024-2025</SelectItem>
-            </SelectContent>
+            {acadYears.map((year) => (
+              <SelectItem key={year.aYearCode} value={year.aYearCode}>
+                {year.ayStart} - {year.ayEnd}
+              </SelectItem>
+            ))}
+          </SelectContent>
           </Select>
           <Badge variant="secondary" className="text-sm font-medium">
             GWA: {yearData.cumulativeGWA.toFixed(2)}

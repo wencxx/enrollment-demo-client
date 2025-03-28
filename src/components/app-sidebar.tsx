@@ -196,7 +196,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent className="scrollbar-hidden">
         {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuDashboard} />}
-        {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuStudent} title="Student" />}
+        {(user && (user.groupName === 'Admin' || user.groupName === 'Student')) && <SingleMenu data={data.menuStudent} title="Student" />}
         {/* { (user && (user.groupName === 'Admin')) && <MenuEnrollment dashboard={data.menuEnrollment} /> } */}
         {(user && (user.groupName === 'Admin')) && <MenuMain items={data.menuMain} />}
         {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuPersmissions} title="Permissions" />}

@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { useState } from "react"
-import { Eye, ArrowUpDown } from "lucide-react"
+import { Eye, ArrowUpDown, FileSpreadsheet } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { format } from "date-fns";
@@ -17,6 +17,7 @@ import {
     DialogTitle,
     DialogHeader
   } from "@/components/ui/dialog"
+import { EditGrades } from "../FldrForm/editgrades"
 
 export const columns: ColumnDef<studentProfile>[] = [
     {
@@ -159,7 +160,7 @@ export const columns: ColumnDef<studentProfile>[] = [
             const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
             const [studentCode, setStudentCode] = useState("");
     
-            const status = row.getValue("enrollStatusCode"); // Get status from row
+            const status = row.getValue("enrollStatusCode");
     
             const handleProfileDialog = (studentCode: string) => {
                 console.log("Opening modal for student:", studentCode); 
@@ -167,14 +168,25 @@ export const columns: ColumnDef<studentProfile>[] = [
                 setTimeout(() => setIsProfileDialogOpen(true), 0);
             };
     
-            const handleProfileUpdate = (updatedStudent) => {
+            const handleProfileUpdate = (updatedStudent: any) => {
                 console.log("Updated student details:", updatedStudent);
                 setIsProfileDialogOpen(false);
             };
 
+            // grade modal
+            const [isGradeDialogOpen, setIsGradeDialogOpen] = useState(false);
+
+            const handleGradeDialog = (studentCode: string) => {
+                console.log("Opening grades for student:", studentCode); 
+                setStudentCode(studentCode);
+                setTimeout(() => setIsGradeDialogOpen(true), 0);
+            };
+
+
           return (
                 <>
                 {status !== "Pending" && (
+                    <div>
                     <Dialog open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen}>
                         <DialogTrigger asChild>
                             <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleProfileDialog(row.original.studentCode)}>
@@ -189,7 +201,24 @@ export const columns: ColumnDef<studentProfile>[] = [
                             <EditStudent studentCode={studentCode} onSubmitSuccess={handleProfileUpdate} />
                         </DialogContent>
                     </Dialog>
+                    {/* update grades modal */}
+                    <Dialog open={isGradeDialogOpen} onOpenChange={setIsGradeDialogOpen}>
+                    <DialogTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleGradeDialog(row.original.studentCode)}>
+                            <span className="sr-only">Open menu</span>
+                            <FileSpreadsheet className="h-4 w-4" />
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[80dvw] lg:!max-w-[70dvw] scrollbar-hidden" aria-labelledby="dialog-title">
+                        <DialogHeader>
+                            <DialogTitle className="mb-4">Update Grades</DialogTitle>
+                        </DialogHeader>
+                        <EditGrades studentCode={studentCode} />
+                    </DialogContent>
+                    </Dialog>
+                    </div>
                 )}
+                
                 </>
             )
         },
