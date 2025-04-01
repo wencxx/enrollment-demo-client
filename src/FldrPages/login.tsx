@@ -75,7 +75,7 @@ function Login({
             if (role === 'Admin') {
                 navigate('/')
             } else if (role === 'Student') {
-                navigate('/student/application')
+                navigate('/student/profile')
             } else {
                 navigate('/')
             }
