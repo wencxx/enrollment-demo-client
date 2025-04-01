@@ -3,6 +3,7 @@ import { enrollment1Schema } from "@/FldrSchema/userSchema.ts"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { AcademicYear } from "@/FldrTypes/academic-year"
 import { Year } from "@/FldrTypes/year"
 import { Sem } from "@/FldrTypes/sem"
 import { CourseCol } from "@/FldrTypes/course.col"
@@ -66,6 +67,7 @@ export function Enrollment1Form() {
   const [course, setCourse] = useState<CourseCol[]>([])
   const [student, setStudent] = useState<StudentCol[]>([])
   const [status, setStatus] = useState<EnrollmentStatus[]>([])
+  const [academicYear, setAcademicYear] = useState<AcademicYear[]>([])
 
   const [studentSearch, setStudentSearch] = useState("");
 
@@ -131,12 +133,22 @@ export function Enrollment1Form() {
     }
   }
 
+  async function fetchAYears() {
+    try {
+      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListAcademicYear`)
+      setAcademicYear(response.data)
+    } catch (error: any) {
+      console.error("Error fetching years:", error)
+    }
+  }
+
   useEffect(() => {
     fetchYears()
     fetchSem()
     fetchCourse()
     fetchStudent()
     fetchStatus()
+    fetchAYears()
   }, [])
 
   const { currentUser } = useAuthStore.getState();
@@ -364,6 +376,35 @@ export function Enrollment1Form() {
                   </Command>
                 </PopoverContent>
               </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="aYearCode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Academic Year</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a year" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {academicYear.length > 0 ? (
+                    academicYear.map((AY) => (
+                      <SelectItem key={AY.AYearCode} value={AY.AYearCode}>
+                        {AY.AYStart}-{AY.AYEnd}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem disabled>No years available</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

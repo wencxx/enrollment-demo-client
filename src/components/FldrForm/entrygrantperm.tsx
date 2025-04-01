@@ -15,31 +15,37 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { routeSchema } from "@/FldrSchema/routes"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { grantSchema } from "@/FldrSchema/routes"
 
 
 // generate typescript type based on zod schema // z.infer used to extract typescript type from schema
-type RouteFormData = z.infer<typeof routeSchema>
+type RouteFormData = z.infer<typeof grantSchema>
 
-export function RoutesForm({ getAllRoutes }: { getAllRoutes: () => void }) {
+export function GrantPermForm({ getAllGrantedPerm }: { getAllGrantedPerm: () => void }) {
   // useform initialize a form with router form as its expteded data type
-  const form = useForm<RouteFormData>({
+  const form = useForm<RouteFormData>({ 
     // integrates zod validation into the form, when the form is submitted it validates,
-    resolver: zodResolver(routeSchema),
+    resolver: zodResolver(grantSchema),
     defaultValues: {
-      objectName: "",
+      groupCode: "",
       path: ""
     }
   })
 
   const onSubmit = async (values: RouteFormData) => {
-    // console.log(values)
     try {
-      const res = await axios.post<any>(`${plsConnect()}/api/Object`, values)
+      const res = await axios.post<any>(`${plsConnect()}/api/Permission`, values)
 
-      if (res.status === 200) {
-        toast("Route added successfully.")
-        getAllRoutes()
+      if(res.status === 200){
+        toast("Granted permission successfully.")
+        getAllGrantedPerm()
       }
     } catch (error) {
       toast("Something went wrong.")
@@ -53,12 +59,20 @@ export function RoutesForm({ getAllRoutes }: { getAllRoutes: () => void }) {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name="objectName"
+            name="groupCode"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Route name</FormLabel>
+                <FormLabel>Group</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select group" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="01">Admin</SelectItem>
+                      <SelectItem value="02">Student</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -69,7 +83,7 @@ export function RoutesForm({ getAllRoutes }: { getAllRoutes: () => void }) {
             name="path"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Route</FormLabel>
+                <FormLabel>Route Name</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>

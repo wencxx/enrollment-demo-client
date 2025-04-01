@@ -1,15 +1,19 @@
 export interface ScheduleItem {
-    id: string
-    course: string
-    section: string
-    subject: string
-    day: string
-    startTime: string
-    endTime: string
-    room: string
-    professor: string
-  }
-  
-  export type Schedule = ScheduleItem[]
-  
-  
+  scheduleCode: string
+  courseCode: string
+  courseDesc: string
+  yearCode: string
+  yearDesc: string
+  section: string
+  subjectCode: string
+  subjectDesc: string
+  day: string
+  timeStart: string
+  timeEnd: string
+  roomCode: string
+  roomName: string
+  professor: string
+}
+
+export type Schedule = ScheduleItem[]
+

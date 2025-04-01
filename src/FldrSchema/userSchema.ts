@@ -25,10 +25,10 @@ export const registerSchema = z.object({
   }).min(2),
   lastName: z.string({
     required_error: "Please enter users last name"
-  }).min(2),
-  groupCode: z.string({
-    required_error: "Please enter group name"
   }).min(2)
+  // groupCode: z.string({
+  //   required_error: "Please enter group name"
+  // }).min(2)
 })
 
 export const studentSchema = z.object({
@@ -68,7 +68,8 @@ export const enrollment1Schema = z.object({
   date: z.date()
     .refine((val) => val <= new Date(), { message: "Date must be today or earlier." }),
   enrollStatusCode: z.string()
-    .min(1, { message: "Please confirm status." })
+    .min(1, { message: "Please confirm status." }),
+    aYearCode: z.number().min(1, { message: "Select an academic year." }),
 })
 
 export const enrollment2Schema = z.object({
@@ -161,4 +162,16 @@ export const subjectSchema = z.object({
 export const prerequisiteSchema = z.object({
   subjectCode: z.string().min(1, 'Subject code is required'),
   prerequisiteCode: z.string().min(1, 'Subject prerequisite is required'),
+});
+
+export const acadYearSchema = z.object({
+  ayStart: z.number()
+    .min(2000, { message: "Year must be 2000 or later." })
+    .max(4000, { message: "Year must be 4000 or earlier." }),
+  ayEnd: z.number()
+    .min(2000, { message: "Year must be 2000 or later." })
+    .max(4000, { message: "Year must be 4000 or earlier." }),
+}).refine((data) => data.ayEnd > data.ayStart, {
+  message: "Ending year cannot be the same or before the starting year.",
+  path: ["ayEnd"],
 });

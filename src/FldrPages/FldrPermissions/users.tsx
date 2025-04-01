@@ -63,8 +63,6 @@ function Users() {
             if (res.data.length) {
                 setGroups(res.data)
             }
-
-            console.log(res.data)
         } catch (error: unknown) {
             console.log(error)
         }

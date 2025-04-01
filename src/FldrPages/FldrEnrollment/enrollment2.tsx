@@ -12,7 +12,7 @@ import { Enrollment1Col } from "@/FldrTypes/enrollment1"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { columnsEnrolled } from "@/components/FldrDatatable/enrollment2-col";
+import { columnsEnrolled } from "@/components/FldrDatatable/enrollment2-columns";
 import { DataTable } from "@/components/FldrDatatable/data-table";
 import { DialogTitle } from "@radix-ui/react-dialog"
 

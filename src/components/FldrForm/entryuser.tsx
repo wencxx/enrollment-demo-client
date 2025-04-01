@@ -40,7 +40,7 @@ export function Userform({ groups }: { groups: group[] }) {
       firstName: "",
       middleName: "",
       lastName: "",
-      groupCode: "",
+      // groupCode: "",
     }
   })
 

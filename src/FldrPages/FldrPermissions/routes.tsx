@@ -1,6 +1,6 @@
-import { columns } from "@/components/FldrDatatable/permissions-columns";
+import { columns } from "@/components/FldrDatatable/routes-columns";
 import { DataTable } from "@/components/FldrDatatable/data-table";
-import { GrantPermForm } from "@/components/FldrForm/entrygrantperm"
+import { RoutesForm } from "@/components/FldrForm/entryroutes"
 import {
     Dialog,
     DialogContent,
@@ -14,19 +14,19 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
-import { grantedPermissions } from "@/FldrTypes/routes";
+import { routes } from "@/FldrTypes/routes";
 
-function GrantPermission() {
-    const [grantedPerm, setGrantedPerm] = useState<grantedPermissions[]>([])
+function RoutePage() {
+    const [routes, setRoutes] = useState<routes[]>([])
     const [loading, setLoading] = useState<boolean>(false)
 
-    const getAllGrantedPerm = async () => {
+    const getAllRoutes = async () => {
         try {
             setLoading(true)
-            const res = await axios.get(`${plsConnect()}/api/Permission`)
+            const res = await axios.get(`${plsConnect()}/api/Object`)
 
             if(res.status === 200){
-                setGrantedPerm(res.data)
+                setRoutes(res.data)
             }
         } catch (error: unknown) {
             console.log(error)
@@ -36,7 +36,7 @@ function GrantPermission() {
     }
 
     useEffect(() => {
-        getAllGrantedPerm();
+        getAllRoutes();
     }, []);
 
     return (
@@ -45,23 +45,23 @@ function GrantPermission() {
                 <DialogTrigger asChild>
                     <Button variant="outline">
                         <Plus />
-                        Grant permission
+                        Add new route
                     </Button>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle className="text-lg font-medium">Grant permission</DialogTitle>
+                        <DialogTitle className="text-lg font-medium">Add new route</DialogTitle>
                         <DialogDescription>
                         </DialogDescription>
                     </DialogHeader>
-                    <GrantPermForm getAllGrantedPerm={getAllGrantedPerm} />
+                    <RoutesForm getAllRoutes={getAllRoutes} />
                 </DialogContent>
             </Dialog>
             <div className="mt-4">
-                <DataTable columns={columns} data={grantedPerm} title="granted permissions" loading={loading} />
+                <DataTable columns={columns} data={routes} title="routes" loading={loading} />
             </div>
         </>
     );
 }
 
-export default GrantPermission;
+export default RoutePage;
