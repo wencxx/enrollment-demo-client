@@ -34,6 +34,7 @@ import {
 import { gradeEditSchema } from "@/FldrSchema/userSchema";
 import { AcademicYear } from "@/FldrTypes/academic-year";
 import { GradesCol, SubjectStatus } from "@/FldrTypes/grades";
+import Subject from "@/FldrPages/FldrEntry/subject-prerequisite";
 
 type GradeFormData = z.infer<typeof gradeEditSchema> & {
     firstName: string;
@@ -152,7 +153,8 @@ export const EditGrades =  ({ studentCode }: GradeFormProps) => {
         setIsEditing(false);
       };
     
-      const handleSave = () => {
+      // put async on this thing so you can use await in it
+      const handleSave = async () => {
         const gradesToSave = grades.map((grade) => ({
           ...grade,
         // avg 0 if either value missing
@@ -165,6 +167,23 @@ export const EditGrades =  ({ studentCode }: GradeFormProps) => {
         console.log("Saving grades:", gradesToSave);
         setGrades(gradesToSave); 
         setIsEditing(false);
+        try {
+            for (const grade of gradesToSave) {
+            await axios.put(
+                `${plsConnect()}/GradesController/UpdateStudentGrade/${pkCode}/${grade.subjectCode}`,
+                {
+                Midterm: grade.midterm,
+                Final: grade.final,
+                Average: grade.average,
+                SubjectStatusCode: grade.subjectStatusCode,
+                }
+            );
+            }
+        } catch (error: any){
+            console.error("Error saving grades:", error);
+            toast.error("Error saving grades.");
+        }
+
         toast("Grades updated.");
       };
     return (
