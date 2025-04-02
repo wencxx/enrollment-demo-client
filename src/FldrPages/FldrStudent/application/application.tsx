@@ -39,15 +39,38 @@ export default function EnrollmentForm() {
     try {
       setSubmitting(true)
       
-
-      const hardcodedStudentCode = "0000001";
+      // Prepare student basic info
+      const studentData = {
+        FirstName: data.firstName,
+        MiddleName: data.middleName,
+        LastName: data.lastName,
+        BirthDate: data.birthDate,
+        Address: `${data.address || ''}`
+      };
       
+      // Prepare student details
+      const studentDetails = {
+        BirthPlace: data.birthPlace,
+        Citizenship: data.citizenship,
+        Religion: data.religion,
+        CivilStatus: data.civilStatus,
+        BloodType: data.bloodType,
+        Country: data.country,
+        Province: data.province,
+        MunicipalityCity: data.municipalityCity,
+        Barangay: data.barangay,
+        StreetAddress: data.address,
+        HomeTelephone: data.homeTelephone,
+        MobileNum: data.mobileNum,
+        ResidentStatus: data.residentStatus
+      };
+      
+      // Prepare parent records
       const parentRecords = [];
       
       // Add mother record if mother is buhi
       if (data.motherAlive) {
         parentRecords.push({
-          StudentCode: hardcodedStudentCode, 
           ParentType: "Mother",
           DeadOrAlive: true,
           Alumnus: data.motherAlumnus || false,
@@ -62,10 +85,9 @@ export default function EnrollmentForm() {
         });
       }
       
-      // Add father record if father is buhi
+      // Abuhirher buhir if buhir is buhi
       if (data.fatherAlive) {
         parentRecords.push({
-          StudentCode: hardcodedStudentCode, 
           ParentType: "Father",
           DeadOrAlive: true,
           Alumnus: data.fatherAlumnus || false,
@@ -80,18 +102,12 @@ export default function EnrollmentForm() {
         });
       }
       
-      if (parentRecords.length > 0) {
-        await axios.post(`${plsConnect()}/API/WEBAPI/StudentController/InsertParents`, parentRecords);
-        console.log("Parent records submitted successfully");
-        toast.success("Parent records submitted successfully");
-      }
-      
+      // Prepare education records
       const educationRecords = [];
       
       // Previous School record
       if (data.schoolLastAttended) {
         educationRecords.push({
-          StudentCode: hardcodedStudentCode, 
           SchoolLevel: "Previous",
           SchoolName: data.schoolLastAttended,
           Average: data.previousSchoolAverage,
@@ -103,7 +119,6 @@ export default function EnrollmentForm() {
       // Elementary Education
       if (data.elementarySchoolName) {
         educationRecords.push({
-          StudentCode: hardcodedStudentCode, 
           SchoolLevel: "Elementary",
           SchoolName: data.elementarySchoolName,
           AYGraduation: data.elementaryYearGraduated,
@@ -114,7 +129,6 @@ export default function EnrollmentForm() {
       // High School Education
       if (data.highSchoolName) {
         educationRecords.push({
-          StudentCode: hardcodedStudentCode, 
           SchoolLevel: "HighSchool",
           SchoolName: data.highSchoolName,
           AYGraduation: data.highSchoolYearGraduated,
@@ -125,7 +139,6 @@ export default function EnrollmentForm() {
       // College Education (only for transferees)
       if (data.residentStatus === "Transferee" && data.collegeName) {
         educationRecords.push({
-          StudentCode: hardcodedStudentCode, // Use hardcoded code
           SchoolLevel: "College",
           SchoolName: data.collegeName,
           AYGraduation: data.collegeYearGraduated,
@@ -134,14 +147,32 @@ export default function EnrollmentForm() {
         });
       }
       
+      // Create a complete student application object
+      const studentApplication = {
+        Student: studentData,
+        StudentDetails: studentDetails,
+        Parents: parentRecords,
+        Educations: educationRecords
+      };
 
-      if (educationRecords.length > 0) {
-        await axios.post(`${plsConnect()}/API/WEBAPI/StudentController/InsertStudentEducations`, educationRecords);
-        console.log("Education records submitted successfully");
-        toast.success("Education records submitted successfully");
-      }
+      // Make a single API call with the complete application data
+      const response = await axios.post(
+        `${plsConnect()}/API/WEBAPI/StudentController/SubmitStudentApplication`, 
+        studentApplication
+      );
       
-      toast.success("All records submitted successfully!");
+      if (response.data.success) {
+        // Store the returned IDs if needed
+        const { studentCode, studentID } = response.data.data;
+        
+        toast.success("Student application submitted successfully!");
+        
+        // Optional: Redirect the user or reset the form
+        // router.push(`/student/confirmation/${studentID}`);
+        // form.reset();
+      } else {
+        toast.error("Failed to submit application");
+      }
       
     } catch (error) {
       console.error("Error submitting application:", error);
@@ -190,23 +221,22 @@ export default function EnrollmentForm() {
                     <div></div>
                   )}
 
-
-{step < totalSteps ? (
-  <Button type="button" onClick={nextStep}>
-    Next <ChevronRight className="ml-2 h-4 w-4" />
-  </Button>
-) : (
-  <Button 
-    type="button" 
-    disabled={submitting}
-    onClick={() => {
-      const values = form.getValues();
-      onSubmit(values);
-    }}
-  >
-    {submitting ? "Submitting..." : "Submit Application"}
-  </Button>
-)}
+                  {step < totalSteps ? (
+                    <Button type="button" onClick={nextStep}>
+                      Next <ChevronRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button 
+                      type="button" 
+                      disabled={submitting}
+                      onClick={() => {
+                        const values = form.getValues();
+                        onSubmit(values);
+                      }}
+                    >
+                      {submitting ? "Submitting..." : "Submit Application"}
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
