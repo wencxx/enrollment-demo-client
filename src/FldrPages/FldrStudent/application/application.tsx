@@ -39,51 +39,69 @@ export default function EnrollmentForm() {
     try {
       setSubmitting(true)
       
-
-      const hardcodedStudentCode = "0000001";
+      // studentCode will be generated in backend
+      const studentRecords = [];
       
+      studentRecords.push({
+        lastName: data.lastName,
+        middleName: data.middleName,
+        firstName: data.firstName,
+        birthDate: data.dateOfBirth,
+        suffix: data.suffix,
+        placeOfBirth: data.placeOfBirth,
+        gender: data.gender,
+        citizenship: data.citizenship,
+        religion: data.religion,
+        civilStatus: data.civilStatus,
+        bloodType: data.bloodType,
+      });
+    
+      const addressRecords = [];
+
+      addressRecords.push({
+        country: data.country,
+        province: data.province,
+        municipality: data.municipality,
+        barangay: data.barangay,
+        street: data.street,
+      });
+    
       const parentRecords = [];
       
-      // Add mother record if mother is buhi
+      // Add mother record if mother is alive
       if (data.motherAlive) {
         parentRecords.push({
-          StudentCode: hardcodedStudentCode, 
-          ParentType: "Mother",
-          DeadOrAlive: true,
-          Alumnus: data.motherAlumnus || false,
-          ContactNumber: data.motherContact,
-          EmailAddress: data.motherEmail,
-          Education: data.motherEducation,
-          Occupation: data.motherOccupation,
-          CompanyName: data.motherCompanyName,
-          CompanyAddress: data.motherCompanyAddress,
-          CompanyTelephone: data.motherCompanyTelephone,
-          Salary: data.motherSalary
+          fullName: data.motherName,
+          parentType: "Mother",
+          deadOrAlive: true,
+          alumnus: data.motherAlumnus || false,
+          contactNumber: data.motherContact,
+          emailAddress: data.motherEmail,
+          education: data.motherEducation,
+          occupation: data.motherOccupation,
+          companyName: data.motherCompanyName,
+          companyAddress: data.motherCompanyAddress,
+          companyTelephone: data.motherCompanyTelephone,
+          salary: data.motherSalary
         });
       }
       
       // Add father record if father is buhi
       if (data.fatherAlive) {
         parentRecords.push({
-          StudentCode: hardcodedStudentCode, 
-          ParentType: "Father",
-          DeadOrAlive: true,
-          Alumnus: data.fatherAlumnus || false,
-          ContactNumber: data.fatherContact,
-          EmailAddress: data.fatherEmail,
-          Education: data.fatherEducation,
-          Occupation: data.fatherOccupation,
-          CompanyName: data.fatherCompanyName,
-          CompanyAddress: data.fatherCompanyAddress,
-          CompanyTelephone: data.fatherCompanyTelephone,
-          Salary: data.fatherSalary
+          fullName: data.fatherName,
+          parentType: "Father",
+          deadOrAlive: true,
+          alumnus: data.fatherAlumnus || false,
+          contactNumber: data.fatherContact,
+          emailAddress: data.fatherEmail,
+          education: data.fatherEducation,
+          occupation: data.fatherOccupation,
+          companyName: data.fatherCompanyName,
+          companyAddress: data.fatherCompanyAddress,
+          companyTelephone: data.fatherCompanyTelephone,
+          salary: data.fatherSalary
         });
-      }
-      
-      if (parentRecords.length > 0) {
-        await axios.post(`${plsConnect()}/API/WEBAPI/StudentController/InsertParents`, parentRecords);
-        console.log("Parent records submitted successfully");
-        toast.success("Parent records submitted successfully");
       }
       
       const educationRecords = [];
@@ -91,7 +109,6 @@ export default function EnrollmentForm() {
       // Previous School record
       if (data.schoolLastAttended) {
         educationRecords.push({
-          StudentCode: hardcodedStudentCode, 
           SchoolLevel: "Previous",
           SchoolName: data.schoolLastAttended,
           Average: data.previousSchoolAverage,
@@ -103,7 +120,6 @@ export default function EnrollmentForm() {
       // Elementary Education
       if (data.elementarySchoolName) {
         educationRecords.push({
-          StudentCode: hardcodedStudentCode, 
           SchoolLevel: "Elementary",
           SchoolName: data.elementarySchoolName,
           AYGraduation: data.elementaryYearGraduated,
@@ -114,7 +130,6 @@ export default function EnrollmentForm() {
       // High School Education
       if (data.highSchoolName) {
         educationRecords.push({
-          StudentCode: hardcodedStudentCode, 
           SchoolLevel: "HighSchool",
           SchoolName: data.highSchoolName,
           AYGraduation: data.highSchoolYearGraduated,
@@ -125,7 +140,6 @@ export default function EnrollmentForm() {
       // College Education (only for transferees)
       if (data.residentStatus === "Transferee" && data.collegeName) {
         educationRecords.push({
-          StudentCode: hardcodedStudentCode, // Use hardcoded code
           SchoolLevel: "College",
           SchoolName: data.collegeName,
           AYGraduation: data.collegeYearGraduated,
@@ -134,14 +148,59 @@ export default function EnrollmentForm() {
         });
       }
       
+      // if (parentRecords.length > 0) {
+      //   // await axios.post(`${plsConnect()}/API/WEBAPI/StudentController/InsertParents`, parentRecords);
+      //   console.log("Parent records: ", parentRecords);
+      // }
 
-      if (educationRecords.length > 0) {
-        await axios.post(`${plsConnect()}/API/WEBAPI/StudentController/InsertStudentEducations`, educationRecords);
-        console.log("Education records submitted successfully");
-        toast.success("Education records submitted successfully");
-      }
+      // if (educationRecords.length > 0) {
+      //   // await axios.post(`${plsConnect()}/API/WEBAPI/StudentController/InsertStudentEducations`, educationRecords);
+      //   console.log("Education records; ", educationRecords);
+      // }
+
+      // structure the payload here
+      const payload = {
+        studentData: {
+          student: [
+            {
+               lastName: data.lastName,
+                  middleName: data.middleName,
+                  firstName: data.firstName,
+                  birthDate: data.dateOfBirth,
+                  suffix: data.suffix,
+                  placeOfBirth: data.placeOfBirth,
+                  gender: data.gender,
+                  citizenship: data.citizenship,
+                  religion: data.religion,
+                  civilStatus: data.civilStatus,
+                  bloodType: data.bloodType,
+                  residentStatus: data.residentStatus,
+            }
+          ],
+          address: [
+            {
+              country: data.country,
+              province: data.province,
+              municipality: data.municipality,
+              barangay: data.barangay,
+              street: data.street
+            }
+          ],
+          parents: [
+            ...parentRecords
+          ],
+          education: [
+            ...educationRecords
+          ]
+        },
+      };
+
+      //EH use a different condition
+      // if (parentRecords.length > 0 && educationRecords.length > 0) {
+        console.log("payload; ", payload);
+        toast.success("All records submitted successfully!");
+      // }
       
-      toast.success("All records submitted successfully!");
       
     } catch (error) {
       console.error("Error submitting application:", error);

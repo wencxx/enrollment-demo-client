@@ -4,8 +4,6 @@ export const formSchema = z.object({
   // Resident Status
   residentStatus: z.enum(["Cross-Enrollee", "Freshmen", "Returnee", "Transferee"]),
   program: z.string().min(1, "Program is required"),
-  yearLevel: z.string().min(1, "Year level is required"),
-  lrn: z.string().optional(),
 
   // Personal Information
   lastName: z.string().min(1, "Last name is required"),

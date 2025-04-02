@@ -250,7 +250,7 @@ return (
                 <DialogHeader>
                 <DialogTitle className="mb-4">Continuing student enrollment</DialogTitle>
                 <DialogDescription className="text-red-500">
-                    Student details must be changed in previous step prior to enrollment.
+                    Student details must be changed prior to enrollment.
                 </DialogDescription>
                 </DialogHeader>
                 <NewSemEnrollment1Form studentCode={studentCode} closeModal={closeModal} />

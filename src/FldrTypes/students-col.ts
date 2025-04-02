@@ -3,9 +3,10 @@ export type StudentColFullName = {
     studentID: string
     fullName: string
     birthDate: Date
-    Address: string
     enrollStatusCode: number
     enrollRemarks: string
+    gender: string
+    suffix: string
 }
 
 export type StudentCol = {
@@ -15,10 +16,11 @@ export type StudentCol = {
     lastName: string
     middleName: string
     birthDate: Date
-    Address: string
     enrollStatusCode: number
     enrollRemarks: string
     pkCode: string
+    gender: string
+    suffix: string
 }
 
 export type StudentDetails = {

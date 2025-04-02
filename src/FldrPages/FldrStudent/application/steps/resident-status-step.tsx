@@ -27,7 +27,7 @@ export default function ResidentStatusStep({ form }: ResidentStatusStepProps) {
                             </FormControl>
                             <SelectContent>
                                 <SelectItem value="Cross-Enrollee">Cross-Enrollee</SelectItem>
-                                <SelectItem value="Freshmen">Freshmen</SelectItem>
+                                <SelectItem value="Freshman">Freshman</SelectItem>
                                 <SelectItem value="Returnee">Returnee</SelectItem>
                                 <SelectItem value="Transferee">Transferee</SelectItem>
                             </SelectContent>
@@ -36,7 +36,7 @@ export default function ResidentStatusStep({ form }: ResidentStatusStepProps) {
                     </FormItem>
                 )}
             />
-
+{/* 
             <FormField
                 control={form.control}
                 name="program"
@@ -75,7 +75,7 @@ export default function ResidentStatusStep({ form }: ResidentStatusStepProps) {
                         <FormMessage />
                     </FormItem>
                 )}
-            />
+            /> */}
 
             {/* <FormField
                 control={form.control}
