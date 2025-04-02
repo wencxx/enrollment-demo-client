@@ -49,7 +49,7 @@ export function StudentForm({ onSubmitSuccess }: StudentFormProps) {
 
   const onSubmit = async (values: StudentFormData) => {
     try {
-      const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertStudent`, values)
+      const response = await axios.post(`${plsConnect()}/API/WEBAPI/StudentController/InsertStudent`, values)
 
       console.log("Data submitted successfully:", response.data)
       toast("New student registered successfully.")

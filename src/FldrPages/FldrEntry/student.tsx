@@ -25,7 +25,7 @@ export default function Student() {
   const getStudents = async () => {
     try {
       setLoading(true)
-      const res = await axios.get<StudentCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListStudent`)
+      const res = await axios.get<StudentCol[]>(`${plsConnect()}/API/WEBAPI/StudentController/ListStudent`)
 
       const dataWithFullName = res.data.map(student => ({
         ...student,

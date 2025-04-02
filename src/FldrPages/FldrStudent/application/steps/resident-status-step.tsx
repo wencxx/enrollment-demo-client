@@ -77,7 +77,7 @@ export default function ResidentStatusStep({ form }: ResidentStatusStepProps) {
                 )}
             />
 
-            <FormField
+            {/* <FormField
                 control={form.control}
                 name="lrn"
                 render={({ field }) => (
@@ -89,7 +89,7 @@ export default function ResidentStatusStep({ form }: ResidentStatusStepProps) {
                         <FormMessage />
                     </FormItem>
                 )}
-            />
+            /> */}
         </div>
     )
 }

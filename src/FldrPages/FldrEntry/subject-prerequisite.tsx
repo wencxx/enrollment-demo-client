@@ -50,16 +50,23 @@ export default function Subject() {
       setLoading(true)
       const res = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListPrerequisite`)
       
-      // Format data with fieldNumber for consistent structure
-      const formattedData = res.data.map((item: any, index: number) => ({
-        fieldNumber: index + 1,
-        subjectCode: item.SubjectCode || item.subjectCode,
-        prerequisiteCode: item.PrerequisiteCode || item.prerequisiteCode,
-      }));
+      console.log("API response for prerequisites:", res.data) // Debug output
       
+      // Format data with fieldNumber for consistent structure
+      const formattedData = Array.isArray(res.data) && res.data.length > 0 
+        ? res.data.map((item: any, index: number) => ({
+            fieldNumber: index + 1,
+            subjectCode: item.SubjectCode || item.subjectCode,
+            subjectDesc: item.SubjectDesc || item.subjectDesc,
+            prerequisiteCode: item.PrerequisiteCode || item.prerequisiteCode,
+            prerequisiteDesc: item.PrerequisiteDesc || item.prerequisiteDesc,
+          }))
+        : [];
+      
+      console.log("Formatted prerequisite data:", formattedData) // Debug output
       setPrerequisiteData(formattedData)
     } catch (error) {
-      console.log(error)
+      console.error("Error fetching prerequisites:", error)
     } finally {
       setLoading(false)
     }
@@ -69,6 +76,15 @@ export default function Subject() {
     getPrerequisite()
     getSubject()
   }, []);
+
+
+  // Refresh both tables
+  const refreshAll = async() => {
+    await Promise.all([
+      getSubject(),
+      getPrerequisite()
+    ]);
+  }
 
   return (
     <div className="container py-6">
@@ -88,7 +104,9 @@ export default function Subject() {
                 {/* <DialogHeader>
                   <DialogTitle>Add new subject</DialogTitle>
                 </DialogHeader> */}
-                <SubjectForm onCancel={getSubject} />
+                
+                {/* Works as both onCancel and onSubmit */}
+                <SubjectForm onCancel={refreshAll} /> 
               </DialogContent>
             </Dialog>
           </div>
@@ -98,7 +116,7 @@ export default function Subject() {
               data={subjectData} 
               loading={loading} 
               title="subjects" 
-              onRefresh={getSubject}
+              onRefresh={refreshAll}
             />
           </div>
         </Card>
@@ -118,7 +136,7 @@ export default function Subject() {
                 {/* <DialogHeader>
                   <DialogTitle>Add new prerequisite</DialogTitle>
                 </DialogHeader> */}
-                <PrerequisiteForm onCancel={getPrerequisite} />
+                <PrerequisiteForm onCancel={refreshAll} />
               </DialogContent>
             </Dialog>
           </div>
@@ -128,7 +146,7 @@ export default function Subject() {
               data={prerequisiteData} 
               loading={loading} 
               title="prerequisites" 
-              onRefresh={getPrerequisite}
+              onRefresh={refreshAll}
             />
           </div>
         </Card>
