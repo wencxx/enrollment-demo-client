@@ -149,10 +149,8 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
 
     try {
       const postResponse = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertEnrollment1`, enrollment1Data)
-      const putResponse = await axios.put(`${plsConnect()}/API/WEBAPI/StudentController/UpdateStudentEnrollmentStatus`, enrollment1Data)
-      console.log("Data submitted successfully:", postResponse)
-      console.log("Data submitted successfully:", putResponse)
-      // console.log("Data submitted successfully:", enrollment1Data)
+      console.log("Response:", postResponse)
+      console.log("SENT:", enrollment1Data);
       closeModal()
       toast("Success.")
     } catch (error) {
