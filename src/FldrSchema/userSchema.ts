@@ -82,6 +82,26 @@ export const enrollment2Schema = z.object({
   amount: z.number(),
 });
 
+export const enrollmentMergedSchema = z.object({
+  yearCode: z.string()
+    .min(1, { message: "Select a year." }),
+  semCode: z.string()
+    .min(1, { message: "Select a semester." }),
+  courseCode: z.string()
+    .min(1, { message: "Select a course." }),
+  studentCode: z.string()
+    .min(1, { message: "Select a student." }),
+  date: z.date()
+    .refine((val) => val <= new Date(), { message: "Date must be today or earlier." }),
+  enrollStatusCode: z.string()
+    .min(1, { message: "Please confirm status." }),
+    aYearCode: z.number().min(1, { message: "Select an academic year." }),
+    pkCode: z.string().min(1, { message: "Select a student." }),
+    rowNum: z.number(),
+    rateCode: z.string().min(1, { message: "Select a rate." }),
+    amount: z.number(),
+})
+
 export const rateSchema = z.object({
   pkCode: z.string().min(1),
   rows: z.array(
@@ -134,9 +154,9 @@ export const studentEditSchema = z.object ({
   }),
   birthDate: z.union([z.string(), z.date()]).optional(),
 
-  address: z.string().min(2, {
-    message: "Address invalid.",
-  }),
+  // address: z.string().min(2, {
+  //   message: "Address invalid.",
+  // }),
   semCode: z.string()
     .min(1, { message: "Select a semester." }),
     yearCode: z.string()
@@ -181,4 +201,9 @@ export const acadYearSchema = z.object({
 
 export const gradeEditSchema = z.object({
   // subjectCode: z.string().min(1, 'Subject code is required'),
+});
+
+export const gradeGenSchema = z.object({
+  pkCode: z.string().min(1),
+  userCode: z.string().min(1)
 });
