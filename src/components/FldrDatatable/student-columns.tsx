@@ -1,23 +1,29 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { useState } from "react"
-import { Eye, ArrowUpDown, FileSpreadsheet } from "lucide-react"
+import { Eye, ArrowUpDown, FileSpreadsheet, Stamp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { format } from "date-fns";
-import { StudentColFullName } from "@/FldrTypes/students-col";
 import { Badge } from "@/components/ui/badge"
 import moment from 'moment'
 import { EditStudent } from "../FldrForm/editstudent"
 import { studentProfile } from "@/FldrTypes/enrollment1"
-
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+  } from "@/components/ui/tooltip"  
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogTrigger,
     DialogTitle,
     DialogHeader
   } from "@/components/ui/dialog"
 import { EditGrades } from "../FldrForm/editgrades"
+import { NewSemEnrollment1Form } from "../FldrForm/entryNewSemEnrollment1"
 
 export const columns: ColumnDef<studentProfile>[] = [
     {
@@ -182,45 +188,104 @@ export const columns: ColumnDef<studentProfile>[] = [
                 setTimeout(() => setIsGradeDialogOpen(true), 0);
             };
 
+            const [isNewSemDialogOpen, setIsNewSemDialogOpen] = useState(false);
 
-          return (
-                <>
-                {status !== "Pending" && (
-                    <div>
-                    <Dialog open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleProfileDialog(row.original.studentCode)}>
-                                <span className="sr-only">Open menu</span>
-                                <Eye className="h-4 w-4" />
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-                            <DialogHeader>
-                                <DialogTitle className="mb-4">View Student Profile</DialogTitle>
-                            </DialogHeader>
-                            <EditStudent studentCode={studentCode} onSubmitSuccess={handleProfileUpdate} />
-                        </DialogContent>
-                    </Dialog>
-                    {/* update grades modal */}
-                    <Dialog open={isGradeDialogOpen} onOpenChange={setIsGradeDialogOpen}>
-                    <DialogTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleGradeDialog(row.original.studentCode)}>
-                            <span className="sr-only">Open menu</span>
-                            <FileSpreadsheet className="h-4 w-4" />
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[80dvw] lg:!max-w-[70dvw] scrollbar-hidden" aria-labelledby="dialog-title">
-                        <DialogHeader>
-                            <DialogTitle className="mb-4">Update Grades</DialogTitle>
-                        </DialogHeader>
-                        <EditGrades studentCode={studentCode} />
-                    </DialogContent>
-                    </Dialog>
-                    </div>
-                )}
-                
-                </>
-            )
+            const handleDialogOpen = (studentCode: string) => {
+                setStudentCode(studentCode);
+                setIsNewSemDialogOpen(true);
+            };
+            
+            const closeModal = () => {
+                setIsNewSemDialogOpen(false)
+              }
+
+
+return (
+    <>
+    {status !== "Pending" && (
+    <div>
+        <Dialog open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen}>
+            <DialogTrigger asChild>
+                <TooltipProvider>
+                <Tooltip>
+                <TooltipTrigger>
+                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleProfileDialog(row.original.studentCode)}>
+                        <span className="sr-only">Open menu</span>
+                        <Eye className="h-4 w-4" />
+                    </Button>
+                </TooltipTrigger>
+                    <TooltipContent>
+                    <p>View and edit student details</p>
+                    </TooltipContent>
+                </Tooltip>
+                </TooltipProvider>
+            </DialogTrigger>
+            <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+                <DialogHeader>
+                    <DialogTitle className="mb-4">View Student Profile</DialogTitle>
+                </DialogHeader>
+                <EditStudent studentCode={studentCode} onSubmitSuccess={handleProfileUpdate} />
+            </DialogContent>
+        </Dialog>
+
+    
+    {/* enrollment1 modal */}
+        <Dialog open={isNewSemDialogOpen} onOpenChange={setIsNewSemDialogOpen}>
+            <DialogTrigger asChild>
+            <TooltipProvider>
+            <Tooltip>
+            <TooltipTrigger>
+                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.studentCode)}>
+                <span className="sr-only">Open menu</span>
+                <Stamp className="h-4 w-4" />
+                </Button>
+            </TooltipTrigger>
+                <TooltipContent>
+                <p>Enroll in next semester</p>
+                </TooltipContent>
+            </Tooltip>
+            </TooltipProvider>
+            </DialogTrigger>
+            <DialogContent className="max-h-[90vh] overflow-y-auto scrollbar-hidden" aria-labelledby="dialog-title">
+                <DialogHeader>
+                <DialogTitle className="mb-4">Continuing student enrollment</DialogTitle>
+                <DialogDescription className="text-red-500">
+                    Student details must be changed prior to enrollment.
+                </DialogDescription>
+                </DialogHeader>
+                <NewSemEnrollment1Form studentCode={studentCode} closeModal={closeModal} />
+            </DialogContent>
+        </Dialog>
+
+        {/* update grades modal */}
+        <Dialog open={isGradeDialogOpen} onOpenChange={setIsGradeDialogOpen}>
+            <DialogTrigger asChild>
+            <TooltipProvider>
+            <Tooltip>
+            <TooltipTrigger>
+                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleGradeDialog(row.original.studentCode)}>
+                    <span className="sr-only">Open menu</span>
+                    <FileSpreadsheet className="h-4 w-4" />
+                </Button>
+            </TooltipTrigger>
+                <TooltipContent>
+                <p>Grades</p>
+                </TooltipContent>
+            </Tooltip>
+            </TooltipProvider>
+            </DialogTrigger>
+            <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[80dvw] lg:!max-w-[70dvw] scrollbar-hidden" aria-labelledby="dialog-title">
+                <DialogHeader>
+                    <DialogTitle className="mb-4">Update Grades</DialogTitle>
+                </DialogHeader>
+                <EditGrades studentCode={studentCode} />
+            </DialogContent>
+        </Dialog>
+</div>
+    )}
+    
+    </>
+)
         },
     },
 ]

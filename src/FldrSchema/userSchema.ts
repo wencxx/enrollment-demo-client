@@ -41,12 +41,15 @@ export const studentSchema = z.object({
   lastName: z.string().min(2, {
     message: "Last name at least 2 characters.",
   }),
-  address: z.string().min(2, {
-    message: "Address invalid.",
-  }),
   birthDate: z.union([z.string(), z.date()]).optional(),
   enrollRemarks: z.string().min(2, {
     message: "Make a remark.",
+  }),
+  gender: z.string().min(1, {
+    message: "Select.",
+  }),
+  suffix: z.string().min(2, {
+    message: "Select.",
   }),
 })
 

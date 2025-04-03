@@ -2,10 +2,8 @@ import { z } from 'zod'
 
 export const formSchema = z.object({
   // Resident Status
-  residentStatus: z.enum(["Cross-Enrollee", "Freshmen", "Returnee", "Transferee"]),
-  program: z.string().min(1, "Program is required"),
-  yearLevel: z.string().min(1, "Year level is required"),
-  lrn: z.string().optional(),
+  residentStatus: z.enum(["Cross-Enrollee", "Freshman", "Returnee", "Transferee"]),
+  // program: z.string().min(1, "Program is required"),
 
   // Personal Information
   lastName: z.string().min(1, "Last name is required"),
@@ -16,11 +14,15 @@ export const formSchema = z.object({
     required_error: "Date of birth is required",
   }),
   placeOfBirth: z.string().min(1, "Place of birth is required"),
-  gender: z.enum(["Male", "Female", "Other"]),
+  gender: z
+  .enum(["M", "F"], { required_error: "Gender is required" })
+  .or(z.literal("")),
   citizenship: z.string().min(1, "Citizenship is required"),
   religion: z.string().min(1, "Religion is required"),
   civilStatus: z.enum(["Single", "Married", "Divorced", "Widowed"]),
-  bloodType: z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
+  bloodType: z
+  .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"], { required_error: "Blood type is required" })
+  .or(z.literal("")), // Allow empty string
 
   // Address
   country: z.string().min(1, "Country is required"),
@@ -34,12 +36,12 @@ export const formSchema = z.object({
   mobileNumber: z.string().min(1, "Mobile number is required"),
 
   // Program Details
-  firstChoiceProgram: z.string().min(1, "First choice program is required"),
-  secondChoiceProgram: z.string().optional(),
-  programInfluence: z.enum(["Parent", "Personal", "Benefactor", "Friend", "Others"]),
-  programInfluenceOther: z.string().optional(),
-  educationSupport: z.enum(["Parent", "Scholarship", "Employed", "Relative", "Benefactor"]),
-  typeOfScholarship: z.string().optional(),
+  // firstChoiceProgram: z.string().min(1, "First choice program is required"),
+  // secondChoiceProgram: z.string().optional(),
+  // programInfluence: z.enum(["Parent", "Personal", "Benefactor", "Friend", "Others"]),
+  // programInfluenceOther: z.string().optional(),
+  // educationSupport: z.enum(["Parent", "Scholarship", "Employed", "Relative", "Benefactor"]),
+  // typeOfScholarship: z.string().optional(),
 
   // Parents
   motherAlive: z.boolean().default(true),
@@ -69,13 +71,13 @@ export const formSchema = z.object({
   fatherSalary: z.string().optional(),
 
   // Family Details
-  livingWith: z.enum(["Parents", "Mother", "Father", "Guardian", "Alone", "Others"]),
-  guardianName: z.string().optional(),
-  guardianRelationship: z.string().optional(),
-  guardianContact: z.string().optional(),
-  numberOfSiblings: z.string().optional(),
-  numberOfBrothers: z.string().optional(),
-  numberOfSisters: z.string().optional(),
+  // livingWith: z.enum(["Parents", "Mother", "Father", "Guardian", "Alone", "Others"]),
+  // guardianName: z.string().optional(),
+  // guardianRelationship: z.string().optional(),
+  // guardianContact: z.string().optional(),
+  // numberOfSiblings: z.string().optional(),
+  // numberOfBrothers: z.string().optional(),
+  // numberOfSisters: z.string().optional(),
 
   // Education
   elementarySchoolName: z.string().optional(),
@@ -92,7 +94,6 @@ export const formSchema = z.object({
 
   schoolLastAttended: z.string().min(1, "School last attended is required"),
   previousSchoolAverage: z.string().optional(),
-  inclusionDate: z.string().optional(),
   section: z.string().optional(),
 
   // Additional Info
