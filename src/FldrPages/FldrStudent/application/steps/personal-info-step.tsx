@@ -139,9 +139,9 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  <SelectItem value="M">Male</SelectItem>
+                  <SelectItem value="F">Female</SelectItem>
+                  {/* <SelectItem value="Other">Other</SelectItem> */}
                 </SelectContent>
               </Select>
               <FormMessage />
