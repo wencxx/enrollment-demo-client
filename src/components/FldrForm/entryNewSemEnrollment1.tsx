@@ -209,6 +209,7 @@ export function NewSemEnrollment1Form({ studentCode, closeModal }: studentCodePr
     }
 
     try {
+      // this is the ONLY enrollment1 and enrollment2 endpoint that should be used
       const postResponse = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertNewEnrollment1`, enrollment1Data)
       console.log("Data submitted successfully:", postResponse);
       console.log("Submitted:", enrollment1Data);

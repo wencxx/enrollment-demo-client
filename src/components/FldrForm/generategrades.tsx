@@ -96,6 +96,7 @@ export const GenerateGrades =  ({ studentCode }: GradeFormProps) => {
             console.log("Submitted:", data);
             const response = await axios.post(`${plsConnect()}/GradesController/ProcessEnrollment`, data);
             console.log("Response:", response);
+            toast("Grades generated successfully.");
         } catch (error: any) {
             if (error.response) {
                 if (error.response.status === 409) {

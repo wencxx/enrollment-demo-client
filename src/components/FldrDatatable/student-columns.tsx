@@ -237,7 +237,7 @@ return (
                 </Button>
             </TooltipTrigger>
                 <TooltipContent>
-                <p>Enroll in next semester</p>
+                <p>Enroll in new semester</p>
                 </TooltipContent>
             </Tooltip>
             </TooltipProvider>
@@ -246,7 +246,7 @@ return (
                 <DialogHeader>
                 <DialogTitle className="mb-4">Continuing student enrollment</DialogTitle>
                 <DialogDescription>
-                    Change <strong className="text-red-500">year, semester, course, and AY</strong> accordingly. The current values are the student's most recent enrollment.
+                    This is a <strong className="text-red-500">continuing student</strong>. The current values are the student's most recent enrollment. Change <strong>year, semester, course, and AY</strong> according to the details of the new semester to be enrolled in.
                 </DialogDescription>
                 </DialogHeader>
                 <NewSemEnrollment1Form studentCode={studentCode} closeModal={closeModal} />
