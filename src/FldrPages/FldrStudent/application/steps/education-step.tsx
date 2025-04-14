@@ -53,7 +53,7 @@ export default function EducationStep({ form }: EducationStepProps) {
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="inclusionDate"
               render={({ field }) => (
@@ -65,10 +65,8 @@ export default function EducationStep({ form }: EducationStepProps) {
                   <FormMessage />
                 </FormItem>
               )}
-            />
-          </div>
-
-          <FormField
+            /> */}
+                      <FormField
             control={form.control}
             name="section"
             render={({ field }) => (
@@ -81,6 +79,9 @@ export default function EducationStep({ form }: EducationStepProps) {
               </FormItem>
             )}
           />
+          </div>
+
+
         </TabsContent>
 
         <TabsContent value="elementary" className="space-y-6 pt-4">

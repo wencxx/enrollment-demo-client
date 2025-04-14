@@ -26,8 +26,9 @@ export default function ResidentStatusStep({ form }: ResidentStatusStepProps) {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <SelectItem value="Cross-Enrollee">Cross-Enrollee</SelectItem>
+                                {/* <SelectItem value="Cross-Enrollee">Cross-Enrollee</SelectItem> */}
                                 <SelectItem value="Freshman">Freshman</SelectItem>
+                                <SelectItem value="Cross-Enrollee">Cross-Enrollee</SelectItem>
                                 <SelectItem value="Returnee">Returnee</SelectItem>
                                 <SelectItem value="Transferee">Transferee</SelectItem>
                             </SelectContent>
