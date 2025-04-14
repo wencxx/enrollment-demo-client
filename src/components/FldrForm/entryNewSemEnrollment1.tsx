@@ -76,6 +76,7 @@ export function NewSemEnrollment1Form({ studentCode, closeModal }: studentCodePr
         const fetchStudent = async () => {
           try {
             // fetches by highest/latest pkCode
+            // BUT IT SHOULD REALLY GRAB FROM STUDENT DATA
             const response = await axios.get(
               `${plsConnect()}/API/WEBAPI/ListController/ListStudentEnrollment1?studentCode=${studentCode}`
             );
