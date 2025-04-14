@@ -29,9 +29,9 @@ const useAuthStore = create<AuthState>((set) => ({
             const role = res.data.groupName
             
             if (role === 'Admin') {
-                navigate('/')
+                navigate('/enrollment/enrollment2')
             } else if (role === 'Student') {
-                navigate('/student/application')
+                navigate('/enrollment/enrollment2')
             }
         } catch (error: unknown) {
             console.log(error)

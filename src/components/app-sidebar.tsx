@@ -70,7 +70,6 @@ const data = {
       name: 'Users',
       url: 'permissions/users',
       icon: Users,
-      route: 'adjashd'
     },
     {
       name: 'Grant Permission',
@@ -121,7 +120,11 @@ const data = {
           url: "entry/AY",
           authorizeUsers: ['Admin']
         },
-
+        {
+          title: "Professors",
+          url: "entry/professors",
+          authorizeUsers: ['Admin']
+        },
         {
           title: "Room",
           url: "entry/room",
