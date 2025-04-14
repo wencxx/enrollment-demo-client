@@ -112,7 +112,7 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
       cell: ({ row }) => {
            let variantType: "approve" | "disapprove" = "disapprove";
           const status: boolean = row.getValue("void");
-          const displayStatus = status ? "Void" : "Approved";
+          const displayStatus = status ? "Void" : "Active";
           //reused custom badge colors: disapprove (red) and approve (green)
           if (status === true) {
               variantType = "disapprove";

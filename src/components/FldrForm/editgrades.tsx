@@ -6,7 +6,7 @@ import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Edit, Save } from "lucide-react";
+import { Edit, ListRestart, Save } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
     Form,
@@ -34,6 +34,8 @@ import {
 import { gradeEditSchema } from "@/FldrSchema/userSchema";
 import { AcademicYear } from "@/FldrTypes/academic-year";
 import { GradesCol, SubjectStatus } from "@/FldrTypes/grades";
+import Subject from "@/FldrPages/FldrEntry/subject-prerequisite";
+import useAuthStore from "@/FldrStore/auth";
 
 type GradeFormData = z.infer<typeof gradeEditSchema> & {
     firstName: string;
@@ -44,11 +46,15 @@ interface GradeFormProps {
     studentCode: string;
 }
 
+
+
+
 export const EditGrades =  ({ studentCode }: GradeFormProps) => {
     const form = useForm<GradeFormData>({
         resolver: zodResolver(gradeEditSchema),
     });
-
+    const { currentUser } = useAuthStore.getState();
+      
     const [loading, setLoading] = useState<boolean>(false)
     const [acadYears, setAcadYears] = useState<AcademicYear[]>([])
     const [aYearCode, setSelectedAYearCode] = useState<string | null>(null);
@@ -111,6 +117,8 @@ export const EditGrades =  ({ studentCode }: GradeFormProps) => {
 
     const [grades, setGrades] = useState<GradesCol[]>([]);
 
+    const [emptySem, setEmptySem] = useState("Please select a semester to view grades.");
+
     useEffect(() => {
         if (!pkCode) return;
 
@@ -123,7 +131,7 @@ export const EditGrades =  ({ studentCode }: GradeFormProps) => {
             } catch (error: any) {
                 if (error.response && error.response.status === 404) {
                     console.error("Not Found:", error.response.data);
-                    toast("No subjects loaded for this semester.");
+                    setEmptySem("No grades to show.");
                     setSelectedSemester(null);
                   } else {
                     console.error("An error occurred:", error.message);
@@ -149,8 +157,10 @@ export const EditGrades =  ({ studentCode }: GradeFormProps) => {
         setGrades([...originalGrades]);
         setIsEditing(false);
       };
+      
     
-      const handleSave = () => {
+      // put async on this thing so you can use await in it
+      const handleSave = async () => {
         const gradesToSave = grades.map((grade) => ({
           ...grade,
         // avg 0 if either value missing
@@ -163,8 +173,30 @@ export const EditGrades =  ({ studentCode }: GradeFormProps) => {
         console.log("Saving grades:", gradesToSave);
         setGrades(gradesToSave); 
         setIsEditing(false);
+        try {
+            for (const grade of gradesToSave) {
+            await axios.put(
+                `${plsConnect()}/GradesController/UpdateStudentGrade/${pkCode}/${grade.subjectCode}`,
+                {
+                Midterm: grade.midterm,
+                Final: grade.final,
+                Average: grade.average,
+                SubjectStatusCode: grade.subjectStatusCode,
+                }
+            );
+            }
+        } catch (error: any){
+            console.error("Error saving grades:", error);
+            toast.error("Error saving grades.");
+        }
+
         toast("Grades updated.");
       };
+
+      if (!currentUser) {
+        toast("User not logged in.");
+        return;
+      }
     return (
         <>
             <Form {...form}>
@@ -376,7 +408,7 @@ export const EditGrades =  ({ studentCode }: GradeFormProps) => {
                 </div>
                 ) : (
                 <div className="col-span-full text-center text-gray-300 mt-5">
-                    Please select a semester to view grades.
+                    {emptySem}
                 </div>
                 )}
 
@@ -399,7 +431,12 @@ export const EditGrades =  ({ studentCode }: GradeFormProps) => {
                     </Button>
                     )}
                 </div>) : (
-                    <div className="flex justify-end space-x-2"></div>
+                    <div className="flex justify-end space-x-2">
+                        {/* <Button type="button" onClick={generateGrades}>
+                            <ListRestart />
+                            Generate Grades
+                        </Button> */}
+                    </div>
                 )}
                 </form>
             </Form>

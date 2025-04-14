@@ -113,6 +113,7 @@ export const subjectColumns: ColumnDef<SubjectCol>[] = [
                     <SubjectForm 
                         editMode={true}
                         subjectToEdit={subjectCode} 
+                        onCancel={handleSubjectUpdate} //Works as both onSubmit and onCancel???
                     />
                 </DialogContent>
             </Dialog>

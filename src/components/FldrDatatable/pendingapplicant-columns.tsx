@@ -15,7 +15,8 @@ import {
   DialogContent,
   DialogTrigger,
   DialogTitle,
-  DialogHeader
+  DialogHeader,
+  DialogDescription
 } from "@/components/ui/dialog"
 
 export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
@@ -112,6 +113,9 @@ export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
                 <DialogContent className="max-h-[90vh] overflow-y-auto scrollbar-hidden" aria-labelledby="dialog-title">
                   <DialogHeader>
                     <DialogTitle className="mb-4">Begin student enrollment</DialogTitle>
+                    <DialogDescription>
+                    The student is matriculating for the <strong className="text-red-500">first time</strong>. Please enter <strong>year, semester, course, and AY</strong> according to the details of the semester the student will enroll in.
+                </DialogDescription>
                   </DialogHeader>
                   <PendingApplicantEnrollment1Form studentCode={studentCode} closeModal={closeModal} />
                 </DialogContent>

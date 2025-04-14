@@ -35,19 +35,6 @@ export default function Enrollment1() {
 
   return (
     <>
-      {/* <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">
-            <Plus />
-            Enrollment 1
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-h-[90vh]" aria-labelledby="dialog-title">
-          <DialogTitle id="dialog-title" className="text-lg font-medium">Enrollment 1</DialogTitle>
-          <Enrollment1Form />
-        </DialogContent>
-      </Dialog> */}
-
       <ScrollArea className="overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
         <DataTable columns={columnsPending} data={pending} loading={loading} title="pending students" />
         <ScrollBar orientation="horizontal" />

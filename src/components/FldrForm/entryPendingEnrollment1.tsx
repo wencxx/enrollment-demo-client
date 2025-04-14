@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { enrollment1Schema } from "@/FldrSchema/userSchema.ts"
+import { enrollmentMergedSchema } from "@/FldrSchema/userSchema.ts"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { useEffect, useState } from "react"
@@ -7,8 +7,9 @@ import { AcademicYear } from "@/FldrTypes/academic-year"
 import { Year } from "@/FldrTypes/year"
 import { Sem } from "@/FldrTypes/sem"
 import { CourseCol } from "@/FldrTypes/course.col"
+import { RateCol } from "../FldrDatatable/rate-columns"
 import { EnrollmentStatus } from "@/FldrTypes/enrollmentstatus"
-import { zodResolver } from "@hookform/resolvers/zod"
+// import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
@@ -46,22 +47,23 @@ import {
   } from "@/components/ui/popover"
   import { studentCodeProps } from "@/FldrTypes/studentCode"
 
-type Enrollment1FormData = z.infer<typeof enrollment1Schema>
+type Enrollment1FormData = z.infer<typeof enrollmentMergedSchema>
 
 export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: studentCodeProps) {
   const form = useForm<Enrollment1FormData>({
-    resolver: zodResolver(enrollment1Schema),
-    defaultValues: {
-      yearCode: "",
-      semCode: "",
-      courseCode: "",
-      studentCode,
-      date: new Date(),
-      enrollStatusCode: "",
-      aYearCode: 0,
-    },
-    mode: 'onChange',
-  })
+      defaultValues: {
+        yearCode: "",
+        semCode: "",
+        courseCode: "",
+        studentCode,
+        date: new Date(),
+        enrollStatusCode: "",
+        aYearCode: 0,
+        rateCode: "",
+        amount: 0,
+      },
+      mode: 'onChange',
+    })
 
   const [years, setYears] = useState<Year[]>([])
   const [sem, setSem] = useState<Sem[]>([])
@@ -130,6 +132,45 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
     fetchAYears()
   }, [])
 
+  const [rates, setRate] = useState<RateCol[]>([]);
+    
+      const fetchRate = async () => {
+        try {
+          const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListDistinctRate`);
+          const mappedRate = response.data.map((item: RateCol) => ({
+            label: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc}`,
+            value: item.rateCode,
+          }))
+          setRate(mappedRate)
+        } catch (error: any) {
+          console.error("Error fetching data:", error);
+        }
+      };
+    
+      useEffect(() => {
+        fetchRate();
+      }, [])
+    
+    const [amount, setAmount] = useState<number>(0);
+    const [rateCode, setRateCode] = useState<string>('');
+    
+      useEffect(() => {
+          const fetchRateAmountSum = async () => {
+              try {
+                  if (rateCode) {
+                      console.log("Rate Code:", rateCode)
+                      const response = await axios.get(`${plsConnect()}/api/Enrollment2/SumRateAmount/${rateCode}`);
+                      
+                      setAmount(response.data);
+                      form.setValue("amount", response.data);
+                  }
+              } catch (error) {
+                  console.error("Error fetching sum of RateAmounts:", error);
+              }
+          };
+          fetchRateAmountSum();
+      }, [rateCode]);
+
   const { currentUser } = useAuthStore.getState();
 
   if (!currentUser) {
@@ -145,14 +186,14 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
       userCode: currentUser.userCode,
       tDate: currentDate,
       dateEncoded: currentDate,
+      rateCode: values.rateCode,
+      amount: values.amount,
     }
 
     try {
       const postResponse = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertEnrollment1`, enrollment1Data)
-      const putResponse = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollmentStatus`, enrollment1Data)
-      console.log("Data submitted successfully:", postResponse)
-      console.log("Data submitted successfully:", putResponse)
-      // console.log("Data submitted successfully:", enrollment1Data)
+      console.log("Response:", postResponse)
+      console.log("SENT:", enrollment1Data);
       closeModal()
       toast("Success.")
     } catch (error) {
@@ -167,8 +208,9 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 grid grid-cols-2 gap-2">
-
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <div className="w-full space-y-6 grid grid-cols-2 gap-2 mt-4">
+      <div className="space-y-4">
       <FormField
           control={form.control}
           name="studentCode"
@@ -186,36 +228,7 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
             </FormItem>
           )}
         />
-
-        <FormField
-          control={form.control}
-          name="enrollStatusCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {status.length > 0 ? (
-                    status.map((statusItem) => (
-                      <SelectItem key={statusItem.enrollStatusCode} value={statusItem.enrollStatusCode}>
-                        {statusItem.enrollStatusDesc}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem key="no-status" disabled>Not Available</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
+        
         <FormField
           control={form.control}
           name="yearCode"
@@ -245,36 +258,7 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="semCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Semester</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select semester" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {sem.length > 0 ? (
-                    sem.map((semItem) => (
-                      <SelectItem key={semItem.semCode} value={semItem.semCode}>
-                        {semItem.semDesc}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem key="no-status" disabled>No semesters available</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
+<FormField
                   control={form.control}
                   name="courseCode"
                   render={({ field }) => (
@@ -338,6 +322,70 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
                     </FormItem>
                   )}
                 />
+        
+        
+        </div>
+
+        <div className="space-y-4">
+        <FormField
+          control={form.control}
+          name="enrollStatusCode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Application Status</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {status.length > 0 ? (
+                    status.map((statusItem) => (
+                      <SelectItem key={statusItem.enrollStatusCode} value={statusItem.enrollStatusCode}>
+                        {statusItem.enrollStatusDesc}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem key="no-status" disabled>Not Available</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="semCode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Semester</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select semester" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {sem.length > 0 ? (
+                    sem.map((semItem) => (
+                      <SelectItem key={semItem.semCode} value={semItem.semCode}>
+                        {semItem.semDesc}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem key="no-status" disabled>No semesters available</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        
 
                 <FormField
                   control={form.control}
@@ -403,9 +451,90 @@ export function PendingApplicantEnrollment1Form({ studentCode, closeModal }: stu
                     </FormItem>
                   )}
                 />
+            </div>
+        <div className="w-full space-y-6 col-span-2">
+          <FormField
+            control={form.control}
+            name="rateCode"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Rate</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value
+                          ? rates.find(
+                              (rates) => rates.value === field.value
+                            )?.label
+                          : "Select rate"}
+                        <ChevronsUpDown className="opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput
+                        placeholder="Search..."
+                        className="h-9"
+                      />
+                      <CommandList>
+                        <CommandEmpty>None found.</CommandEmpty>
+                        <CommandGroup>
+                          {rates.map((rates) => (
+                            <CommandItem
+                              value={rates.label}
+                              key={rates.value}
+                              onSelect={() => {
+                                  form.setValue("rateCode", rates.value);
+                                  field.onChange(rates.value);
+                                  setRateCode(rates.value);
+                              }}
+                            >
+                              {rates.label}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  rates.value === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
+          <FormField name="amount" control={form.control} render={({ field }) => (
+            <FormItem className="w-full">
+              <FormLabel className="mr-2">Amount</FormLabel>
+              <FormControl>
+                <span className="text-sm font-medium">
+                  {new Intl.NumberFormat('en-PH', {style: 'currency', currency: 'PHP',
+                  }).format(amount)}
+                </span>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+        </div>
           <div className="col-span-2">
             <Button type="submit" className="w-full sm:w-20 float-right">Submit</Button>
+          </div>
           </div>
       </form>
     </Form>

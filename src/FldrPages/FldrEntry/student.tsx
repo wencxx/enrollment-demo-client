@@ -15,8 +15,12 @@ import axios from "axios";
 import { StudentCol, StudentColFullName } from "@/FldrTypes/students-col"
 import { Plus } from 'lucide-react'
 import { DialogTitle } from "@radix-ui/react-dialog";
+import { PendingApplicantCol } from "@/FldrTypes/pendingapplicant";
+import { columnsPending } from "@/components/FldrDatatable/pendingapplicant-columns"
 // import { useReactToPrint } from "react-to-print";
 // import { useRef } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 
 export default function Student() {
   const [data, setData] = useState<StudentColFullName[]>([]);
@@ -25,7 +29,7 @@ export default function Student() {
   const getStudents = async () => {
     try {
       setLoading(true)
-      const res = await axios.get<StudentCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListStudent`)
+      const res = await axios.get<StudentCol[]>(`${plsConnect()}/API/WEBAPI/StudentController/ListStudent`)
 
       const dataWithFullName = res.data.map(student => ({
         ...student,
@@ -44,9 +48,29 @@ export default function Student() {
     getStudents()
   }, []);
 
-  const addNewStudent = (newStudent: StudentColFullName) => {
-    setData((prevData) => [...prevData, newStudent])
-  }
+  // students who are not yet "approved" (EnrollStatusCode = 1 "Pending"), meaning they are new to the school
+  const [pending, setPending] = useState<PendingApplicantCol[]>([]);
+  
+    const fetchPending = async () => {
+      try {
+        setLoading(true)
+        const response = await axios.get<PendingApplicantCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListApplicant`);
+        const updatedData = response.data.map((item) => ({
+          ...item,
+          fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}`,
+        }));
+        setPending(updatedData);
+        console.log(updatedData)
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false)
+      }
+    };
+  
+    useEffect(() => {
+      fetchPending();
+    }, []);
 
   // print function
   // const contentRef = useRef<HTMLDivElement>(null);
@@ -54,9 +78,21 @@ export default function Student() {
 
   return (
     <>
+    <Tabs defaultValue="students" className="w-full">
+      <TabsList>
+        <TabsTrigger value="students">Students</TabsTrigger>
+        <TabsTrigger value="pendingStudents">Pending Applicants</TabsTrigger>
+      </TabsList>
+      <TabsContent value="students">
       <DataTable columns={columns} data={data} title="students" loading={loading} />
-      {/* <div className="hidden print:block" ref={contentRef}>this is the content to print</div> */}
-      <Toaster />
+      </TabsContent>
+      <TabsContent value="pendingStudents">
+      <DataTable columns={columnsPending} data={pending} loading={loading} title="pending students" />
+      </TabsContent>
+    </Tabs>
+
+    {/* <div className="hidden print:block" ref={contentRef}>this is the content to print</div> */}
+    <Toaster />
     </>
   )
 }
