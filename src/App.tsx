@@ -23,6 +23,9 @@ import AcademicYearPage from "./FldrPages/FldrEntry/academicyear"
 import RoutesPage from "./FldrPages/FldrPermissions/assign-permission"
 import { useEffect } from "react";
 
+import Room from "./FldrPages/FldrEntry/room"
+import Section from "./FldrPages/FldrEntry/section"
+
 const useTabVisibility = () => {
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -67,6 +70,9 @@ function App() {
             <Route path="permissions/users" element={<Users />} />
             <Route path="permissions/grant-permission" element={<GrantPermission />} />
             <Route path="permissions/routes" element={<RoutePage />} />
+
+            <Route path="entry/room" element={<Room />} />
+            <Route path="entry/section" element={<Section />} />
           </Route>
           <Route path="/unauthorize" element={<Unauthorized />} />
         </Routes>

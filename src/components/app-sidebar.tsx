@@ -121,6 +121,17 @@ const data = {
           url: "entry/AY",
           authorizeUsers: ['Admin']
         },
+
+        {
+          title: "Room",
+          url: "entry/room",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Section",
+          url: "entry/section",
+          authorizeUsers: ['Admin']
+        },
       ],
     },
     {
