@@ -73,7 +73,7 @@ export default function EnrollmentForm() {
                 {step === 6 && <ParentsStep form={form} />}
                 {step === 7 && <FamilyDetailsStep form={form} />}
                 {step === 8 && <EducationStep form={form} />}
-                {step === 9 && <AdditionalInfoStep form={form} />}
+                {step === 9 && <AdditionalInfoStep form={form} />}  
 
                 <div className="flex justify-between mt-8">
                   {step > 1 ? (

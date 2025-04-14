@@ -70,7 +70,6 @@ const data = {
       name: 'Users',
       url: 'permissions/users',
       icon: Users,
-      route: 'adjashd'
     },
     {
       name: 'Grant Permission',
@@ -119,6 +118,11 @@ const data = {
         {
           title: "Academic Year",
           url: "entry/AY",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Professors",
+          url: "entry/professors",
           authorizeUsers: ['Admin']
         },
       ],
