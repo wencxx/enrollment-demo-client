@@ -126,6 +126,16 @@ const data = {
           authorizeUsers: ['Admin']
         },
         {
+          title: "High School",
+          url: "entry/highschool",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Elementary",
+          url: "entry/elementary",
+          authorizeUsers: ['Admin']
+        },
+        {
           title: "Room",
           url: "entry/room",
           authorizeUsers: ['Admin']
