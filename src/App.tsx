@@ -23,6 +23,7 @@ import AcademicYearPage from "./FldrPages/FldrEntry/academicyear"
 import Professor from "./FldrPages/FldrEntry/professor"
 import HighSchool from "./FldrPages/FldrEntry/highschool"
 import Elementary from "./FldrPages/FldrEntry/elementary"
+import Town from "./FldrPages/FldrEntry/town"
 import Room from "./FldrPages/FldrEntry/room"
 import Section from "./FldrPages/FldrEntry/section"
 import Rate1 from "./FldrPages/FldrEntry/rate1"
@@ -79,6 +80,10 @@ const routes = [
   {
     element: <Elementary />,
     path: '/entry/elementary',
+  },
+  {
+    element: <Town />,
+    path: '/entry/town',
   },
   {
     element: <Rate1 />,

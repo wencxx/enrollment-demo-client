@@ -135,6 +135,12 @@ const data = {
           url: "entry/elementary",
           authorizeUsers: ['Admin']
         },
+
+        {
+          title: "Town/City",
+          url: "entry/town",
+          authorizeUsers: ['Admin']
+        },
         {
           title: "Room",
           url: "entry/room",
@@ -175,7 +181,7 @@ const data = {
     //     },
     //   ],
     // }
-  ],
+  // ],
   // menuEnrollment: [
   //   {
   //     name: 'Enrollment1',
