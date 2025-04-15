@@ -1,9 +1,8 @@
-import { columns } from "@/components/FldrDatatable/course-columns";
+import { columns } from "@/components/FldrDatatable/rate1-col.tsx";
 import { DataTable } from "@/components/FldrDatatable/data-table";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { CourseForm } from "@/components/FldrForm/entrycourse"
-import { CourseCol } from "@/FldrTypes/course.col";
+import { Rate1Col } from "@/FldrTypes/kim-types";
 import {
   Dialog,
   DialogContent,
@@ -13,23 +12,27 @@ import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { Plus } from 'lucide-react'
+import { Rate1Form } from "@/components/FldrForm/entryRate1";
 
-export default function Course() {
-  const [data, setData] = useState<CourseCol[]>([]);
+export default function Rate1() {
+  const [data, setData] = useState<Rate1Col[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const getCourse = async () => {
+  const getRate1 = async () => {
     try {
       setLoading(true)
-      const res = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
+      const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListRate1`)
       
-      // Format data with fieldNumber for consistent structure
       const formattedData = res.data.map((item: any, index: number) => ({
         fieldNumber: index + 1,
-        courseCode: item.CourseCode || item.courseCode,
-        courseDesc: item.CourseDesc || item.courseDesc,
+        pkRate1: item.pkRate1 || "",
+        yearCode: item.yearCode || "",
+        courseCode: item.courseCode || "",
+        yearDesc: item.yearDesc || "",
+        courseDesc: item.courseDesc || "",
       }));
-      
+      console.log("List received:", res.data);  
       setData(formattedData)
     } catch (error) {
       console.log(error)
@@ -37,24 +40,29 @@ export default function Course() {
       setLoading(false)
     }
   }
-
   useEffect(() => {
-    getCourse()
+    getRate1()
   }, []);
 
   return (
     <div className="container py-6">
         <div className="space-x-2">
           {/* <h2 className="text-xl font-semibold">Courses</h2> */}
-          <Dialog>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add new course
+                Add new rate
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <CourseForm onCancel={getCourse} />
+                <Rate1Form
+                onCancel={getRate1}
+                onSuccess={() => {
+                    getRate1();
+                    setIsDialogOpen(false);
+                }}
+                />
             </DialogContent>
           </Dialog>
         </div>
@@ -63,8 +71,8 @@ export default function Course() {
             columns={columns} 
             data={data} 
             loading={loading} 
-            title="courses" 
-            onRefresh={getCourse}
+            title="rooms" 
+            onRefresh={getRate1}
           />
         </div>
       <Toaster />

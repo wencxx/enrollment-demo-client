@@ -223,3 +223,17 @@ export const gradeGenSchema = z.object({
   pkCode: z.string().min(1),
   userCode: z.string().min(1)
 });
+
+export const roomSchema = z.object({
+  roomCode: z.string().optional(),
+  roomDesc: z.string().min(2, {
+    message: "Room description must be at least 2 characters.",
+  }),
+})
+
+export const sectionSchema = z.object({
+  sectionCode: z.string().optional(),
+  sectionDesc: z.string().min(2, {
+    message: "Section description must be at least 2 characters.",
+  }),
+})
