@@ -135,6 +135,11 @@ const data = {
           url: "entry/elementary",
           authorizeUsers: ['Admin']
         },
+        {
+          title: "Town/City",
+          url: "entry/town",
+          authorizeUsers: ['Admin']
+        },
       ],
     },
     {

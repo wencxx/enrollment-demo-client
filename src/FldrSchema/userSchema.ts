@@ -71,6 +71,10 @@ export const elementarySchema = z.object({
   elementaryDesc: z.string().nonempty('Elementary description is required'),
 })
 
+export const townSchema = z.object({
+  tcDesc: z.string().nonempty('Town/City description is required'),
+})
+
 export const enrollment1Schema = z.object({
   yearCode: z.string()
     .min(1, { message: "Select a year." }),
