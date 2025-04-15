@@ -21,6 +21,8 @@ import RoutePage from "./FldrPages/FldrPermissions/routes"
 import Subject from "./FldrPages/FldrEntry/subject-prerequisite"
 import AcademicYearPage from "./FldrPages/FldrEntry/academicyear"
 import Professor from "./FldrPages/FldrEntry/professor"
+import HighSchool from "./FldrPages/FldrEntry/highschool"
+import Elementary from "./FldrPages/FldrEntry/elementary"
 
 const routes = [
   {
@@ -58,6 +60,14 @@ const routes = [
   {
     element: <Professor />,
     path: '/entry/professors',
+  },
+  {
+    element: <HighSchool />,
+    path: '/entry/highschool',
+  },
+  {
+    element: <Elementary />,
+    path: '/entry/elementary',
   },
   {
     element: <Enrollment1 />,

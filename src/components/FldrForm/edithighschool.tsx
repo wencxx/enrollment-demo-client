@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
@@ -15,46 +14,46 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { professorSchema } from "@/FldrSchema/userSchema";
+import { highschoolSchema } from "@/FldrSchema/userSchema";
 
-type ProfessorFormData = z.infer<typeof professorSchema> & {
-  professorName: string
+type HighSchoolFormData = z.infer<typeof highschoolSchema> & {
+  hsDesc: string
 };
 
 interface CourseFormProps {
   data: {
-    professorCode: string;
-    professorName: string;
+    hsCode: string;
+    hsDesc: string;
   },
-  getProfessor: () => Promise<void> ,
+  getHighschool: () => Promise<void> ,
   setOpenEdit: (openEdit: boolean) => void,
 }
 
-export function EditProfessor({ data , getProfessor, setOpenEdit}: CourseFormProps) {
-  const form = useForm<ProfessorFormData>({
-    resolver: zodResolver(professorSchema),
+export function EditHighschool({ data , getHighschool, setOpenEdit}: CourseFormProps) {
+  const form = useForm<HighSchoolFormData>({
+    resolver: zodResolver(highschoolSchema),
     defaultValues: {
-      professorName: data.professorName
+      hsDesc: data.hsDesc
     }
   },
   );
 
 
-  const onSubmit = async (values: ProfessorFormData) => {
+  const onSubmit = async (values: HighSchoolFormData) => {
     try {
       const formattedValues = {
-        professorCode: data.professorCode,
-        professorName: values.professorName,
+        hsCode: data.hsCode,
+        hsDesc: values.hsDesc,
       };
 
       await axios.put(
-        `${plsConnect()}/api/Professors`,
+        `${plsConnect()}/api/Highschool`,
         formattedValues,
       );
 
-      await getProfessor()
+      await getHighschool()
       setOpenEdit(false)
-      toast("Professor updated successfully.");
+      toast("Highschool updated successfully.");
     } catch (error: any) {
       toast("Error updating course details.");
       console.log(error)
@@ -63,14 +62,14 @@ export function EditProfessor({ data , getProfessor, setOpenEdit}: CourseFormPro
 
   return (
     <>
-      <h2 className="text-xl font-semibold mb-4">Edit Professor</h2>
+      <h2 className="text-xl font-semibold mb-4">Edit High School</h2>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4">
-          <FormField name="professorName" control={form.control} render={({ field }) => (
+          <FormField name="hsDesc" control={form.control} render={({ field }) => (
             <FormItem>
-              <FormLabel>Professor Name</FormLabel>
+              <FormLabel>Highschool Description</FormLabel>
               <FormControl><Input {...field} /></FormControl>
               <FormMessage />
             </FormItem>

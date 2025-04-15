@@ -125,6 +125,16 @@ const data = {
           url: "entry/professors",
           authorizeUsers: ['Admin']
         },
+        {
+          title: "High School",
+          url: "entry/highschool",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Elementary",
+          url: "entry/elementary",
+          authorizeUsers: ['Admin']
+        },
       ],
     },
     {
