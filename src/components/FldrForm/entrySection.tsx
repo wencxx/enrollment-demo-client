@@ -101,8 +101,14 @@ export function SectionForm({ editMode = false, toEdit = "", onCancel, onSuccess
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.message || "Error submitting form.";
-        toast.error(errorMessage);
+        const errorMessage = error.response?.data || "An error occurred.";
+        if (error.response?.status === 409) {
+          toast.error(errorMessage);
+        } else if (error.response?.status === 400) {
+          toast.error(errorMessage);
+        } else {
+          toast.error("An unexpected error occurred.");
+        }
         console.error("API error:", error.response?.data);
       } else {
         console.error("Network error:", error);

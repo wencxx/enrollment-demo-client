@@ -145,6 +145,11 @@ const data = {
           url: "entry/section",
           authorizeUsers: ['Admin']
         },
+        {
+          title: "Rate 1",
+          url: "entry/rate1",
+          authorizeUsers: ['Admin']
+        },
       ],
     }
     // {

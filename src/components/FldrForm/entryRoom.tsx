@@ -84,26 +84,32 @@ export function RoomForm({ editMode = false, toEdit = "", onCancel, onSuccess }:
         toast("Room updated successfully.");
       } else {
         console.log("Adding new room:", values);
-        response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertRoom`, {
-            roomDesc: values.roomDesc
-        });
+        response = await axios.post(
+          `${plsConnect()}/API/WEBAPI/InsertEntry/InsertRoom`,
+          {
+            roomDesc: values.roomDesc,
+          });
         toast("Room added successfully.");
       }
       
       console.log("API response:", response.data);
       form.reset();
-      
       if (onSuccess) {
         onSuccess();
       }
       if (onCancel) {
         onCancel();
       }
-
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.message || "Error submitting form.";
-        toast.error(errorMessage);
+        const errorMessage = error.response?.data || "An error occurred.";
+        if (error.response?.status === 409) {
+          toast.error(errorMessage);
+        } else if (error.response?.status === 400) {
+          toast.error(errorMessage);
+        } else {
+          toast.error("An unexpected error occurred.");
+        }
         console.error("API error:", error.response?.data);
       } else {
         console.error("Network error:", error);
