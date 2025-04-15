@@ -139,7 +139,7 @@ function App() {
               <Route key={index} path={route.path} element={route.element} />
             ))}
 
-<!--           <Route path="/" element={<Layout />}>
+            {/* <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="schedules" element={<Schedules />} />
             <Route path="entry/course" element={<Course />} />
@@ -159,7 +159,7 @@ function App() {
             <Route path="permissions/routes" element={<RoutePage />} />
 
             <Route path="entry/room" element={<Room />} />
-            <Route path="entry/section" element={<Section />} /> -->
+            <Route path="entry/section" element={<Section />} /> */}
 
           </Route>
           <Route path="/unauthorize" element={<Unauthorized />} />
