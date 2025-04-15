@@ -320,13 +320,13 @@ export default function StudentApplication() {
                 type="button" 
                 disabled={submitting}
                 onClick={() => {
-                  form.trigger(); // Trigger validation for all fields
-                  const isValid = form.formState.isValid;
+                  // form.trigger(); // Trigger validation for all fields
+                  // const isValid = form.formState.isValid;
                   
-                  if (!isValid) {
-                    toast.error("Please fill in all required fields");
-                    return;
-                  }
+                  // if (!isValid) {
+                  //   toast.error("Please fill in all required fields");
+                  //   return;
+                  // }
                   
                   const values = form.getValues();
                   onSubmit(values);
