@@ -89,37 +89,37 @@ const data = {
       icon: FileInput,
       authorizeUsers: ['Admin'],
       items: [
-        {
-          title: "Student",
-          url: "entry/student",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Subject",
-          url: "entry/subject-prerequisite",
-          authorizeUsers: ['Admin']
-        },
+        // {
+        //   title: "Student",
+        //   url: "entry/student",
+        //   authorizeUsers: ['Admin']
+        // },
+        // {
+        //   title: "Subject",
+        //   url: "entry/subject-prerequisite",
+        //   authorizeUsers: ['Admin']
+        // },
 
         {
           title: "Course",
           url: "entry/course",
           authorizeUsers: ['Admin']
         },
-        {
-          title: "Rate",
-          url: "entry/rate",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Rate Course",
-          url: "entry/ratecourse",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Academic Year",
-          url: "entry/AY",
-          authorizeUsers: ['Admin']
-        },
+        // {
+        //   title: "Rate",
+        //   url: "entry/rate",
+        //   authorizeUsers: ['Admin']
+        // },
+        // {
+        //   title: "Rate Course",
+        //   url: "entry/ratecourse",
+        //   authorizeUsers: ['Admin']
+        // },
+        // {
+        //   title: "Academic Year",
+        //   url: "entry/AY",
+        //   authorizeUsers: ['Admin']
+        // },
         {
           title: "Professors",
           url: "entry/professors",
@@ -135,31 +135,41 @@ const data = {
           url: "entry/elementary",
           authorizeUsers: ['Admin']
         },
-      ],
-    },
-    {
-      title: "Enrollment",
-      url: "#",
-      icon: FileUser,
-      authorizeUsers: ['Admin'],
-      items: [
         {
-          title: "Enrollment - 1",
-          url: "enrollment/enrollment1",
+          title: "Room",
+          url: "entry/room",
           authorizeUsers: ['Admin']
         },
         {
-          title: "Enrollment - 2",
-          url: "enrollment/enrollment2",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Enrollment - 3",
-          url: "enrollment/enrollment3",
+          title: "Section",
+          url: "entry/section",
           authorizeUsers: ['Admin']
         },
       ],
     }
+    // {
+    //   title: "Enrollment",
+    //   url: "#",
+    //   icon: FileUser,
+    //   authorizeUsers: ['Admin'],
+    //   items: [
+    //     {
+    //       title: "Enrollment - 1",
+    //       url: "enrollment/enrollment1",
+    //       authorizeUsers: ['Admin']
+    //     },
+    //     {
+    //       title: "Enrollment - 2",
+    //       url: "enrollment/enrollment2",
+    //       authorizeUsers: ['Admin']
+    //     },
+    //     {
+    //       title: "Enrollment - 3",
+    //       url: "enrollment/enrollment3",
+    //       authorizeUsers: ['Admin']
+    //     },
+    //   ],
+    // }
   ],
   // menuEnrollment: [
   //   {
