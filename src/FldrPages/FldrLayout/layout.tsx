@@ -64,7 +64,7 @@ function Layout() {
   const isAuthorized = () => {
     const path = location.pathname.split('/')[2] || '/'
     const authorizedPaths: Record<string, string[]> = {
-      'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/', 'grades', 'profile', 'application', 'statement-of-account', 'users', 'subject-prerequisite', 'schedules', 'routes', 'AY', 'grant-permission', 'professors', 'highschool', 'elementary', 'town', 'room', 'section', 'rate1'],
+      'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/', 'grades', 'profile', 'application', 'statement-of-account', 'users', 'subject-prerequisite', 'schedules', 'routes', 'AY', 'grant-permission', 'professors', 'highschool', 'elementary', 'town', 'room', 'section', 'rate1', 'ratedesc'],
       // Students should not access enrollment
       'Student': ['application', 'grades', 'profile', 'statement-of-account']
     }

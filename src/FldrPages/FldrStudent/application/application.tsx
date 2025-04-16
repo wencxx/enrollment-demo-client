@@ -547,10 +547,6 @@ export default function StudentApplication() {
                         </FormItem>
                       )}
                     />
-                            
-                                  
-                    
-
 
                     <FormField
                       control={form.control}

@@ -27,6 +27,7 @@ import Town from "./FldrPages/FldrEntry/town"
 import Room from "./FldrPages/FldrEntry/room"
 import Section from "./FldrPages/FldrEntry/section"
 import Rate1 from "./FldrPages/FldrEntry/rate1"
+import RateDesc from "./FldrPages/FldrEntry/ratedesc"
 
 const routes = [
   {
@@ -88,6 +89,10 @@ const routes = [
   {
     element: <Rate1 />,
     path: '/entry/rate1',
+  },
+  {
+    element: <RateDesc />,
+    path: '/entry/ratedesc',
   },
   {
     element: <Enrollment1 />,
