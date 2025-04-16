@@ -75,7 +75,7 @@ export const columns: ColumnDef<RoomCol>[] = [
             setIsDialogOpen(false);
             const onRefresh = table.options.meta?.refreshData;
             if (typeof onRefresh === 'function') {
-              console.log("Refreshing course data after update");
+              console.log("Refreshing...");
               onRefresh();
             }
           };

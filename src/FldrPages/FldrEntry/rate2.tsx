@@ -1,8 +1,8 @@
-import { columns } from "@/components/FldrDatatable/rate1-col.tsx";
+import { columns } from "@/components/FldrDatatable/rate2-col.tsx";
 import { DataTable } from "@/components/FldrDatatable/data-table";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Rate1Col } from "@/FldrTypes/kim-types";
+import { Rate2Col } from "@/FldrTypes/kim-types";
 import {
   Dialog,
   DialogContent,
@@ -12,25 +12,25 @@ import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { Plus } from 'lucide-react'
-import { EntryRate1Form } from "@/components/FldrForm/entryRate1";
+import { EntryRate2Form } from "@/components/FldrForm/entryRate2";
 
-export default function Rate1() {
-  const [data, setData] = useState<Rate1Col[]>([]);
+export default function Rate2() {
+  const [data, setData] = useState<Rate2Col[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const getRate1 = async () => {
+  const getRate2 = async () => {
     try {
       setLoading(true)
-      const res = await axios.get(`${plsConnect()}/API/WebAPI/RateController/ListRate1`)
+      const res = await axios.get(`${plsConnect()}/API/WebAPI/RateController/ListRate2`)
       
       const formattedData = res.data.map((item: any, index: number) => ({
         fieldNumber: index + 1,
-        pkRate1: item.pkRate1 || "",
-        yearCode: item.yearCode || "",
-        courseCode: item.courseCode || "",
+        pkRate: item.pkRate || "",
         yearDesc: item.yearDesc || "",
         courseDesc: item.courseDesc || "",
+        rdDesc: item.rdDesc || "",
+        rateTypeDesc: item.rateTypeDesc || "",
       }));
       console.log("List received:", res.data);  
       setData(formattedData)
@@ -41,7 +41,7 @@ export default function Rate1() {
     }
   }
   useEffect(() => {
-    getRate1()
+    getRate2()
   }, []);
 
   return (
@@ -51,14 +51,14 @@ export default function Rate1() {
             <DialogTrigger asChild>
               <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add new Rate 1
+                Add new Rate 2
               </Button>
             </DialogTrigger>
             <DialogContent>
-                <EntryRate1Form
-                onCancel={getRate1}
+                <EntryRate2Form
+                onCancel={getRate2}
                 onSuccess={() => {
-                    getRate1();
+                    getRate2();
                     setIsDialogOpen(false);
                 }}
                 />
@@ -71,7 +71,7 @@ export default function Rate1() {
             data={data} 
             loading={loading} 
             title="rooms" 
-            onRefresh={getRate1}
+            onRefresh={getRate2}
           />
         </div>
       <Toaster />
