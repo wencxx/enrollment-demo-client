@@ -279,6 +279,9 @@ export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
                       />
                     </TableCell>
                     <TableCell className="text-right w-[40%]">
+
+
+
                       <FormField
                         control={form.control}
                         name={`rows[${index}].subjectCode`}
@@ -345,6 +348,10 @@ export function RateForm({ onSubmitSuccess, onAddRate }: RateFormProps) {
                               </FormControl>
                             )}
                           </FormItem>
+
+
+
+
                         )}
                       />
                     </TableCell>
