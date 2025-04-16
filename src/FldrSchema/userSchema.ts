@@ -59,6 +59,22 @@ export const courseSchema = z.object({
   }),
 })
 
+export const professorSchema = z.object({
+  professorName: z.string().nonempty('Professor name is required'),
+})
+
+export const highschoolSchema = z.object({
+  hsDesc: z.string().nonempty('High school description is required'),
+})
+
+export const elementarySchema = z.object({
+  elementaryDesc: z.string().nonempty('Elementary description is required'),
+})
+
+export const townSchema = z.object({
+  tcDesc: z.string().nonempty('Town/City description is required'),
+})
+
 export const enrollment1Schema = z.object({
   yearCode: z.string()
     .min(1, { message: "Select a year." }),
@@ -81,6 +97,26 @@ export const enrollment2Schema = z.object({
   rateCode: z.string().min(1, { message: "Select a rate." }),
   amount: z.number(),
 });
+
+export const enrollmentMergedSchema = z.object({
+  yearCode: z.string()
+    .min(1, { message: "Select a year." }),
+  semCode: z.string()
+    .min(1, { message: "Select a semester." }),
+  courseCode: z.string()
+    .min(1, { message: "Select a course." }),
+  studentCode: z.string()
+    .min(1, { message: "Select a student." }),
+  date: z.date()
+    .refine((val) => val <= new Date(), { message: "Date must be today or earlier." }),
+  enrollStatusCode: z.string()
+    .min(1, { message: "Please confirm status." }),
+    aYearCode: z.number().min(1, { message: "Select an academic year." }),
+    pkCode: z.string().min(1, { message: "Select a student." }),
+    rowNum: z.number(),
+    rateCode: z.string().min(1, { message: "Select a rate." }),
+    amount: z.number(),
+})
 
 export const rateSchema = z.object({
   pkCode: z.string().min(1),
@@ -134,9 +170,9 @@ export const studentEditSchema = z.object ({
   }),
   birthDate: z.union([z.string(), z.date()]).optional(),
 
-  address: z.string().min(2, {
-    message: "Address invalid.",
-  }),
+  // address: z.string().min(2, {
+  //   message: "Address invalid.",
+  // }),
   semCode: z.string()
     .min(1, { message: "Select a semester." }),
     yearCode: z.string()
@@ -182,3 +218,22 @@ export const acadYearSchema = z.object({
 export const gradeEditSchema = z.object({
   // subjectCode: z.string().min(1, 'Subject code is required'),
 });
+
+export const gradeGenSchema = z.object({
+  pkCode: z.string().min(1),
+  userCode: z.string().min(1)
+});
+
+export const roomSchema = z.object({
+  roomCode: z.string().optional(),
+  roomDesc: z.string().min(2, {
+    message: "Room description must be at least 2 characters.",
+  }),
+})
+
+export const sectionSchema = z.object({
+  sectionCode: z.string().optional(),
+  sectionDesc: z.string().min(2, {
+    message: "Section description must be at least 2 characters.",
+  }),
+})

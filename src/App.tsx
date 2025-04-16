@@ -20,28 +20,132 @@ import GrantPermission from "./FldrPages/FldrPermissions/assign-permission"
 import RoutePage from "./FldrPages/FldrPermissions/routes"
 import Subject from "./FldrPages/FldrEntry/subject-prerequisite"
 import AcademicYearPage from "./FldrPages/FldrEntry/academicyear"
-import RoutesPage from "./FldrPages/FldrPermissions/assign-permission"
-import { useEffect } from "react";
+import Professor from "./FldrPages/FldrEntry/professor"
+import HighSchool from "./FldrPages/FldrEntry/highschool"
+import Elementary from "./FldrPages/FldrEntry/elementary"
+import Town from "./FldrPages/FldrEntry/town"
+import Room from "./FldrPages/FldrEntry/room"
+import Section from "./FldrPages/FldrEntry/section"
+import Rate1 from "./FldrPages/FldrEntry/rate1"
 
-const useTabVisibility = () => {
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        document.title = "B4l1K n@ b@bY! 😢";
-      } else {
-        document.title = "Enrollment System";
-      }
-    };
+const routes = [
+  {
+    element: <Dashboard />,
+    path: '/',
+  },
+  {
+    element: <Schedules />,
+    path: '/schedules',
+  },
+  {
+    element: <Course />,
+    path: '/entry/course',
+  },
+  {
+    element: <Room />,
+    path: '/entry/room',
+  },
+  {
+    element: <Section />,
+    path: '/entry/section',
+  },
+  {
+    element: <Student />,
+    path: '/entry/student',
+  },
+  {
+    element: <Rate />,
+    path: '/entry/rate',
+  },
+  {
+    element: <Subject />,
+    path: '/entry/subject-prerequisite',
+  },
+  {
+    element: <RateCourse />,
+    path: '/entry/ratecourse',
+  },
+  {
+    element: <AcademicYearPage />,
+    path: '/entry/AY',
+  },
+  {
+    element: <Professor />,
+    path: '/entry/professors',
+  },
+  {
+    element: <HighSchool />,
+    path: '/entry/highschool',
+  },
+  {
+    element: <Elementary />,
+    path: '/entry/elementary',
+  },
+  {
+    element: <Town />,
+    path: '/entry/town',
+  },
+  {
+    element: <Rate1 />,
+    path: '/entry/rate1',
+  },
+  {
+    element: <Enrollment1 />,
+    path: '/enrollment/enrollment1',
+  },
+  {
+    element: <Enrollment2 />,
+    path: '/enrollment/enrollment2',
+  },
+  {
+    element: <Application />,
+    path: '/student/application',
+  },
+  {
+    element: <Grades />,
+    path: '/student/grades',
+  },
+  {
+    element: <StudentProfile />,
+    path: '/student/profile',
+  },
+  {
+    element: <StatementOfAccount />,
+    path: '/student/statement-of-account',
+  },
+  {
+    element: <Users />,
+    path: '/permissions/users',
+  },
+  {
+    element: <GrantPermission />,
+    path: '/permissions/grant-permission',
+  },
+  {
+    element: <RoutePage />,
+    path: '/permissions/routes',
+  },
+]
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
-};
+// const useTabVisibility = () => {
+//   useEffect(() => {
+//     const handleVisibilityChange = () => {
+//       if (document.hidden) {
+//         document.title = "B4l1K n@ b@bY! 😢";
+//       } else {
+//         document.title = "Enrollment System";
+//       }
+//     };
+
+//     document.addEventListener("visibilitychange", handleVisibilityChange);
+//     return () => {
+//       document.removeEventListener("visibilitychange", handleVisibilityChange);
+//     };
+//   }, []);
+// };
+
 
 function App() {
-  useTabVisibility()
 
   return (
     <div className="font-inter">
@@ -49,7 +153,13 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Layout />}>
+
+          <Route element={<Layout />}>
+            {routes.map((route, index) => (
+              <Route key={index} path={route.path} element={route.element} />
+            ))}
+
+            {/* <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="schedules" element={<Schedules />} />
             <Route path="entry/course" element={<Course />} />
@@ -67,6 +177,10 @@ function App() {
             <Route path="permissions/users" element={<Users />} />
             <Route path="permissions/grant-permission" element={<GrantPermission />} />
             <Route path="permissions/routes" element={<RoutePage />} />
+
+            <Route path="entry/room" element={<Room />} />
+            <Route path="entry/section" element={<Section />} /> */}
+
           </Route>
           <Route path="/unauthorize" element={<Unauthorized />} />
         </Routes>

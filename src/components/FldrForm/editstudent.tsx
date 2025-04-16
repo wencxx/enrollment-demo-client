@@ -31,7 +31,7 @@ type StudentFormData = z.infer<typeof studentEditSchema> & {
   firstName: string;
   middleName: string;
   lastName: string;
-  address: string;
+  // address: string;
   birthDate: Date;
   courseCode: string;
   courseDesc: string;
@@ -86,7 +86,7 @@ export const EditStudent =  ({ studentCode, onSubmitSuccess }) => {
             firstName: response.data.firstName || "",
             middleName: response.data.middleName || "",
             lastName: response.data.lastName || "",
-            address: response.data.address || "",
+            // address: response.data.address || "",
             birthDate: response.data.birthDate
               ? new Date(response.data.birthDate).toISOString().split("T")[0]
               : "",
@@ -134,7 +134,7 @@ export const EditStudent =  ({ studentCode, onSubmitSuccess }) => {
           firstName: values.firstName,
           middleName: values.middleName,
           lastName: values.lastName,
-          address: values.address,
+          // address: values.address,
           birthDate: values.birthDate
             ? new Date(values.birthDate).toISOString().split("T")[0]
             : "",
@@ -238,7 +238,7 @@ export const EditStudent =  ({ studentCode, onSubmitSuccess }) => {
           </div>
 
           {/* Address (Full Width) */}
-          <FormField
+          {/* <FormField
             name="address"
             control={form.control}
             render={({ field }) => (
@@ -250,7 +250,7 @@ export const EditStudent =  ({ studentCode, onSubmitSuccess }) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           {/* Course (Full Width) */}
           <FormField
@@ -262,7 +262,7 @@ export const EditStudent =  ({ studentCode, onSubmitSuccess }) => {
                 <Select
                   onValueChange={field.onChange}
                   value={field.value}
-                  disabled={!isEditing}
+                  disabled={true}
                 >
                   <FormControl>
                     <SelectTrigger className="w-full">
@@ -300,7 +300,7 @@ export const EditStudent =  ({ studentCode, onSubmitSuccess }) => {
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
-                    disabled={!isEditing}
+                    disabled={true}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
@@ -333,7 +333,7 @@ export const EditStudent =  ({ studentCode, onSubmitSuccess }) => {
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
-                    disabled={!isEditing}
+                    disabled={true}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">

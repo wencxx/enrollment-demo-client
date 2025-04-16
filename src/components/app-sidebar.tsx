@@ -70,7 +70,6 @@ const data = {
       name: 'Users',
       url: 'permissions/users',
       icon: Users,
-      route: 'adjashd'
     },
     {
       name: 'Grant Permission',
@@ -90,63 +89,99 @@ const data = {
       icon: FileInput,
       authorizeUsers: ['Admin'],
       items: [
-        {
-          title: "Student",
-          url: "entry/student",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Subject",
-          url: "entry/subject-prerequisite",
-          authorizeUsers: ['Admin']
-        },
+        // {
+        //   title: "Student",
+        //   url: "entry/student",
+        //   authorizeUsers: ['Admin']
+        // },
+        // {
+        //   title: "Subject",
+        //   url: "entry/subject-prerequisite",
+        //   authorizeUsers: ['Admin']
+        // },
 
         {
           title: "Course",
           url: "entry/course",
           authorizeUsers: ['Admin']
         },
+        // {
+        //   title: "Rate",
+        //   url: "entry/rate",
+        //   authorizeUsers: ['Admin']
+        // },
+        // {
+        //   title: "Rate Course",
+        //   url: "entry/ratecourse",
+        //   authorizeUsers: ['Admin']
+        // },
+        // {
+        //   title: "Academic Year",
+        //   url: "entry/AY",
+        //   authorizeUsers: ['Admin']
+        // },
         {
-          title: "Rate",
-          url: "entry/rate",
+          title: "Professors",
+          url: "entry/professors",
           authorizeUsers: ['Admin']
         },
         {
-          title: "Rate Course",
-          url: "entry/ratecourse",
+          title: "High School",
+          url: "entry/highschool",
           authorizeUsers: ['Admin']
         },
         {
-          title: "Academic Year",
-          url: "entry/AY",
+          title: "Elementary",
+          url: "entry/elementary",
           authorizeUsers: ['Admin']
         },
-      ],
-    },
-    {
-      title: "Enrollment",
-      url: "#",
-      icon: FileUser,
-      authorizeUsers: ['Admin'],
-      items: [
+
         {
-          title: "Enrollment - 1",
-          url: "enrollment/enrollment1",
+          title: "Town/City",
+          url: "entry/town",
           authorizeUsers: ['Admin']
         },
         {
-          title: "Enrollment - 2",
-          url: "enrollment/enrollment2",
+          title: "Room",
+          url: "entry/room",
           authorizeUsers: ['Admin']
         },
         {
-          title: "Enrollment - 3",
-          url: "enrollment/enrollment3",
+          title: "Section",
+          url: "entry/section",
           authorizeUsers: ['Admin']
         },
+        {
+          title: "Rate 1",
+          url: "entry/rate1",
+          authorizeUsers: ['Admin']
+        }
       ],
     }
-  ],
+    // {
+    //   title: "Enrollment",
+    //   url: "#",
+    //   icon: FileUser,
+    //   authorizeUsers: ['Admin'],
+    //   items: [
+    //     {
+    //       title: "Enrollment - 1",
+    //       url: "enrollment/enrollment1",
+    //       authorizeUsers: ['Admin']
+    //     },
+    //     {
+    //       title: "Enrollment - 2",
+    //       url: "enrollment/enrollment2",
+    //       authorizeUsers: ['Admin']
+    //     },
+    //     {
+    //       title: "Enrollment - 3",
+    //       url: "enrollment/enrollment3",
+    //       authorizeUsers: ['Admin']
+    //     },
+    //   ],
+    // }
+  // ],
   // menuEnrollment: [
   //   {
   //     name: 'Enrollment1',
@@ -166,7 +201,8 @@ const data = {
   //     icon: ChartColumn,
   //     authorizeUsers: ['Admin']
   //   }
-  // ],
+  
+  ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

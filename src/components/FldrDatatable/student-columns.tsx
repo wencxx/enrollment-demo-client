@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { useState } from "react"
-import { Eye, ArrowUpDown, FileSpreadsheet, Stamp } from "lucide-react"
+import { Eye, ArrowUpDown, FileSpreadsheet, Stamp, ListRestart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { format } from "date-fns";
@@ -24,6 +24,7 @@ import {
   } from "@/components/ui/dialog"
 import { EditGrades } from "../FldrForm/editgrades"
 import { NewSemEnrollment1Form } from "../FldrForm/entryNewSemEnrollment1"
+import { GenerateGrades } from "../FldrForm/generategrades"
 
 export const columns: ColumnDef<studentProfile>[] = [
     {
@@ -76,54 +77,40 @@ export const columns: ColumnDef<studentProfile>[] = [
             )
         },
     },
-    {
-        accessorKey: "birthDate",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Birth Date
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-            const birthDate = row.getValue("birthDate");
+    // {
+    //     accessorKey: "birthDate",
+    //     header: ({ column }) => {
+    //         return (
+    //             <Button
+    //                 variant="ghost"
+    //                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //             >
+    //                 Birth Date
+    //                 <ArrowUpDown className="ml-2 h-4 w-4" />
+    //             </Button>
+    //         )
+    //     },
+    //     cell: ({ row }) => {
+    //         const birthDate = row.getValue("birthDate");
 
-            let dateObject: Date;
+    //         let dateObject: Date;
 
-            if (birthDate instanceof Date) {
-                dateObject = birthDate;
-            } else if (typeof birthDate === "string" || typeof birthDate === "number") {
-                dateObject = new Date(birthDate);
-            } else {
-                return "No birthdate";
-            }
+    //         if (birthDate instanceof Date) {
+    //             dateObject = birthDate;
+    //         } else if (typeof birthDate === "string" || typeof birthDate === "number") {
+    //             dateObject = new Date(birthDate);
+    //         } else {
+    //             return "No birthdate";
+    //         }
 
-            if (!isNaN(dateObject.getTime())) {
-                return moment(format(dateObject, "yyyy-MM-dd")).format('ll');
-            }
+    //         if (!isNaN(dateObject.getTime())) {
+    //             return moment(format(dateObject, "yyyy-MM-dd")).format('ll');
+    //         }
 
-            return "N/A";
-        },
+    //         return "N/A";
+    //     },
 
-    },
-    {
-        accessorKey: "address",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Address
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
+    // },
     {
         accessorKey: "enrollStatusCode",
         header: ({ column }) => {
@@ -199,6 +186,15 @@ export const columns: ColumnDef<studentProfile>[] = [
                 setIsNewSemDialogOpen(false)
               }
 
+              // grade gen
+            const [isGradeGenDialogOpen, setIsGradeGenDialogOpen] = useState(false);
+
+            const handleGradeGenDialog = (studentCode: string) => {
+                console.log("Generating grades for:", studentCode); 
+                setStudentCode(studentCode);
+                setTimeout(() => setIsGradeGenDialogOpen(true), 0);
+            };
+
 
 return (
     <>
@@ -241,7 +237,7 @@ return (
                 </Button>
             </TooltipTrigger>
                 <TooltipContent>
-                <p>Enroll in next semester</p>
+                <p>Enroll in new semester</p>
                 </TooltipContent>
             </Tooltip>
             </TooltipProvider>
@@ -249,8 +245,8 @@ return (
             <DialogContent className="max-h-[90vh] overflow-y-auto scrollbar-hidden" aria-labelledby="dialog-title">
                 <DialogHeader>
                 <DialogTitle className="mb-4">Continuing student enrollment</DialogTitle>
-                <DialogDescription className="text-red-500">
-                    Student details must be changed prior to enrollment.
+                <DialogDescription>
+                    This is a <strong className="text-red-500">continuing student</strong>. The current values are the student's most recent enrollment. Change <strong>year, semester, course, and AY</strong> according to the details of the new semester to be enrolled in.
                 </DialogDescription>
                 </DialogHeader>
                 <NewSemEnrollment1Form studentCode={studentCode} closeModal={closeModal} />
@@ -269,7 +265,7 @@ return (
                 </Button>
             </TooltipTrigger>
                 <TooltipContent>
-                <p>Grades</p>
+                <p>Manage grades</p>
                 </TooltipContent>
             </Tooltip>
             </TooltipProvider>
@@ -279,6 +275,31 @@ return (
                     <DialogTitle className="mb-4">Update Grades</DialogTitle>
                 </DialogHeader>
                 <EditGrades studentCode={studentCode} />
+            </DialogContent>
+        </Dialog>
+
+        {/* gen grades modal */}
+        <Dialog open={isGradeGenDialogOpen} onOpenChange={setIsGradeGenDialogOpen}>
+            <DialogTrigger asChild>
+            <TooltipProvider>
+            <Tooltip>
+            <TooltipTrigger>
+                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleGradeGenDialog(row.original.studentCode)}>
+                    <span className="sr-only">Open menu</span>
+                    <ListRestart className="h-4 w-4" />
+                </Button>
+            </TooltipTrigger>
+                <TooltipContent>
+                <p>Generate grades</p>
+                </TooltipContent>
+            </Tooltip>
+            </TooltipProvider>
+            </DialogTrigger>
+            <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[80dvw] lg:!max-w-[70dvw] scrollbar-hidden" aria-labelledby="dialog-title">
+                <DialogHeader>
+                    <DialogTitle className="mb-4">Generate Grades</DialogTitle>
+                </DialogHeader>
+                <GenerateGrades studentCode={studentCode} />
             </DialogContent>
         </Dialog>
 </div>
