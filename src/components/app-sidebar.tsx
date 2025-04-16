@@ -201,8 +201,27 @@ const data = {
   //     icon: ChartColumn,
   //     authorizeUsers: ['Admin']
   //   }
-  
   ],
+
+  // menuEnrollment: [
+  //   {
+  //     name: 'Enrollment1',
+  //     url: 'enrollment/enrollment1',
+  //     icon: ChartColumn,
+  //     authorizeUsers: ['Admin']
+  //   },
+  //   {
+  //     name: 'Enrollment2',
+  //     url: 'enrollment/enrollment1',
+  //     icon: ChartColumn,
+  //     authorizeUsers: ['Admin']
+  //   },
+  //   {
+  //     name: 'Enrollment3',
+  //     url: 'enrollment/enrollment1',
+  //     icon: ChartColumn,
+  //     authorizeUsers: ['Admin']
+  //   }  
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

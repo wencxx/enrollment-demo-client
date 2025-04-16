@@ -22,7 +22,7 @@ export default function Rate1() {
   const getRate1 = async () => {
     try {
       setLoading(true)
-      const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListRate1`)
+      const res = await axios.get(`${plsConnect()}/API/WebAPI/RateController/ListRate1`)
       
       const formattedData = res.data.map((item: any, index: number) => ({
         fieldNumber: index + 1,
