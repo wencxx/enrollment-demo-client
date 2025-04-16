@@ -231,3 +231,36 @@ export const gradeGenSchema = z.object({
   pkCode: z.string().min(1),
   userCode: z.string().min(1)
 });
+
+export const roomSchema = z.object({
+  roomCode: z.string().optional(),
+  roomDesc: z.string().min(2, {
+    message: "Room description must be at least 2 characters.",
+  }),
+})
+
+export const sectionSchema = z.object({
+  sectionCode: z.string().optional(),
+  sectionDesc: z.string().min(2, {
+    message: "Section description must be at least 2 characters.",
+  }),
+})
+
+export const rateDescSchema = z.object({
+  OldRDID: z.string().optional(),
+  RDID: z.string().min(2, {
+    message: "Rate Id cannot be empty.",
+  }),
+  RDDesc: z.string().min(2, {
+    message: "Rate description cannot be empty",
+  })
+})
+
+export const rate2Schema = z.object({
+  pkRate: z.string().optional(),
+  pkRate1: z.string().min(1),
+  rdCode: z.string().min(1),
+  rateTypeCode: z.string().min(1),
+  noUnits: z.number().int().min(0, 'Number of units cannot be negative'),
+  rateAmount: z.number().min(0, 'Rate amount must be greater than 0'),
+})
