@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { sectionSchema } from "@/FldrSchema/userSchema.ts";
 import { useEffect, useState } from "react";
+import { Save, SaveAll } from "lucide-react";
 
 type SectionFormData = z.infer<typeof sectionSchema>;
 
@@ -172,7 +173,12 @@ export function SectionForm({ editMode = false, toEdit = "", onCancel, onSuccess
                   </svg>
                   Processing...
                 </span>
-              ) : isEditing ? "Update" : "Submit"}
+              ) : isEditing ? (
+                <span className="flex items-center gap-2">
+                  <Save />
+                  Update
+                </span>
+              ) : ("Submit")}
             </Button>
           </div>
         </form>

@@ -2,7 +2,6 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Edit, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { SectionCol } from "@/FldrTypes/section"
 import {
     Dialog,
     DialogContent,
@@ -10,10 +9,12 @@ import {
     // DialogTitle,
     // DialogHeader
   } from "@/components/ui/dialog"
-import { useState } from "react"
-import { SectionForm } from "../FldrForm/entrySection"
+import { useEffect, useState } from "react"
+import { Rate2Col } from "@/FldrTypes/kim-types"
+import { EditRate1Form } from "../FldrForm/editRate1"
+import { EditRate2Form } from "../FldrForm/editRate2"
 
-export const columns: ColumnDef<SectionCol>[] = [
+export const columns: ColumnDef<Rate2Col>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -37,25 +38,49 @@ export const columns: ColumnDef<SectionCol>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "sectionCode",
+        accessorKey: "courseDesc",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Section Code
+                Course
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
     },
     {
-        accessorKey: "sectionDesc",
+        accessorKey: "yearDesc",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Section Description
+                Year
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+    },
+    {
+        accessorKey: "rdDesc",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Description
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+    },
+    {
+        accessorKey: "rateTypeDesc",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Type
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
@@ -64,10 +89,10 @@ export const columns: ColumnDef<SectionCol>[] = [
         id: "actions",
         cell: ({ row, table }) => {
           const [isDialogOpen, setIsDialogOpen] = useState(false);
-          const [sectionCode, setSectionCode] = useState("");
+          const [pkRate, setPKRate] = useState("");
 
           const handleDialogOpen = (code: string) => {
-            setSectionCode(code);
+            setPKRate(code);
             setIsDialogOpen(true);
           };
 
@@ -83,15 +108,15 @@ export const columns: ColumnDef<SectionCol>[] = [
           return (
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.sectionCode)}>
-                    <span className="sr-only">Edit room</span>
+                <Button variant="ghost" className="h-8 w-8 p-0"
+                onClick={() => handleDialogOpen(row.original.pkRate)}>
+                    <span className="sr-only">Edit rate2</span>
                     <Edit className="h-4 w-4" />
                 </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-md" aria-labelledby="dialog-title">
-                    <SectionForm 
-                      editMode={true}
-                      toEdit={sectionCode} 
+                    <EditRate2Form
+                      toEdit={pkRate} 
                       onCancel={handleUpdate}
                     />
                 </DialogContent>

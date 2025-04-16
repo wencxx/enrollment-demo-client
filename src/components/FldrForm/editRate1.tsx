@@ -21,7 +21,7 @@ import {
 import { useEffect, useState } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Save } from "lucide-react";
 import { CourseCol, YearCol } from "@/FldrTypes/kim-types";
 import { cn } from "@/lib/utils";
 
@@ -53,6 +53,7 @@ export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormPro
 
   useEffect(() => {
         async function fetchData() {
+          setIsLoading(true);
           try {
             const yearRes = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListYear`)
             setYear(yearRes.data)
@@ -77,10 +78,12 @@ export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormPro
           } catch (error) {
             console.error("Error fetching data:", error)
             toast("Error fetching data.")
+          } finally {
+            setIsLoading(false)
           }
         }
         fetchData()
-      }, [pkRate1, form]);
+      }, [pkRate1]);
 
   const onSubmit = async (values: Rate1FormData) => {
     try {
@@ -174,7 +177,7 @@ export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormPro
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
+                <PopoverContent className="w-full min-w-[var(--radix-popover-trigger-width)]">
                   <Command>
                     <CommandInput
                       placeholder="Search..."
@@ -213,6 +216,9 @@ export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormPro
         />
 
         <div className="flex justify-end gap-2">
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
+            Cancel
+          </Button>
            <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <span className="flex items-center">
@@ -222,7 +228,12 @@ export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormPro
                   </svg>
                   Processing...
                 </span>
-              ) : ("Submit")}
+              ) : (
+                <span className="flex items-center gap-2">
+                <Save/>
+                Update
+                </span>
+            )}
             </Button>
         </div>
         </form>

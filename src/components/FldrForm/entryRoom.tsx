@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { roomSchema } from "@/FldrSchema/userSchema.ts";
 import { useEffect, useState } from "react";
+import { Save } from "lucide-react";
 
 type RoomFormData = z.infer<typeof roomSchema>;
 
@@ -173,7 +174,12 @@ export function RoomForm({ editMode = false, toEdit = "", onCancel, onSuccess }:
                   </svg>
                   Processing...
                 </span>
-              ) : isEditing ? "Update" : "Submit"}
+              ) : isEditing ? (
+                <span className="flex items-center gap-2">
+                  <Save />
+                  Update
+                </span>
+              ) : ("Submit")}
             </Button>
           </div>
         </form>
