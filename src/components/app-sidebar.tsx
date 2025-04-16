@@ -155,7 +155,7 @@ const data = {
           title: "Rate 1",
           url: "entry/rate1",
           authorizeUsers: ['Admin']
-        },
+        }
       ],
     }
     // {
@@ -201,7 +201,8 @@ const data = {
   //     icon: ChartColumn,
   //     authorizeUsers: ['Admin']
   //   }
-  // ],
+  
+  ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
