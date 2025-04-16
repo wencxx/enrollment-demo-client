@@ -24,6 +24,7 @@ import Professor from "./FldrPages/FldrEntry/professor"
 import HighSchool from "./FldrPages/FldrEntry/highschool"
 import Elementary from "./FldrPages/FldrEntry/elementary"
 import Town from "./FldrPages/FldrEntry/town"
+import EnrollDescription from "./FldrPages/FldrEntry/enrolldescription"
 
 const routes = [
   {
@@ -73,6 +74,10 @@ const routes = [
   {
     element: <Town />,
     path: '/entry/town',
+  },
+  {
+    element: <EnrollDescription />,
+    path: '/entry/enroll-description',
   },
   {
     element: <Enrollment1 />,

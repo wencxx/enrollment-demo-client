@@ -140,6 +140,11 @@ const data = {
           url: "entry/town",
           authorizeUsers: ['Admin']
         },
+        {
+          title: "Enroll Description",
+          url: "entry/enroll-description",
+          authorizeUsers: ['Admin']
+        },
       ],
     },
     {
