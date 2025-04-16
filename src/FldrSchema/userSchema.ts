@@ -238,6 +238,16 @@ export const sectionSchema = z.object({
   }),
 })
 
+export const rateDescSchema = z.object({
+  OldRDID: z.string().optional(),
+  RDID: z.string().min(2, {
+    message: "Rate Id cannot be empty.",
+  }),
+  RDDesc: z.string().min(2, {
+    message: "Rate description cannot be empty",
+  })
+})
+
 export const rate2Schema = z.object({
   pkRate: z.string().optional(),
   pkRate1: z.string().min(1),
