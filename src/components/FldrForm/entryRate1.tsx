@@ -75,7 +75,7 @@ export function Rate1Form({ onCancel, onSuccess }: Rate1FormProps) {
     try {
       setIsLoading(true);
         console.log("Adding new room:", values);
-        const response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertRate1`, values);
+        const response = await axios.post(`${plsConnect()}/API/WebAPI/RateController/InsertRate1`, values);
         toast("Rate added successfully.");
       
       console.log("API response:", response.data);

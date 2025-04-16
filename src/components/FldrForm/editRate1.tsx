@@ -85,7 +85,7 @@ export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormPro
   const onSubmit = async (values: Rate1FormData) => {
     try {
       setIsLoading(true);
-        const response = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateRate1`, values);
+        const response = await axios.put(`${plsConnect()}/API/WebAPI/RateController/UpdateRate1`, values);
         toast("Rate1 added successfully.");
       
       console.log("API response:", response.data);
