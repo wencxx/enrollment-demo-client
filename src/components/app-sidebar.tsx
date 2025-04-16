@@ -165,6 +165,11 @@ const data = {
           title: "Rate Description",
           url: "entry/ratedesc",
           authorizeUsers: ['Admin']
+        },
+        {
+          title: "Enroll Description",
+          url: "entry/enroll-description",
+          authorizeUsers: ['Admin']
         }
       ],
     }

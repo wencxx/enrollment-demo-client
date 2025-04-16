@@ -75,6 +75,14 @@ export const townSchema = z.object({
   tcDesc: z.string().nonempty('Town/City description is required'),
 })
 
+export const enrollDescriptionSchema = z.object({
+  yearCode: z.string().nonempty('Year is required'),
+  courseCode: z.string().nonempty('Course is required'),
+  semCode: z.string().nonempty('Semester is required'),
+  sectionCode: z.string().nonempty('Section is required'),
+  aYearCode: z.string().nonempty('Academic year is required'),
+})
+
 export const enrollment1Schema = z.object({
   yearCode: z.string()
     .min(1, { message: "Select a year." }),

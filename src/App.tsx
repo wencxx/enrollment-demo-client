@@ -24,12 +24,12 @@ import Professor from "./FldrPages/FldrEntry/professor"
 import HighSchool from "./FldrPages/FldrEntry/highschool"
 import Elementary from "./FldrPages/FldrEntry/elementary"
 import Town from "./FldrPages/FldrEntry/town"
+import EnrollDescription from "./FldrPages/FldrEntry/enrolldescription"
 import Room from "./FldrPages/FldrEntry/room"
 import Section from "./FldrPages/FldrEntry/section"
 import Rate1 from "./FldrPages/FldrEntry/rate1"
 import RateDesc from "./FldrPages/FldrEntry/ratedesc"
 import Rate2 from "./FldrPages/FldrEntry/rate2"
-
 
 const routes = [
   {
@@ -97,8 +97,12 @@ const routes = [
     path: '/entry/rate2',
   },
   {
-  element: <RateDesc />,
+    element: <RateDesc />,
     path: '/entry/ratedesc',
+  },
+  {
+    element: <EnrollDescription />,
+    path: '/entry/enroll-description',
   },
   {
     element: <Enrollment1 />,
