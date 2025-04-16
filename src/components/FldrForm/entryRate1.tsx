@@ -36,7 +36,7 @@ interface Rate1FormProps {
   onSuccess?: () => void;
 }
 
-export function Rate1Form({ onCancel, onSuccess }: Rate1FormProps) {
+export function EntryRate1Form({ onCancel, onSuccess }: Rate1FormProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const [year, setYear] = useState<YearCol[]>([])
@@ -76,7 +76,7 @@ export function Rate1Form({ onCancel, onSuccess }: Rate1FormProps) {
       setIsLoading(true);
         console.log("Adding new room:", values);
         const response = await axios.post(`${plsConnect()}/API/WebAPI/RateController/InsertRate1`, values);
-        toast("Rate added successfully.");
+        toast("Rate1 added successfully.");
       
       console.log("API response:", response.data);
       form.reset();
@@ -161,7 +161,7 @@ export function Rate1Form({ onCancel, onSuccess }: Rate1FormProps) {
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
+                <PopoverContent className="w-full min-w-[var(--radix-popover-trigger-width)]">
                   <Command>
                     <CommandInput
                       placeholder="Search..."

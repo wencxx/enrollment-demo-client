@@ -237,3 +237,12 @@ export const sectionSchema = z.object({
     message: "Section description must be at least 2 characters.",
   }),
 })
+
+export const rate2Schema = z.object({
+  pkRate: z.string().optional(),
+  pkRate1: z.string().min(1),
+  rdCode: z.string().min(1),
+  rateTypeCode: z.string().min(1),
+  noUnits: z.number().int().min(0, 'Number of units cannot be negative'),
+  rateAmount: z.number().min(0, 'Rate amount must be greater than 0'),
+})

@@ -155,6 +155,11 @@ const data = {
           title: "Rate 1",
           url: "entry/rate1",
           authorizeUsers: ['Admin']
+        },
+        {
+          title: "Rate 2",
+          url: "entry/rate2",
+          authorizeUsers: ['Admin']
         }
       ],
     }
