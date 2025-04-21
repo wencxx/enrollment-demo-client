@@ -70,7 +70,7 @@ export default function Rate1() {
             columns={columns} 
             data={data} 
             loading={loading} 
-            title="rooms" 
+            title="rate 1" 
             onRefresh={getRate1}
           />
         </div>
