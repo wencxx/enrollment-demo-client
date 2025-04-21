@@ -28,6 +28,7 @@ import {
   SidebarMenuButton
 } from "@/components/ui/sidebar"
 import useAuthStore from "@/FldrStore/auth"
+import { MenuEnrollment } from "./FldrMenu/menu-enrollment"
 
 // menu lists
 const data = {
@@ -89,37 +90,11 @@ const data = {
       icon: FileInput,
       authorizeUsers: ['Admin'],
       items: [
-        // {
-        //   title: "Student",
-        //   url: "entry/student",
-        //   authorizeUsers: ['Admin']
-        // },
-        // {
-        //   title: "Subject",
-        //   url: "entry/subject-prerequisite",
-        //   authorizeUsers: ['Admin']
-        // },
-
         {
           title: "Course",
           url: "entry/course",
           authorizeUsers: ['Admin']
         },
-        // {
-        //   title: "Rate",
-        //   url: "entry/rate",
-        //   authorizeUsers: ['Admin']
-        // },
-        // {
-        //   title: "Rate Course",
-        //   url: "entry/ratecourse",
-        //   authorizeUsers: ['Admin']
-        // },
-        // {
-        //   title: "Academic Year",
-        //   url: "entry/AY",
-        //   authorizeUsers: ['Admin']
-        // },
         {
           title: "Professors",
           url: "entry/professors",
@@ -170,73 +145,30 @@ const data = {
           title: "Enroll Description",
           url: "entry/enroll-description",
           authorizeUsers: ['Admin']
-        }
+        },
       ],
-    }
-    // {
-    //   title: "Enrollment",
-    //   url: "#",
-    //   icon: FileUser,
-    //   authorizeUsers: ['Admin'],
-    //   items: [
-    //     {
-    //       title: "Enrollment - 1",
-    //       url: "enrollment/enrollment1",
-    //       authorizeUsers: ['Admin']
-    //     },
-    //     {
-    //       title: "Enrollment - 2",
-    //       url: "enrollment/enrollment2",
-    //       authorizeUsers: ['Admin']
-    //     },
-    //     {
-    //       title: "Enrollment - 3",
-    //       url: "enrollment/enrollment3",
-    //       authorizeUsers: ['Admin']
-    //     },
-    //   ],
-    // }
-  // ],
-  // menuEnrollment: [
-  //   {
-  //     name: 'Enrollment1',
-  //     url: 'enrollment/enrollment1',
-  //     icon: ChartColumn,
-  //     authorizeUsers: ['Admin']
-  //   },
-  //   {
-  //     name: 'Enrollment2',
-  //     url: 'enrollment/enrollment1',
-  //     icon: ChartColumn,
-  //     authorizeUsers: ['Admin']
-  //   },
-  //   {
-  //     name: 'Enrollment3',
-  //     url: 'enrollment/enrollment1',
-  //     icon: ChartColumn,
-  //     authorizeUsers: ['Admin']
-  //   }
+    },
   ],
-
-  // menuEnrollment: [
-  //   {
-  //     name: 'Enrollment1',
-  //     url: 'enrollment/enrollment1',
-  //     icon: ChartColumn,
-  //     authorizeUsers: ['Admin']
-  //   },
-  //   {
-  //     name: 'Enrollment2',
-  //     url: 'enrollment/enrollment1',
-  //     icon: ChartColumn,
-  //     authorizeUsers: ['Admin']
-  //   },
-  //   {
-  //     name: 'Enrollment3',
-  //     url: 'enrollment/enrollment1',
-  //     icon: ChartColumn,
-  //     authorizeUsers: ['Admin']
-  //   }  
+  menuEnrollment: [
+    {
+      name: 'Enrollment1',
+      url: 'enrollment/enrollment1',
+      icon: ChartColumn,
+      authorizeUsers: ['Admin']
+    },
+    {
+      name: 'Enrollment2',
+      url: 'enrollment/enrollment1',
+      icon: ChartColumn,
+      authorizeUsers: ['Admin']
+    },
+    {
+      name: 'Enrollment3',
+      url: 'enrollment/enrollment1',
+      icon: ChartColumn,
+      authorizeUsers: ['Admin']
+    }
+  ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -267,7 +199,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent className="scrollbar-hidden">
         {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuDashboard} />}
         {(user && (user.groupName === 'Admin' || user.groupName === 'Student')) && <SingleMenu data={data.menuStudent} title="Student" />}
-        {/* { (user && (user.groupName === 'Admin')) && <MenuEnrollment dashboard={data.menuEnrollment} /> } */}
+        { (user && (user.groupName === 'Admin')) && <MenuEnrollment dashboard={data.menuEnrollment} /> }
         {(user && (user.groupName === 'Admin')) && <MenuMain items={data.menuMain} />}
         {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuPersmissions} title="Permissions" />}
       </SidebarContent>

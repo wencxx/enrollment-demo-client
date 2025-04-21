@@ -1,262 +1,130 @@
-import { z } from "zod"
-import { enrollment1Schema } from "@/FldrSchema/userSchema.ts"
-import { plsConnect } from "@/FldrClass/ClsGetConnection"
-import axios from "axios"
-import { useEffect, useState } from "react"
-import { AcademicYear } from "@/FldrTypes/academic-year"
-import { Year } from "@/FldrTypes/year"
-import { Sem } from "@/FldrTypes/sem"
-import { CourseCol } from "@/FldrTypes/course.col"
-import { StudentCol } from "@/FldrTypes/students-col"
-import { EnrollmentStatus } from "@/FldrTypes/enrollmentstatus"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
-import useAuthStore from "@/FldrStore/auth"
+import { useForm } from "react-hook-form";
+import { plsConnect } from "@/FldrClass/ClsGetConnection";
+import axios from "axios";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
-  Form,
-  FormControl,
-  // FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    //   FormMessage,
+} from "@/components/ui/form";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Check, ChevronsUpDown } from "lucide-react"
-import { cn } from "@/lib/utils"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    } from "@/components/ui/select"
+import { useEffect, useState } from "react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { CourseCol, YearCol } from "@/FldrTypes/kim-types";
+import { cn } from "@/lib/utils";
+import { enrollment1Schema } from "@/FldrSchema/userSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
-type Enrollment1FormData = z.infer<typeof enrollment1Schema>
+// type Enrollment1FormData = {
+//     pkCode: string;
+//     voucher: string;
+//     docNum: string;
+//     tDate: string;
+//     studentCode: string;
+//     approveStudent: boolean;
+//     pkedCode: string;
+//     regularStudent: boolean;
+// };
 
-export function Enrollment1Form() {
+type Enrollment1FormData = z.infer<typeof enrollment1Schema>;
+
+interface Enrollment1FormProps {
+  onCancel?: () => void;
+  onSuccess?: () => void;
+}
+
+export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormProps) {
   const form = useForm<Enrollment1FormData>({
-    resolver: zodResolver(enrollment1Schema),
-    defaultValues: {
-      yearCode: "",
-      semCode: "",
-      courseCode: "",
-      studentCode: "",
-      date: new Date(),
-      enrollStatusCode: "",
-    },
-    mode: 'onChange',
-  })
+          resolver: zodResolver(enrollment1Schema),
+          defaultValues: {
+            voucher: "",
+            studentCode: "",
+            approveStudent: true,
+            pkedCode: "",
+            regularStudent: true,
+          },
+        });
 
-  const [years, setYears] = useState<Year[]>([])
-  const [sem, setSem] = useState<Sem[]>([])
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [year, setYear] = useState<YearCol[]>([])
   const [course, setCourse] = useState<CourseCol[]>([])
-  const [student, setStudent] = useState<StudentCol[]>([])
-  const [status, setStatus] = useState<EnrollmentStatus[]>([])
-  const [academicYear, setAcademicYear] = useState<AcademicYear[]>([])
-
-  const [studentSearch, setStudentSearch] = useState("");
-
-  const handleStudentSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStudentSearch(event.target.value);
-  };
-
-  const filteredStudents = student.filter((student) => {
-    return (
-      student.firstName.toLowerCase().includes(studentSearch.toLowerCase()) ||
-      student.lastName.toLowerCase().includes(studentSearch.toLowerCase()) ||
-      student.middleName.toLowerCase().includes(studentSearch.toLowerCase())
-    );
-  });
-
-  async function fetchYears() {
-    try {
-      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListYear`)
-      setYears(response.data)
-    } catch (error: any) {
-      console.error("Error fetching years:", error)
-    }
-  }
-
-  async function fetchSem() {
-    try {
-      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListSemester`)
-      setSem(response.data)
-    } catch (error: any) {
-      console.error("Error fetching semseters:", error)
-    }
-  }
-
-  async function fetchStatus() {
-    try {
-      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollStatus`)
-      setStatus(response.data)
-    } catch (error: any) {
-      console.error("Error fetching courses:", error)
-    }
-  }
-
-  async function fetchCourse() {
-    try {
-      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
-      const mappedCourseCode = response.data.map((item: CourseCol) => ({
-        label: item.courseDesc,
-        value: item.courseCode,
-      }))
-      setCourse(mappedCourseCode)
-    } catch (error: any) {
-      console.error("Error fetching courses:", error)
-    }
-  }
-
-  async function fetchStudent() {
-    try {
-      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListApplicant`)
-      //console.log("Fetched students:", response.data);
-      setStudent(response.data)
-    } catch (error: any) {
-      console.error("Error fetching students:", error)
-    }
-  }
-
-  async function fetchAYears() {
-    try {
-      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListAcademicYear`)
-      setAcademicYear(response.data)
-    } catch (error: any) {
-      console.error("Error fetching years:", error)
-    }
-  }
 
   useEffect(() => {
-    fetchYears()
-    fetchSem()
-    fetchCourse()
-    fetchStudent()
-    fetchStatus()
-    fetchAYears()
-  }, [])
-
-  const { currentUser } = useAuthStore.getState();
-
-  if (!currentUser) {
-    toast("User not logged in.");
-    return;
-  }
+        async function fetchData() {
+          try {
+            const yearRes = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListYear`)
+            setYear(yearRes.data)
+  
+            const courseRes = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
+            const mappedCourseCode = courseRes.data.map((item: CourseCol) => ({
+              label: `${item.courseDesc}`,
+              value: item.courseCode,
+            }))
+            setCourse(mappedCourseCode)
+            
+          } catch (error) {
+            console.error("Error fetching data:", error)
+            toast("Error fetching data.")
+          }
+        }
+        fetchData()
+      }, [])
 
   const onSubmit = async (values: Enrollment1FormData) => {
-    console.log("Form values before submit:", values);
-    const currentDate = new Date();
-
-    const enrollment1Data = {
-      ...values,
-      userCode: currentUser.userCode,
-      tDate: currentDate,
-      dateEncoded: currentDate,
-    }
-
     try {
-      const postResponse = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertEnrollment1`, enrollment1Data)
-
-      const putResponse = await axios.put(`${plsConnect()}/API/WEBAPI/StudentController/UpdateStudentEnrollmentStatus`, enrollment1Data)
-
-      console.log("Data submitted successfully:", postResponse)
-      console.log("Data submitted successfully:", putResponse)
-      toast("Success.")
+      setIsLoading(true);
+        console.log("Adding new room:", values);
+        const response = await axios.post(`${plsConnect()}/API/WebAPI/RateController/InsertRate1`, values);
+        toast("Rate1 added successfully.");
+      
+      console.log("API response:", response.data);
+      form.reset();
+      if (onSuccess) {
+        onSuccess();
+      }
+      if (onCancel) {
+        onCancel();
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        toast("Error submitting form.")
+        const errorMessage = error.response?.data || "An error occurred.";
+        if (error.response?.status === 409) {
+          toast.error(errorMessage);
+        } else {
+          toast.error("An unexpected error occurred.");
+        }
+        console.error("API error:", error.response?.data);
       } else {
-        console.error("Network error:", error)
-        toast("Network error.")
+        console.error("Network error:", error);
+        toast.error("Network error.");
       }
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 grid grid-cols-2 gap-2">
+    <>
+      <div className="flex justify-between items-center mb-4">
+      <h2 className="text-lg font-semibold">Add New Rate1</h2>
+      </div>
 
-        <FormField
-          control={form.control}
-          name="studentCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Student</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Pending applicant" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <div className="p-2">
-                    <input
-                      type="text"
-                      className="w-full px-3 py-2 border rounded text-sm"
-                      placeholder="Search for a student"
-                      value={studentSearch}
-                      onChange={handleStudentSearchChange}
-                    />
-                  </div>
-                  {filteredStudents.length > 0 ? (
-                    filteredStudents.map((student) => (
-                      <SelectItem key={student.studentCode} value={student.studentCode}>
-                        {student.firstName} {student.lastName}, {student.middleName}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem disabled>No students available</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="enrollStatusCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="APPROVE or DISAPPROVE" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {status.length > 0 ? (
-                    status.map((status) => (
-                      <SelectItem key={status.enrollStatusCode} value={status.enrollStatusCode}>
-                        {status.enrollStatusDesc}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem disabled>Not Available</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
         <FormField
           control={form.control}
@@ -264,54 +132,18 @@ export function Enrollment1Form() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Year</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a year" />
-                  </SelectTrigger>
-                </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select year" />
+                </SelectTrigger>
                 <SelectContent>
-                  {years.length > 0 ? (
-                    years.map((year) => (
-                      <SelectItem key={year.yearCode} value={year.yearCode}>
-                        {year.yearDesc}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem disabled>No years available</SelectItem>
-                  )}
+                    {year.map((item) => (
+                    <SelectItem key={item.yearCode} value={item.yearCode}>
+                        {item.yearDesc}
+                    </SelectItem>
+                    ))}
                 </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="semCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Semester</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a semester" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {sem.length > 0 ? (
-                    sem.map((sem) => (
-                      <SelectItem key={sem.semCode} value={sem.semCode}>
-                        {sem.semDesc}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem disabled>No semesters available</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
+            </Select>
             </FormItem>
           )}
         />
@@ -335,14 +167,14 @@ export function Enrollment1Form() {
                     >
                       {field.value
                         ? course.find(
-                          (course) => course.value === field.value
-                        )?.label
+                            (course) => course.value === field.value
+                          )?.label
                         : "Select course"}
                       <ChevronsUpDown className="opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
+                <PopoverContent className="w-full min-w-[var(--radix-popover-trigger-width)]">
                   <Command>
                     <CommandInput
                       placeholder="Search..."
@@ -356,8 +188,8 @@ export function Enrollment1Form() {
                             value={course.label}
                             key={course.value}
                             onSelect={() => {
-                              form.setValue("courseCode", course.value);
-                              field.onChange(course.value);
+                                form.setValue("courseCode", course.value);
+                                field.onChange(course.value);
                             }}
                           >
                             {course.label}
@@ -376,45 +208,25 @@ export function Enrollment1Form() {
                   </Command>
                 </PopoverContent>
               </Popover>
-              <FormMessage />
             </FormItem>
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="aYearCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Academic Year</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a year" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {academicYear.length > 0 ? (
-                    academicYear.map((AY) => (
-                      <SelectItem key={AY.AYearCode} value={AY.AYearCode}>
-                        {AY.AYStart}-{AY.AYEnd}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem disabled>No years available</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* no voucher na */}
-        <div className="col-span-2">
-          <Button type="submit" className="w-full sm:w-20 float-right">Submit</Button>
-        </div>
-      </form>
-    </Form>
-  )
+          <div className="flex justify-end gap-2">
+           <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Processing...
+                </span>
+              ) : ("Submit")}
+            </Button>
+            </div>
+        </form>
+      </Form>
+    </>
+  );
 }

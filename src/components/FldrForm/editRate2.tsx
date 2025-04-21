@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils";
 import { rate2Schema } from "@/FldrSchema/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
+import { z } from "zod";
 
 type Rate2FormData = z.infer<typeof rate2Schema>;
 
