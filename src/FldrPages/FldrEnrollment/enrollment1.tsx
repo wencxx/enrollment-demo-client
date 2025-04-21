@@ -4,7 +4,7 @@ import { PendingApplicantCol } from "@/FldrTypes/pendingapplicant"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { columnsPending } from "@/components/FldrDatatable/pendingapplicant-columns"
+import { columns } from "@/components/FldrDatatable/enrollment1-columns"
 import { DataTable } from "@/components/FldrDatatable/data-table";
 import {
   Dialog,
@@ -13,22 +13,25 @@ import {
 } from "@/components/ui/dialog"
 import { Plus } from 'lucide-react'
 import { Button } from "@/components/ui/button"
+import { EntryEnrollment1Form } from "@/components/FldrForm/entryenrollment1"
+import { Enrollment1Col } from "@/FldrTypes/kim-types"
 
 export default function Enrollment1() {
-  // const [data, setData] = useState<Rate1Col[]>([]);
+  const [data, setData] = useState<Enrollment1Col[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const getEnrollment1 = async () => {
     try {
       setLoading(true)
-      // const response = await axios.get<PendingApplicantCol[]>(`${plsConnect()}/API/WEBAPI/ListController/ListApplicant`);
-      // const updatedData = response.data.map((item) => ({
-      //   ...item,
-      //   fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}`,
-      // }));
-      // setPending(updatedData);
-      // console.log(updatedData)
+      const response = await axios.get<Enrollment1Col[]>(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/ListEnrollment1`);
+      const updatedData = response.data.map((item) => ({
+        ...item,
+        fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}${item.suffix ? ' '+item.suffix : ''}`,
+        pkedDesc: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc} - ${item.sectionDesc} (${item.aYearDesc})`,
+      }));
+      setData(updatedData);
+      console.log(updatedData)
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -51,7 +54,7 @@ export default function Enrollment1() {
                 Enroll
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
                 <EntryEnrollment1Form
                 onCancel={getEnrollment1}
                 onSuccess={() => {
@@ -73,11 +76,5 @@ export default function Enrollment1() {
         </div>
       <Toaster />
     </div>
-      {/* <ScrollArea className="overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
-        <DataTable columns={columnsPending} data={pending} loading={loading} title="pending students" />
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
-
-      <Toaster /> */}
   )
 }

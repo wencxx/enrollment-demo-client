@@ -36,18 +36,16 @@ import { z } from "zod";
 type Enrollment1FormData = z.infer<typeof enrollment1Schema>;
 
 interface Enrollment1FormProps {
-  onCancel?: () => void;
-  onSuccess?: () => void;
+    toEdit?: string;
+    onCancel?: () => void;
+    onSuccess?: () => void;
 }
 
-export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormProps) {
+export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrollment1FormProps) {
   const form = useForm<Enrollment1FormData>({
           resolver: zodResolver(enrollment1Schema),
           defaultValues: {
-            voucher: "ES",
-            studentCode: "",
             approveStudent: true,
-            pkedCode: "",
             regularStudent: true,
           },
         });
@@ -56,6 +54,7 @@ export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormPro
 
   const [students, setStudents] = useState<StudentCol[]>([])
   const [enrollDesc, setEnrollDesc] = useState<EnrollDescCol[]>([])
+  const [pkCode] = useState(toEdit);
 
   useEffect(() => {
         async function fetchData() {
@@ -73,21 +72,33 @@ export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormPro
               value: item.pkedCode,
             }))
             setEnrollDesc(mappedEDRes)
-            
+
+            if (pkCode) {
+                const entryRes = await axios.get(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/ListEnrollment1`);
+                const entryData = entryRes.data.find((entry: Enrollment1FormData) => entry.pkCode === pkCode);
+      
+                form.reset({
+                pkCode: entryData.pkCode,
+                  studentCode: entryData.studentCode,
+                  pkedCode: entryData.pkedCode,
+                  approveStudent: entryData.approveStudent,
+                  regularStudent: entryData.regularStudent,
+                });
+              }
           } catch (error) {
             console.error("Error fetching data:", error)
             toast("Error fetching data.")
           }
         }
         fetchData()
-      }, [])
+      }, [pkCode])
 
   const onSubmit = async (values: Enrollment1FormData) => {
     try {
       setIsLoading(true);
-        console.log("Enrolling:", values);
-        const response = await axios.post(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/InsertEnrollment1`, values);
-        toast("Enrolled successfully.");
+        console.log("Edited:", values);
+        const response = await axios.put(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/UpdateEnrollment1`, values);
+        toast("Edited successfully.");
       
       console.log("API response:", response.data);
       if (onSuccess) {
@@ -117,7 +128,7 @@ export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormPro
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-      <h2 className="text-lg font-semibold">Add enrollment1</h2>
+      <h2 className="text-lg font-semibold">Edit enrollment1</h2>
       </div>
       <div className="max-h-[90vh] overflow-y-auto">
       <Form {...form}>
@@ -133,12 +144,14 @@ export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormPro
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
+                        disabled
                       variant="outline"
                       role="combobox"
                       className={cn(
-                        "w-full justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
+                            "flex w-auto justify-between items-start text-left gap-2 min-h-[2.5rem] h-auto",
+                            !field.value && "text-muted-foreground",
+                            "whitespace-normal break-words p-2"
+                        )}
                     >
                       {field.value
                         ? students.find(
@@ -197,12 +210,12 @@ export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormPro
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
+                    disabled
                       variant="outline"
                       role="combobox"
                       className={cn(
-                        "flex w-auto justify-between items-start text-left gap-2 min-h-[2.5rem] h-auto",
-                        !field.value && "text-muted-foreground",
-                        "whitespace-normal break-words p-2"
+                        "w-full justify-between",
+                        !field.value && "text-muted-foreground"
                       )}
                     >
                       {field.value

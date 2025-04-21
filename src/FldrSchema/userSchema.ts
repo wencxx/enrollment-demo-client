@@ -84,6 +84,7 @@ export const enrollDescriptionSchema = z.object({
 })
 
 export const enrollment1Schema = z.object({
+  pkCode: z.string().optional(),
   voucher: z.string().optional(),
   studentCode: z.string()
     .min(1, { message: "Select a student." }),
@@ -92,14 +93,6 @@ export const enrollment1Schema = z.object({
   approveStudent: z.boolean(),
   regularStudent: z.boolean(),
 })
-            // pkCode: "",
-            // voucher: "",
-            // docNum: "",
-            // tDate: "",
-            // studentCode: "",
-            // approveStudent: null,
-            // pkedCode: "",
-            // regularStudent: null,
 
 export const enrollment2Schema = z.object({
   pkCode: z.string().min(1, { message: "Select a student." }),

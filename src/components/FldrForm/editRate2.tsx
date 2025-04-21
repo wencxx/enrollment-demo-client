@@ -82,7 +82,7 @@ const [pkRate] = useState(toEdit);
             if (pkRate) {
                 const entryRes = await axios.get(`${plsConnect()}/API/WEBAPI/RateController/ListRate2`);
                 const entryData = entryRes.data.find((entry: Rate2FormData) => entry.pkRate === pkRate);
-      
+                
                 form.reset({
                   pkRate: entryData.pkRate,
                   noUnits: entryData.noUnits,
