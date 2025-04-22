@@ -1,6 +1,4 @@
-export type RoomCol = {
-    roomCode: string
-    roomDesc: string
-    value?: string
-    label?: string
+export type Room = {
+    roomCode: string,
+    roomDesc: string,
 }
