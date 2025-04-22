@@ -1,47 +1,79 @@
-import {
-  type LucideIcon,
-} from "lucide-react"
-
+import { ChevronRight, type LucideIcon } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
-import useAuthStore from "@/FldrStore/auth"
 
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 import {
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarGroupLabel
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import useAuthStore from "@/FldrStore/auth"
 
 export function MenuEnrollment({
-  dashboard,
+  items,
 }: {
-  dashboard: {
-    name: string
+  items: {
+    title: string
     url: string
-    icon: LucideIcon,
-    authorizeUsers: string[],
+    icon?: LucideIcon
+    isActive?: boolean
+    authorizeUsers: string[]
+    items?: {
+      title: string
+      url: string,
+      authorizeUsers: string[]
+    }[]
   }[]
 }) {
 
   const store = useAuthStore()
   const location = useLocation()
-
+  
   const user = store.currentUser
 
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Enrollment</SidebarGroupLabel>
       <SidebarMenu>
-        {dashboard.map((item) => (
-          <SidebarMenuItem className={`${user && !item.authorizeUsers?.includes(user.groupName) && 'hidden'}`} key={item.name}>
-            <SidebarMenuButton asChild>
-              <NavLink to={item.url} className={`${item.url === location.pathname.slice(1) && 'bg-gray-100'}`}>
-                {item.icon && <item.icon />}
-                <span>{item.name}</span>
-              </NavLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+        {items.map((item) => (
+          <Collapsible
+            key={item.title}
+            asChild
+            defaultOpen={item.isActive}
+            className={`group/collapsible ${user && !item.authorizeUsers?.includes(user.groupName) && 'hidden'}`}
+          >
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton tooltip={item.title}>
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  {item.items?.map((subItem) => (
+                    <SidebarMenuSubItem className={`${user && !subItem.authorizeUsers?.includes(user.groupName) && 'hidden'}`} key={subItem.title}>
+                      <SidebarMenuSubButton asChild>
+                        <NavLink to={subItem.url} className={`${subItem.url === location.pathname.slice(1) && 'bg-gray-100'}`}>
+                          <span>{subItem.title}</span>
+                        </NavLink>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  ))}
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          </Collapsible>
         ))}
       </SidebarMenu>
     </SidebarGroup>

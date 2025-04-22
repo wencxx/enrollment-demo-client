@@ -151,85 +151,24 @@ const data = {
   ],
   menuEnrollment: [
     {
-      name: 'Enrollment1',
-      url: 'enrollment/enrollment1',
-      icon: ChartColumn,
-      authorizeUsers: ['Admin']
-    },
-    {
-      name: 'Enrollment2',
-      url: 'enrollment/enrollment2',
-      icon: ChartColumn,
-      authorizeUsers: ['Admin']
-    },
-    {
-      name: 'Enrollment3',
-      url: 'enrollment/enrollment3',
-      icon: ChartColumn,
-      authorizeUsers: ['Admin']
-    }
-  ],
-  menuMain: [
-    {
-      title: "Entry",
+      title: "Enrollment",
       url: "#",
-      icon: FileInput,
+      icon: ChartColumn,
       authorizeUsers: ['Admin'],
       items: [
         {
-          title: "Course",
-          url: "entry/course",
+          title: "Enrollment 1",
+          url: "enrollment/enrollment1",
           authorizeUsers: ['Admin']
         },
         {
-          title: "Professors",
-          url: "entry/professors",
+          title: "Enrollment 2",
+          url: "enrollment/enrollment2",
           authorizeUsers: ['Admin']
         },
         {
-          title: "High School",
-          url: "entry/highschool",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Elementary",
-          url: "entry/elementary",
-          authorizeUsers: ['Admin']
-        },
-
-        {
-          title: "Town/City",
-          url: "entry/town",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Room",
-          url: "entry/room",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Section",
-          url: "entry/section",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Rate 1",
-          url: "entry/rate1",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Rate 2",
-          url: "entry/rate2",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Rate Description",
-          url: "entry/ratedesc",
-          authorizeUsers: ['Admin']
-        },
-        {
-          title: "Enroll Description",
-          url: "entry/enroll-description",
+          title: "Enrollment 3",
+          url: "enrollment/enrollment3",
           authorizeUsers: ['Admin']
         },
       ],
@@ -265,8 +204,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent className="scrollbar-hidden">
         {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuDashboard} />}
         {(user && (user.groupName === 'Admin' || user.groupName === 'Student')) && <SingleMenu data={data.menuStudent} title="Student" />}
-        {(user && (user.groupName === 'Admin')) && <MenuEnrollment dashboard={data.menuEnrollment} /> }
         {(user && (user.groupName === 'Admin')) && <MenuMain items={data.menuMain} />}
+        {(user && (user.groupName === 'Admin')) && <MenuEnrollment items={data.menuEnrollment} /> } 
         {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuPersmissions} title="Permissions" />}
       </SidebarContent>
       <SidebarFooter>

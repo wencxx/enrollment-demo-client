@@ -51,13 +51,13 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
         });
 
   const [isLoading, setIsLoading] = useState(false);
-
   const [students, setStudents] = useState<StudentCol[]>([])
   const [enrollDesc, setEnrollDesc] = useState<EnrollDescCol[]>([])
   const [pkCode] = useState(toEdit);
 
   useEffect(() => {
         async function fetchData() {
+          setIsLoading(true);
           try {
             const studentsRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`)
             const mappedStudentsRes = studentsRes.data.map((item: StudentCol) => ({
@@ -88,6 +88,8 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
           } catch (error) {
             console.error("Error fetching data:", error)
             toast("Error fetching data.")
+          } finally {
+            setIsLoading(false)
           }
         }
         fetchData()
