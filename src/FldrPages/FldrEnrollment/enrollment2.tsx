@@ -22,25 +22,25 @@ export default function Enrollment1() {
   const [list, setList] = useState<Enrollment1Col[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const fetchEnrollment1 = async () => {
-    try {
-      setLoading(true)
-      const response = await axios.get<Enrollment1Col[]>(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`);
-      const updatedData = response.data.map((item) => ({
-        ...item,
-        fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}`,
-      }));
-      setList(updatedData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false)
-    }
-  };
+  // const fetchEnrollment1 = async () => {
+  //   try {
+  //     setLoading(true)
+  //     const response = await axios.get<Enrollment1Col[]>(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`);
+  //     const updatedData = response.data.map((item) => ({
+  //       ...item,
+  //       fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}`,
+  //     }));
+  //     setList(updatedData);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchEnrollment1();
-  }, []);
+  // useEffect(() => {
+  //   fetchEnrollment1();
+  // }, []);
 
   return (
     <>
@@ -57,10 +57,10 @@ export default function Enrollment1() {
         </DialogContent>
       </Dialog>
 
-      <ScrollArea className="overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
+      {/* <ScrollArea className="overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
         <DataTable columns={columnsEnrolled} data={list} loading={loading} title="approved students" />
         <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      </ScrollArea> */}
 
       <Toaster />
     </>
