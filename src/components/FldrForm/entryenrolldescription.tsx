@@ -53,7 +53,7 @@ interface section {
 }
 
 
-export function EnrollDesciprtionForm() {
+export function EnrollDesciprtionForm({ getEnrollDescription }: { getEnrollDescription: () => void }) {
 
   const [years, setYears] = useState<year[]>([])
   const [course, setCourse] = useState<course[]>([])
@@ -64,6 +64,7 @@ export function EnrollDesciprtionForm() {
       aYearDesc: "2025-2026",
     }
   ])
+
   const [sections, setSections] = useState<section[]>([])
 
   const getYears = async () => {
@@ -137,6 +138,7 @@ export function EnrollDesciprtionForm() {
 
       if(res.status === 200){
         toast.success("Enrollment description added successfully")
+        getEnrollDescription()
         form.reset()
       }
     } catch (error) {
