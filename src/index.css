@@ -153,6 +153,12 @@
   scrollbar-width: none;     /* Firefox */
 }
 
+.not-muted-disabled:disabled {
+  opacity: 1 !important;
+  color: inherit !important;
+  background-color: inherit !important;
+}
+
 /* print styles */
 @media print {
   @page {

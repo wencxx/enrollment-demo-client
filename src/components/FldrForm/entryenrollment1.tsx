@@ -16,49 +16,36 @@ import { useEffect, useState } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
-import { CourseCol, EnrollDescCol, StudentCol, YearCol } from "@/FldrTypes/kim-types";
+import { EnrollDescCol, StudentCol } from "@/FldrTypes/kim-types";
 import { cn } from "@/lib/utils";
 import { enrollment1Schema } from "@/FldrSchema/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-// type Enrollment1FormData = {
-//     pkCode: string;
-//     voucher: string;
-//     docNum: string;
-//     tDate: string;
-//     studentCode: string;
-//     approveStudent: boolean;
-//     pkedCode: string;
-//     regularStudent: boolean;
-// };
-
 type Enrollment1FormData = z.infer<typeof enrollment1Schema>;
 
 interface Enrollment1FormProps {
-  onCancel?: () => void;
-  onSuccess?: () => void;
+    toEdit?: string;
+    onCancel?: () => void;
+    onSuccess?: () => void;
 }
 
-export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormProps) {
+export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrollment1FormProps) {
   const form = useForm<Enrollment1FormData>({
           resolver: zodResolver(enrollment1Schema),
           defaultValues: {
-            voucher: "ES",
-            studentCode: "",
-            approveStudent: true,
-            pkedCode: "",
             regularStudent: true,
           },
         });
 
   const [isLoading, setIsLoading] = useState(false);
-
   const [students, setStudents] = useState<StudentCol[]>([])
   const [enrollDesc, setEnrollDesc] = useState<EnrollDescCol[]>([])
+  const [studentCode] = useState(toEdit);
 
   useEffect(() => {
         async function fetchData() {
+          setIsLoading(true);
           try {
             const studentsRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`)
             const mappedStudentsRes = studentsRes.data.map((item: StudentCol) => ({
@@ -73,21 +60,31 @@ export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormPro
               value: item.pkedCode,
             }))
             setEnrollDesc(mappedEDRes)
-            
+
+            if (studentCode) {
+                const entryRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`);
+                const entryData = entryRes.data.find((entry: StudentCol) => entry.studentCode === studentCode);
+      
+                form.reset({
+                  studentCode: entryData.studentCode,
+                });
+              }
           } catch (error) {
             console.error("Error fetching data:", error)
             toast("Error fetching data.")
+          } finally {
+            setIsLoading(false)
           }
         }
         fetchData()
-      }, [])
+      }, [studentCode])
 
   const onSubmit = async (values: Enrollment1FormData) => {
     try {
       setIsLoading(true);
-        console.log("Enrolling:", values);
+        console.log("Edited:", values);
         const response = await axios.post(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/InsertEnrollment1`, values);
-        toast("Enrolled successfully.");
+        toast("Edited successfully.");
       
       console.log("API response:", response.data);
       if (onSuccess) {
@@ -117,7 +114,7 @@ export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormPro
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-      <h2 className="text-lg font-semibold">Add enrollment1</h2>
+      <h2 className="text-lg font-semibold">Enter enrollment1</h2>
       </div>
       <div className="max-h-[90vh] overflow-y-auto">
       <Form {...form}>
@@ -133,19 +130,21 @@ export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormPro
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
+                        disabled
                       variant="outline"
                       role="combobox"
                       className={cn(
-                        "w-full justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
+                            "flex w-auto justify-between items-start text-left gap-2 min-h-[2.5rem] h-auto",
+                            !field.value && "text-muted-foreground",
+                            "whitespace-normal break-words p-2",
+                            "not-muted-disabled"
+                        )}
                     >
                       {field.value
                         ? students.find(
                             (students) => students.value === field.value
                           )?.label
                         : "Select student"}
-                      <ChevronsUpDown className="opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -203,7 +202,7 @@ export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormPro
                         "flex w-auto justify-between items-start text-left gap-2 min-h-[2.5rem] h-auto",
                         !field.value && "text-muted-foreground",
                         "whitespace-normal break-words p-2"
-                      )}
+                    )}
                     >
                       {field.value
                         ? enrollDesc.find(
@@ -268,26 +267,6 @@ export function EntryEnrollment1Form({ onCancel, onSuccess }: Enrollment1FormPro
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel>Regular</FormLabel>
-                  </div>
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="flex-1">
-            <FormField
-              control={form.control}
-              name="approveStudent"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Approve</FormLabel>
                   </div>
                 </FormItem>
               )}

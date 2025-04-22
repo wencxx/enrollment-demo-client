@@ -15,23 +15,13 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useEffect, useState } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { CourseCol, EnrollDescCol, StudentCol, YearCol } from "@/FldrTypes/kim-types";
+import { Check } from "lucide-react";
+import { EnrollDescCol, Enrollment1Col, StudentCol } from "@/FldrTypes/kim-types";
 import { cn } from "@/lib/utils";
 import { enrollment1Schema } from "@/FldrSchema/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
-// type Enrollment1FormData = {
-//     pkCode: string;
-//     voucher: string;
-//     docNum: string;
-//     tDate: string;
-//     studentCode: string;
-//     approveStudent: boolean;
-//     pkedCode: string;
-//     regularStudent: boolean;
-// };
+import { Input } from "../ui/input";
 
 type Enrollment1FormData = z.infer<typeof enrollment1Schema>;
 
@@ -41,13 +31,12 @@ interface Enrollment1FormProps {
     onSuccess?: () => void;
 }
 
-export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrollment1FormProps) {
+export function ViewEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrollment1FormProps) {
   const form = useForm<Enrollment1FormData>({
           resolver: zodResolver(enrollment1Schema),
-          defaultValues: {
-            approveStudent: true,
-            regularStudent: true,
-          },
+        //   defaultValues: {
+        //     regularStudent: true,
+        //   },
         });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +50,7 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
           try {
             const studentsRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`)
             const mappedStudentsRes = studentsRes.data.map((item: StudentCol) => ({
-              label: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName} ${item.suffix} - ${item.studentCode}`,
+              label: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName} ${item.suffix}`,
               value: item.studentCode,
             }))
             setStudents(mappedStudentsRes)
@@ -75,14 +64,14 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
 
             if (pkCode) {
                 const entryRes = await axios.get(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/ListEnrollment1`);
-                const entryData = entryRes.data.find((entry: Enrollment1FormData) => entry.pkCode === pkCode);
+                const entryData = entryRes.data.find((entry: Enrollment1Col) => entry.pkCode === pkCode);
       
                 form.reset({
-                pkCode: entryData.pkCode,
                   studentCode: entryData.studentCode,
                   pkedCode: entryData.pkedCode,
-                  approveStudent: entryData.approveStudent,
                   regularStudent: entryData.regularStudent,
+                  approveStudent: entryData.approveStudent,
+                  tDate: entryData.tDate,
                 });
               }
           } catch (error) {
@@ -99,7 +88,7 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
     try {
       setIsLoading(true);
         console.log("Edited:", values);
-        const response = await axios.put(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/UpdateEnrollment1`, values);
+        const response = await axios.post(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/InsertEnrollment1`, values);
         toast("Edited successfully.");
       
       console.log("API response:", response.data);
@@ -130,29 +119,33 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-      <h2 className="text-lg font-semibold">Edit enrollment1</h2>
+      <h2 className="text-lg font-semibold">Enrollment 1 Details</h2>
       </div>
       <div className="max-h-[90vh] overflow-y-auto">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
+        {/* start row */}
+        <div className="flex flex-wrap gap-4">
+        <div className="flex-1 min-w-[200px]">
         <FormField
           control={form.control}
           name="studentCode"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Student</FormLabel>
+              <FormLabel>Full Name</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                        disabled
+                    disabled
                       variant="outline"
                       role="combobox"
                       className={cn(
                             "flex w-auto justify-between items-start text-left gap-2 min-h-[2.5rem] h-auto",
                             !field.value && "text-muted-foreground",
-                            "whitespace-normal break-words p-2"
+                            "whitespace-normal break-words p-2",
+                            "not-muted-disabled"
                         )}
                     >
                       {field.value
@@ -160,7 +153,7 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
                             (students) => students.value === field.value
                           )?.label
                         : "Select student"}
-                      <ChevronsUpDown className="opacity-50" />
+                      {/* <ChevronsUpDown className="opacity-50" /> */}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -201,6 +194,42 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
             </FormItem>
           )}
         />
+        </div>
+
+        <div className="flex-1 min-w-[200px]">
+        <FormField
+            disabled
+            control={form.control}
+            name="studentCode"
+            render={({ field }) => (
+            <FormItem>
+                <FormLabel>Student Code</FormLabel>
+                <FormControl>
+                <Input className="not-muted-disabled" {...field} />
+                </FormControl>
+            </FormItem>
+            )}
+        />
+        </div>
+
+        <div className="flex-1 min-w-[200px]">
+        <FormField
+            disabled
+                control={form.control}
+                name="tDate"
+                render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Date of Transaction</FormLabel>
+                    <FormControl>
+                    <Input className="not-muted-disabled" {...field} />
+                    </FormControl>
+                </FormItem>
+                )}
+            />
+        </div>
+    </div>
+
+        {/* end */}
 
         <FormField
           control={form.control}
@@ -216,16 +245,18 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
                       variant="outline"
                       role="combobox"
                       className={cn(
-                        "w-full justify-between",
-                        !field.value && "text-muted-foreground"
-                      )}
+                        "flex w-auto justify-between items-start text-left gap-2 min-h-[2.5rem] h-auto",
+                        !field.value && "text-muted-foreground",
+                        "whitespace-normal break-words p-2",
+                        "not-muted-disabled"
+                    )}
                     >
                       {field.value
                         ? enrollDesc.find(
                             (enrollDesc) => enrollDesc.value === field.value
                           )?.label
                         : "Select enrollment description"}
-                      <ChevronsUpDown className="opacity-50" />
+                      {/* <ChevronsUpDown className="opacity-50" /> */}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -277,6 +308,7 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
                   <FormControl>
                     <Checkbox
+                    disabled
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
@@ -297,12 +329,13 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
                   <FormControl>
                     <Checkbox
+                        disabled
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>Approve</FormLabel>
+                    <FormLabel>Approved</FormLabel>
                   </div>
                 </FormItem>
               )}
@@ -312,7 +345,7 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
         </div>
 
 
-          <div className="flex justify-end gap-2">
+          {/* <div className="flex justify-end gap-2">
            <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <span className="flex items-center">
@@ -324,7 +357,7 @@ export function EditEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
                 </span>
               ) : ("Submit")}
             </Button>
-            </div>
+            </div> */}
         </form>
       </Form>
       </div>

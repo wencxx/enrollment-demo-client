@@ -1,26 +1,18 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Edit, Stamp } from "lucide-react"
+import { ArrowUpDown, Stamp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Enrollment1Col } from "@/FldrTypes/kim-types"
-import { PendingApplicantEnrollment1Form } from "../FldrForm/entryPendingEnrollment1"
+import { StudentCol } from "@/FldrTypes/kim-types"
 import { useState } from "react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {
   Dialog,
   DialogContent,
-  DialogTrigger,
-  DialogTitle,
-  DialogHeader,
-  DialogDescription
+  DialogTrigger
 } from "@/components/ui/dialog"
-import { EditEnrollment1Form } from "../FldrForm/editEnrollment1"
+import { EntryEnrollment1Form } from "../FldrForm/entryEnrollment1"
 
-export const columns: ColumnDef<Enrollment1Col>[] = [
+
+export const pendingColumns: ColumnDef<StudentCol>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -72,27 +64,13 @@ export const columns: ColumnDef<Enrollment1Col>[] = [
     },
   },
   {
-    accessorKey: "pkedDesc",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Enrollment Description
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-  {
     id: "actions",
     cell: ({ row, table }) => {
       const [isDialogOpen, setIsDialogOpen] = useState(false);
-      const [pkRate, setPKRate] = useState("");
+      const [code, setCode] = useState("");
 
       const handleDialogOpen = (code: string) => {
-        setPKRate(code);
+        setCode(code);
         setIsDialogOpen(true);
       };
 
@@ -109,14 +87,14 @@ export const columns: ColumnDef<Enrollment1Col>[] = [
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0"
-            onClick={() => handleDialogOpen(row.original.pkCode)}>
-                <span className="sr-only">Edit rate2</span>
-                <Edit className="h-4 w-4" />
+            onClick={() => handleDialogOpen(row.original.studentCode)}>
+                <span className="sr-only">Enrollment1</span>
+                <Stamp className="h-4 w-4" />
             </Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
-                <EditEnrollment1Form
-                  toEdit={pkRate} 
+                <EntryEnrollment1Form
+                  toEdit={code} 
                   onCancel={handleUpdate}
                 />
             </DialogContent>
