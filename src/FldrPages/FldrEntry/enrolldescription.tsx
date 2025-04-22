@@ -51,7 +51,7 @@ function EnrollDescription() {
                         </DialogTrigger>
                         <DialogContent>
                             <DialogTitle className="text-lg font-semibold">Enroll Description</DialogTitle>
-                            <EnrollDesciprtionForm />
+                            <EnrollDesciprtionForm getEnrollDescription={getEnrollDescription} />
                         </DialogContent>
                     </Dialog>
                 </div>
