@@ -158,16 +158,82 @@ const data = {
     },
     {
       name: 'Enrollment2',
-      url: 'enrollment/enrollment1',
+      url: 'enrollment/enrollment2',
       icon: ChartColumn,
       authorizeUsers: ['Admin']
     },
     {
       name: 'Enrollment3',
-      url: 'enrollment/enrollment1',
+      url: 'enrollment/enrollment3',
       icon: ChartColumn,
       authorizeUsers: ['Admin']
     }
+  ],
+  menuMain: [
+    {
+      title: "Entry",
+      url: "#",
+      icon: FileInput,
+      authorizeUsers: ['Admin'],
+      items: [
+        {
+          title: "Course",
+          url: "entry/course",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Professors",
+          url: "entry/professors",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "High School",
+          url: "entry/highschool",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Elementary",
+          url: "entry/elementary",
+          authorizeUsers: ['Admin']
+        },
+
+        {
+          title: "Town/City",
+          url: "entry/town",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Room",
+          url: "entry/room",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Section",
+          url: "entry/section",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Rate 1",
+          url: "entry/rate1",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Rate 2",
+          url: "entry/rate2",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Rate Description",
+          url: "entry/ratedesc",
+          authorizeUsers: ['Admin']
+        },
+        {
+          title: "Enroll Description",
+          url: "entry/enroll-description",
+          authorizeUsers: ['Admin']
+        },
+      ],
+    },
   ],
 }
 
