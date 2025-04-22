@@ -298,7 +298,7 @@ export function ViewEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
           )}
         />
 
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 mt-2">
 
         <div className="flex-1">
             <FormField
