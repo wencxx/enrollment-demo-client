@@ -57,7 +57,7 @@ export default function Enrollment1() {
       <div className="container py-6">
         <div className="space-x-2">
         <Tabs defaultValue="pending" className="w-[full]">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-[20vw] grid-cols-2">
             <TabsTrigger value="pending">Students</TabsTrigger>
             <TabsTrigger value="approved">Approved</TabsTrigger>
           </TabsList>
@@ -71,36 +71,19 @@ export default function Enrollment1() {
                 onRefresh={getData}
               />
             </div>
-            </TabsContent>
+          </TabsContent>
           <TabsContent value="approved">
           <div className="mt-4">
             <DataTable 
               columns={approvedColumns} 
               data={approved} 
               loading={loading} 
-              title="approved students" 
+              title="approved enrollments" 
               onRefresh={getData}
             />
           </div>
           </TabsContent>
         </Tabs>
-      {/* <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Enroll
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
-                <EntryEnrollment1Form
-                onCancel={getEnrollment1}
-                onSuccess={() => {
-                    getEnrollment1();
-                    setIsDialogOpen(false);
-                }}
-                />
-            </DialogContent>
-          </Dialog> */}
         </div>
     </div>
     </>

@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Stamp } from "lucide-react"
+import { ArrowUpDown, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Enrollment1Col } from "@/FldrTypes/kim-types"
@@ -10,6 +10,7 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog"
 import { EntryEnrollment1Form } from "../FldrForm/entryEnrollment1"
+import { ViewEnrollment1Form } from "../FldrForm/viewEnrollment1"
 
 export const approvedColumns: ColumnDef<Enrollment1Col>[] = [
   {
@@ -35,19 +36,33 @@ export const approvedColumns: ColumnDef<Enrollment1Col>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "studentCode",
+    accessorKey: "pkCode",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Student Code
+          PKCode
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
   },
+  // {
+  //   accessorKey: "studentCode",
+  //   header: ({ column }) => {
+  //     return (
+  //       <Button
+  //         variant="ghost"
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //       >
+  //         Student Code
+  //         <ArrowUpDown className="ml-2 h-4 w-4" />
+  //       </Button>
+  //     )
+  //   },
+  // },
   {
     accessorKey: "fullName",
     header: ({ column }) => {
@@ -102,11 +117,12 @@ export const approvedColumns: ColumnDef<Enrollment1Col>[] = [
             <Button variant="ghost" className="h-8 w-8 p-0"
             onClick={() => handleDialogOpen(row.original.pkCode)}>
                 <span className="sr-only">Edit rate2</span>
-                <Stamp className="h-4 w-4" />
+                <Eye className="h-4 w-4" />
             </Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
-                <EntryEnrollment1Form
+                {/* list of details */}
+                <ViewEnrollment1Form
                   toEdit={pkRate} 
                   onCancel={handleUpdate}
                 />

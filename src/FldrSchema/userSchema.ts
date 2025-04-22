@@ -1,3 +1,4 @@
+import { toDate } from "date-fns"
 import { z } from "zod"
 
 export const loginSchema = z.object({
@@ -91,6 +92,8 @@ export const enrollment1Schema = z.object({
   pkedCode: z.string()
     .min(1, { message: "Select an enrollment description." }),
   regularStudent: z.boolean(),
+  approveStudent: z.boolean().optional(),
+  tDate: z.string().optional(),
 })
 
 export const enrollment2Schema = z.object({
