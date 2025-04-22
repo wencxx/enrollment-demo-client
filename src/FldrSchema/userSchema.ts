@@ -90,7 +90,6 @@ export const enrollment1Schema = z.object({
     .min(1, { message: "Select a student." }),
   pkedCode: z.string()
     .min(1, { message: "Select an enrollment description." }),
-  approveStudent: z.boolean(),
   regularStudent: z.boolean(),
 })
 

@@ -1,26 +1,17 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Edit, Stamp } from "lucide-react"
+import { ArrowUpDown, Stamp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Enrollment1Col } from "@/FldrTypes/kim-types"
-import { PendingApplicantEnrollment1Form } from "../FldrForm/entryPendingEnrollment1"
 import { useState } from "react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {
   Dialog,
   DialogContent,
-  DialogTrigger,
-  DialogTitle,
-  DialogHeader,
-  DialogDescription
+  DialogTrigger
 } from "@/components/ui/dialog"
-import { EditEnrollment1Form } from "../FldrForm/editEnrollment1"
+import { EntryEnrollment1Form } from "../FldrForm/entryEnrollment1"
 
-export const columns: ColumnDef<Enrollment1Col>[] = [
+export const approvedColumns: ColumnDef<Enrollment1Col>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -111,11 +102,11 @@ export const columns: ColumnDef<Enrollment1Col>[] = [
             <Button variant="ghost" className="h-8 w-8 p-0"
             onClick={() => handleDialogOpen(row.original.pkCode)}>
                 <span className="sr-only">Edit rate2</span>
-                <Edit className="h-4 w-4" />
+                <Stamp className="h-4 w-4" />
             </Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
-                <EditEnrollment1Form
+                <EntryEnrollment1Form
                   toEdit={pkRate} 
                   onCancel={handleUpdate}
                 />
