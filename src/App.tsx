@@ -25,6 +25,11 @@ import HighSchool from "./FldrPages/FldrEntry/highschool"
 import Elementary from "./FldrPages/FldrEntry/elementary"
 import Town from "./FldrPages/FldrEntry/town"
 import EnrollDescription from "./FldrPages/FldrEntry/enrolldescription"
+import Room from "./FldrPages/FldrEntry/room"
+import Section from "./FldrPages/FldrEntry/section"
+import Rate1 from "./FldrPages/FldrEntry/rate1"
+import RateDesc from "./FldrPages/FldrEntry/ratedesc"
+import Rate2 from "./FldrPages/FldrEntry/rate2"
 
 const routes = [
   {
@@ -38,6 +43,14 @@ const routes = [
   {
     element: <Course />,
     path: '/entry/course',
+  },
+  {
+    element: <Room />,
+    path: '/entry/room',
+  },
+  {
+    element: <Section />,
+    path: '/entry/section',
   },
   {
     element: <Student />,
@@ -74,6 +87,18 @@ const routes = [
   {
     element: <Town />,
     path: '/entry/town',
+  },
+  {
+    element: <Rate1 />,
+    path: '/entry/rate1',
+  },
+  {
+    element: <Rate2 />,
+    path: '/entry/rate2',
+  },
+  {
+    element: <RateDesc />,
+    path: '/entry/ratedesc',
   },
   {
     element: <EnrollDescription />,
@@ -117,6 +142,24 @@ const routes = [
   },
 ]
 
+// const useTabVisibility = () => {
+//   useEffect(() => {
+//     const handleVisibilityChange = () => {
+//       if (document.hidden) {
+//         document.title = "B4l1K n@ b@bY! 😢";
+//       } else {
+//         document.title = "Enrollment System";
+//       }
+//     };
+
+//     document.addEventListener("visibilitychange", handleVisibilityChange);
+//     return () => {
+//       document.removeEventListener("visibilitychange", handleVisibilityChange);
+//     };
+//   }, []);
+// };
+
+
 function App() {
 
   return (
@@ -125,10 +168,34 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
           <Route element={<Layout />}>
             {routes.map((route, index) => (
               <Route key={index} path={route.path} element={route.element} />
             ))}
+
+            {/* <Route path="/" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="schedules" element={<Schedules />} />
+            <Route path="entry/course" element={<Course />} />
+            <Route path="entry/student" element={<Student />} />
+            <Route path="entry/rate" element={<Rate />} />
+            <Route path="entry/subject-prerequisite" element={<Subject />} />
+            <Route path="entry/ratecourse" element={<RateCourse />} />
+            <Route path="entry/AY" element={<AcademicYearPage />} />
+            <Route path="enrollment/enrollment1" element={<Enrollment1 />} />
+            <Route path="enrollment/enrollment2" element={<Enrollment2 />} />
+            <Route path="student/application" element={<Application />} />
+            <Route path="student/grades" element={<Grades />} />
+            <Route path="student/profile" element={<StudentProfile />} />
+            <Route path="student/statement-of-account" element={<StatementOfAccount />} />
+            <Route path="permissions/users" element={<Users />} />
+            <Route path="permissions/grant-permission" element={<GrantPermission />} />
+            <Route path="permissions/routes" element={<RoutePage />} />
+
+            <Route path="entry/room" element={<Room />} />
+            <Route path="entry/section" element={<Section />} /> */}
+
           </Route>
           <Route path="/unauthorize" element={<Unauthorized />} />
         </Routes>
