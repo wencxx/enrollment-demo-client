@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
 import { Plus } from 'lucide-react'
 import { useState, useEffect } from "react"
-import { Enrollment1Col } from "@/FldrTypes/enrollment1"
+import { Enrollment2Details } from "@/FldrTypes/enrollment2"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
@@ -16,19 +16,19 @@ import { columnsEnrolled } from "@/components/FldrDatatable/enrollment2-columns"
 import { DataTable } from "@/components/FldrDatatable/data-table";
 import { DialogTitle } from "@radix-ui/react-dialog"
 
-export default function Enrollment1() {
+export default function Enrollment2() {
   const [isDialogOpen, setDialogOpen] = useState(false)
   // enrolled students
-  const [list, setList] = useState<Enrollment1Col[]>([]);
+  const [list, setList] = useState<Enrollment2Details[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const fetchEnrollment1 = async () => {
+  const fetchEnrollment2 = async () => {
     try {
       setLoading(true)
-      const response = await axios.get<Enrollment1Col[]>(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`);
+      const response = await axios.get<Enrollment2Details[]>(`${plsConnect()}/api/Enrollment2/Enrollment2Controller/AllData`);
       const updatedData = response.data.map((item) => ({
         ...item,
-        fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}`,
+        fullName: `${item.FirstName} ${item.MiddleName ? item.MiddleName + ' ' : ''}${item.LastName}`,
       }));
       setList(updatedData);
     } catch (error) {
@@ -39,7 +39,7 @@ export default function Enrollment1() {
   };
 
   useEffect(() => {
-    fetchEnrollment1();
+    fetchEnrollment2();
   }, []);
 
   return (
@@ -51,14 +51,14 @@ export default function Enrollment1() {
             Enrollment 2
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[60dvw] lg:!max-w-[50dvw]" aria-labelledby="dialog-title">
+        <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[70dvw] lg:!max-w-[60dvw]" aria-labelledby="dialog-title">
           <DialogTitle id="dialog-title" className="text-lg font-medium">Enrollment 2</DialogTitle>
           <Enrollment2Form closeModal={() => setDialogOpen(false)}/>
         </DialogContent>
       </Dialog>
 
       <ScrollArea className="overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
-        <DataTable columns={columnsEnrolled} data={list} loading={loading} title="approved students" />
+        <DataTable columns={columnsEnrolled} data={list} loading={loading} title="Schedules" />
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
 

@@ -1,340 +1,645 @@
-import { enrollment2Schema } from "@/FldrSchema/userSchema.ts"
-import { plsConnect } from "@/FldrClass/ClsGetConnection"
-import axios from "axios"
-import { useEffect, useState } from "react"
-import { StudentCol } from "@/FldrTypes/students-col"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
-import { Plus, Minus, ChevronsUpDown, Check } from 'lucide-react'
+"use client";
+import { rateSchema } from "@/FldrSchema/userSchema.ts";
+import { plsConnect } from "@/FldrClass/ClsGetConnection";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { RateCourseCol } from "@/FldrTypes/ratecourse-col";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useFieldArray } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { Check, ChevronsUpDown, Plus, Trash } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
-  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import useAuthStore from "@/FldrStore/auth"
-import { RateCol } from "@/components/FldrDatatable/rate-columns";
-import { Input } from "@/components/ui/input";
-  import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-  } from "@/components/ui/popover"
-  import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-  } from "@/components/ui/command"
-  import { cn } from "@/lib/utils"
+} from "@/components/ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "../ui/input";
+import { z } from "zod";
+import { enrollment2Schema } from "@/FldrSchema/userSchema.ts";
 
-type Enrollment2FormData = {
-  pkCode: string;
-  rateCode: string;
-  amount: number;
-  rowNum: number;
+type Enrollment2FormData = z.infer<typeof enrollment2Schema>;
+
+type Enrollment2FormProps = {
+  onSubmitSuccess: () => void;
+  onAddRate: () => void;
 };
 
-interface Enrollment2FormProps {
-  closeModal: () => void;
-}
+type ComboOption = { label: string; value: string };
 
-export function Enrollment2Form({ closeModal }: Enrollment2FormProps) {
+export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormProps) {
   const form = useForm<Enrollment2FormData>({
-    resolver: zodResolver(enrollment2Schema),
+    resolver: zodResolver(
+      z.object({
+        pkCode: z.string().min(1, { message: "Select a student." }),
+        rows: z
+          .array(enrollment2Schema.omit({ pkCode: true }))
+          .min(1, "At least one subject is required."),
+      })
+    ),
     defaultValues: {
       pkCode: "",
-      rowNum: 0,
-      rateCode: "",
-      amount: 0,
+      rows: [
+        {
+          rowNum: 1,
+          subjectCode: "",
+          PKRate: "",
+          professorCode: "",
+          roomCode: "",
+          scheduleDayCode: "",
+          classStart: "",
+          classEnd: "",
+          noUnits: 0,
+          rateAmount: 0,
+          amount: 0,
+        },
+      ],
     },
-    mode: 'onChange',
+    mode: "onChange",
   });
 
-  const [student, setStudent] = useState<StudentCol[]>([])
+  const { control, handleSubmit, setValue, watch } = form;
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "rows",
+  });
 
-  async function fetchStudent() {
-    try {
-      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`)
-      const mappedStudent = response.data.map((item: StudentCol) => ({
-          label: `${item.firstName} ${item.middleName} ${item.lastName}`,
-          value: item.pkCode,
-      }))
-      setStudent(mappedStudent)
-    } catch (error: any) {
-        console.error("Error fetching students:", error)
+  const [students, setStudents] = useState<ComboOption[]>([]);
+  const [subjects, setSubjects] = useState<ComboOption[]>([]);
+  const [professors, setProfessors] = useState<ComboOption[]>([]);
+  const [rooms, setRooms] = useState<ComboOption[]>([]);
+  const [days, setDays] = useState<ComboOption[]>([]);
+
+
+  // Fetch dropdown data
+  useEffect(() => {
+    async function fetchDropdowns() {
+      try {
+        const [studentsRes, subjectsRes, professorsRes, roomsRes, daysRes] = await Promise.all([
+          axios.get(`${plsConnect()}/api/Enrollment2/ListEnrollment2Student`),
+          axios.get(`${plsConnect()}/API/WebAPI/ListController/ListSubject`),
+          axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListProfessor`),
+          axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListRoom`),
+          axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListDay`),
+        ]);
+        setStudents(studentsRes.data.map((s: any) => ({
+          label: `${s.firstName} ${s.middleName} ${s.lastName} (${s.courseDesc} - ${s.yearDesc} - ${s.sectionDesc})`,
+          value: s.pkCode,
+        })));
+        setSubjects(subjectsRes.data.map((s: any) => ({
+          label: s.rdDesc,
+          value: s.rdCode,
+        })));
+        setProfessors(professorsRes.data.map((p: any) => ({
+          label: p.professorName,
+          value: p.professorCode,
+        })));
+        setRooms(roomsRes.data.map((r: any) => ({
+          label: r.roomDesc,
+          value: r.roomCode,
+        })));
+        setDays(daysRes.data.map((d: any) => ({
+          label: d.scheduleDayDesc,
+          value: d.scheduleDayCode,
+        })));
+      } catch {
+        toast("Error loading dropdowns");
+      }
     }
-  }
+    fetchDropdowns();
+  }, []);
 
-  const [rates, setRate] = useState<RateCol[]>([]);
+    // fetch NoUnits and RateAmount
+    const rows = watch("rows");
+    useEffect(() => {
+      rows.forEach((row, idx) => {
+        if (row.subjectCode) {
+          axios
+            .get(`${plsConnect()}/api/Enrollment2/GetSubjectDetails/${row.subjectCode}`)
+            .then(res => {
+              setValue(`rows.${idx}.PKRate`, res.data.pkRate);
+              setValue(`rows.${idx}.noUnits`, res.data.noUnits);
+              setValue(`rows.${idx}.rateAmount`, res.data.rateAmount);
+              setValue(`rows.${idx}.amount`, res.data.noUnits * res.data.rateAmount);
+            });
+        }
+      });
+    }, [rows.map(r => r.subjectCode).join(",")]);
 
-  const fetchRate = async () => {
-    try {
-      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListDistinctRate`);
-      const mappedRate = response.data.map((item: RateCol) => ({
-        label: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc}`,
-        value: item.rateCode,
-      }))
-      setRate(mappedRate)
-    } catch (error: any) {
-      console.error("Error fetching data:", error);
-    }
+
+  const handleAddRow = () => {
+    const nextRowNum =
+      fields.length > 0 ? fields[fields.length - 1].rowNum + 1 : 1;
+    append({
+      rowNum: fields.length + 1,
+      subjectCode: "",
+      PKRate: "",
+      professorCode: "",
+      roomCode: "",
+      scheduleDayCode: "",
+      classStart: "",
+      classEnd: "",
+      noUnits: 0,
+      rateAmount: 0,
+      amount: 0,
+    });
   };
 
-  useEffect(() => {
-    fetchStudent()
-    fetchRate();
-  }, [])
-
-const [amount, setAmount] = useState<number>(0);
-const [rateCode, setRateCode] = useState<string>('');
-
-  useEffect(() => {
-      const fetchRateAmountSum = async () => {
-          try {
-              if (rateCode) {
-                  console.log("Rate Code:", rateCode)
-                  const response = await axios.get(`${plsConnect()}/api/Enrollment2/SumRateAmount/${rateCode}`);
-                  
-                  setAmount(response.data);
-                  form.setValue("amount", response.data);
-              }
-          } catch (error) {
-              console.error("Error fetching sum of RateAmounts:", error);
-          }
-      };
-      fetchRateAmountSum();
-  }, [rateCode]);
-
-  const [rowNum, setRowNum] = useState<number>(1);
-  const [pkCode, setPkCode] = useState<string>('');
-
-useEffect(() => {
-  const checkExistingEnrollment = async (pkCode: string) => {
-    try {
-      const response = await axios.get(`${plsConnect()}/api/Enrollment2/CheckEnrollment/${pkCode}`);
-      const newRowNum = response.data;
-      setRowNum(newRowNum);
-    } catch (error) {
-      console.error("Error checking enrollment:", error);
-    }
+  const handleRemoveRow = (index: number) => {
+    remove(index);
+    // Re-number rows
+    fields.forEach((_, i) => setValue(`rows.${i}.rowNum`, i + 1));
   };
-
-  if (pkCode) {
-    checkExistingEnrollment(pkCode);
-  }
-}, [pkCode]);
-
-useEffect(() => {
-  const currentPkCode = form.watch("pkCode");
-  if (currentPkCode && currentPkCode !== pkCode) {
-    setPkCode(currentPkCode);
-  }
-}, [form.watch("pkCode")]);
-
 
   const onSubmit = async (values: Enrollment2FormData) => {
-    const enrollment2FormData = {
+    console.log("Original form values:", values);
+    
+    const PKRateValues = form.watch('rows').map(r => r.PKRate);
+    console.log("PKRate values from form:", PKRateValues);
+    
+    // Create a new payload that with PKRAATE
+    const payload = {
       pkCode: values.pkCode,
-      rateCode: values.rateCode,
-      amount: values.amount,
-      rowNum: rowNum,
+      rows: values.rows.map((row, index) => {
+        // Get PKRate from form state
+        const PKRate = form.getValues(`rows.${index}.PKRate`);
+        console.log(`Row ${index} PKRate:`, PKRate);
+        
+        return {
+          ...row,
+          PKRate: PKRate || "" // Explicitly include PKRate from form state
+        };
+      })
     };
+    
+    console.log("Modified payload:", payload);
 
+    if (payload.rows.some(row => !row.PKRate)) {
+      toast("One or more subjects are missing PKRate. Please re-select the subject.");
+      return;
+    }
+    
     try {
-      const response = await axios.post(`${plsConnect()}/api/Enrollment2/AddEnrollment2`, enrollment2FormData)
-      toast("Success.")
-      closeModal();
-      console.log("Values:", enrollment2FormData);
-      console.log("Response:", response.data);
+      await axios.post(
+        `${plsConnect()}/api/Enrollment2/AddEnrollment2`,
+        payload
+      );
+      onSubmitSuccess();
+      onAddRate();
+      toast("Enrollment submitted successfully.");
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast("Error submitting form.")
-      } else {
-        console.error("Network error:", error)
-        toast("Network error.")
-      }
+      console.error("Error submitting enrollment:", error);
+      toast("Error submitting enrollment.");
     }
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 gap-2">
+    <>
+      <Form {...form}>
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+          <div className="col-span-2">
+            {/* STUDENT SELECTION */}
+            <FormField
+              control={form.control}
+              name="pkCode"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  {/* <FormLabel>Rate Course</FormLabel> */}
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                      {field.value
+                        ? students.find((s) => s.value === field.value)?.label
+                        : "Select Student, course, year, and semester"}
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput placeholder="Search..." className="h-9" />
+                        <CommandList>
+                          <CommandEmpty>None found.</CommandEmpty>
+                          <CommandGroup>
+                          {students.map((s) => (
+                          <CommandItem
+                          value={s.label}
+                          key={s.value}
+                          onSelect={() => {
+                            setValue("pkCode", s.value);
+                            field.onChange(s.value);
+                          }}
+                        >
+                          {s.label}
+                          <Check
+                            className={cn(
+                              "ml-auto",
+                              s.value === field.value
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Subject</TableHead>
+                <TableHead>Professor</TableHead>
+                <TableHead>Room</TableHead>
+                <TableHead>Day</TableHead>
+                <TableHead>Class Start</TableHead>
+                <TableHead>Class End</TableHead>
+                <TableHead>No. of Units</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="text-center"></TableHead>
+              </TableRow>
+            </TableHeader>
+            
+            <TableBody>
+  {fields.map((item, index) => (
+    <TableRow key={item.id}>
+      {/* Subject */}
+      <TableCell>
         <FormField
-            control={form.control}
-            name="pkCode"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Student</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          "w-full justify-between",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value
-                          ? student.find(
-                              (student) => student.value === field.value
-                            )?.label
-                          : "Select student"}
-                        <ChevronsUpDown className="opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0">
-                    <Command>
-                      <CommandInput
-                        placeholder="Search..."
-                        className="h-9"
-                      />
-                      <CommandList>
-                        <CommandEmpty>None found.</CommandEmpty>
-                        <CommandGroup>
-                          {student.map((student) => (
-                            <CommandItem
-                              value={student.label}
-                              key={student.value}
-                              onSelect={() => {
-                                  form.setValue("pkCode", student.value);
-                                  field.onChange(student.value);
-                              }}
-                            >
-                              {student.label}
-                              <Check
-                                className={cn(
-                                  "ml-auto",
-                                  student.value === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-              
-            )}
-          />
+          control={form.control}
+          name={`rows.${index}.subjectCode`}
+          render={({ field }) => (
+            <Popover>
+              <PopoverTrigger asChild>
+                <FormControl>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className={cn(
+                      "w-full justify-between",
+                      !field.value && "text-muted-foreground"
+                    )}
+                  >
+                    {field.value
+                      ? subjects.find((s) => s.value === field.value)?.label
+                      : "Select Subject"}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0">
+                <Command>
+                  <CommandInput placeholder="Search..." className="h-9" />
+                  <CommandList>
+                    <CommandEmpty>None found.</CommandEmpty>
+                    <CommandGroup>
+                      {subjects.map((s) => (
+                        <CommandItem
+                          value={s.label}
+                          key={s.value}
+                          onSelect={async () => {
+                            form.setValue(`rows.${index}.subjectCode`, s.value);
+                            try {
+                              const res = await axios.get(
+                                `${plsConnect()}/api/Enrollment2/GetSubjectDetails/${s.value}`
+                              );
+                              form.setValue(`rows.${index}.PKRate`, res.data.pkRate); // <-- Set PKRate
+                              form.setValue(`rows.${index}.noUnits`, res.data.noUnits); // <-- Set NoUnits
+                              form.setValue(`rows.${index}.rateAmount`, res.data.rateAmount); // <-- Set RateAmount
+                              form.setValue(`rows.${index}.amount`, res.data.noUnits * res.data.rateAmount); // <-- Set Amount
+                            } catch {
+                              toast("Failed to fetch subject details.");
+                            }
+                            field.onChange(s.value);
+                          }}
+                        >
+                          {s.label}
+                          <Check
+                            className={cn(
+                              "ml-auto",
+                              s.value === field.value
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          )}
+        />
+      </TableCell>
+      {/* Professor */}
+      <TableCell>
+        <FormField
+          control={form.control}
+          name={`rows.${index}.professorCode`}
+          render={({ field }) => (
+            <Popover>
+              <PopoverTrigger asChild>
+                <FormControl>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className={cn(
+                      "w-full justify-between",
+                      !field.value && "text-muted-foreground"
+                    )}
+                  >
+                    {field.value
+                      ? professors.find((p) => p.value === field.value)?.label
+                      : "Select Professor"}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0">
+                <Command>
+                  <CommandInput placeholder="Search..." className="h-9" />
+                  <CommandList>
+                    <CommandEmpty>None found.</CommandEmpty>
+                    <CommandGroup>
+                      {professors.map((p) => (
+                        <CommandItem
+                          value={p.label}
+                          key={p.value}
+                          onSelect={() => {
+                            form.setValue(`rows.${index}.professorCode`, p.value);
+                            field.onChange(p.value);
+                          }}
+                        >
+                          {p.label}
+                          <Check
+                            className={cn(
+                              "ml-auto",
+                              p.value === field.value
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          )}
+        />
+      </TableCell>
+      {/* Room */}
+      <TableCell>
+        <FormField
+          control={form.control}
+          name={`rows.${index}.roomCode`}
+          render={({ field }) => (
+            <Popover>
+              <PopoverTrigger asChild>
+                <FormControl>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className={cn(
+                      "w-full justify-between",
+                      !field.value && "text-muted-foreground"
+                    )}
+                  >
+                    {field.value
+                      ? rooms.find((r) => r.value === field.value)?.label
+                      : "Select Room"}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0">
+                <Command>
+                  <CommandInput placeholder="Search..." className="h-9" />
+                  <CommandList>
+                    <CommandEmpty>None found.</CommandEmpty>
+                    <CommandGroup>
+                      {rooms.map((r) => (
+                        <CommandItem
+                          value={r.label}
+                          key={r.value}
+                          onSelect={() => {
+                            form.setValue(`rows.${index}.roomCode`, r.value);
+                            field.onChange(r.value);
+                          }}
+                        >
+                          {r.label}
+                          <Check
+                            className={cn(
+                              "ml-auto",
+                              r.value === field.value
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          )}
+        />
+      </TableCell>
+      {/* Day */}
+      <TableCell>
+        <FormField
+          control={form.control}
+          name={`rows.${index}.scheduleDayCode`}
+          render={({ field }) => (
+            <Popover>
+              <PopoverTrigger asChild>
+                <FormControl>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className={cn(
+                      "w-full justify-between",
+                      !field.value && "text-muted-foreground"
+                    )}
+                  >
+                    {field.value
+                      ? days.find((d) => d.value === field.value)?.label
+                      : "Select Day"}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0">
+                <Command>
+                  <CommandInput placeholder="Search..." className="h-9" />
+                  <CommandList>
+                    <CommandEmpty>None found.</CommandEmpty>
+                    <CommandGroup>
+                      {days.map((d) => (
+                        <CommandItem
+                          value={d.label}
+                          key={d.value}
+                          onSelect={() => {
+                            form.setValue(`rows.${index}.scheduleDayCode`, d.value);
+                            field.onChange(d.value);
+                          }}
+                        >
+                          {d.label}
+                          <Check
+                            className={cn(
+                              "ml-auto",
+                              d.value === field.value
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          )}
+        />
+      </TableCell>
+      {/* Class Start */}
+      <TableCell>
+        <FormField
+          control={form.control}
+          name={`rows.${index}.classStart`}
+          render={({ field }) => (
+            <Input {...field} placeholder="Start (e.g. 08:00)" />
+          )}
+        />
+      </TableCell>
+      {/* Class End */}
+      <TableCell>
+        <FormField
+          control={form.control}
+          name={`rows.${index}.classEnd`}
+          render={({ field }) => (
+            <Input {...field} placeholder="End (e.g. 09:00)" />
+          )}
+        />
+      </TableCell>
+      {/* No. of Units */}
+      <TableCell>
+        <FormField
+          control={form.control}
+          name={`rows.${index}.noUnits`}
+          render={({ field }) => (
+            <Input {...field} readOnly placeholder="Units" />
+          )}
+        />
+      </TableCell>
+      {/* Amount */}
+      <TableCell>
+        <FormField
+          control={form.control}
+          name={`rows.${index}.amount`}
+          render={({ field }) => (
+            <Input {...field} readOnly placeholder="Amount" />
+          )}
+        />
+      </TableCell>
+      {/* Remove Row */}
 
-          <FormField
-            control={form.control}
-            name="rateCode"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Rate</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          "w-full justify-between",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value
-                          ? rates.find(
-                              (rates) => rates.value === field.value
-                            )?.label
-                          : "Select rate"}
-                        <ChevronsUpDown className="opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0">
-                    <Command>
-                      <CommandInput
-                        placeholder="Search..."
-                        className="h-9"
-                      />
-                      <CommandList>
-                        <CommandEmpty>None found.</CommandEmpty>
-                        <CommandGroup>
-                          {rates.map((rates) => (
-                            <CommandItem
-                              value={rates.label}
-                              key={rates.value}
-                              onSelect={() => {
-                                  form.setValue("rateCode", rates.value);
-                                  field.onChange(rates.value);
-                                  setRateCode(rates.value);
-                              }}
-                            >
-                              {rates.label}
-                              <Check
-                                className={cn(
-                                  "ml-auto",
-                                  rates.value === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+  <TableCell>
+    <Button
+      type="button"
+      variant="ghost"
+      onClick={() => handleRemoveRow(index)}
+      className="text-red-500"
+    >
+      <Trash size={16} />
+    </Button>
+    
+    {/* Move PKRate hidden input INSIDE the TableCell */}
+    <FormField
+      control={form.control}
+      name={`rows.${index}.PKRate`}
+      render={({ field }) => (
+        <input type="hidden" {...field} />
+      )}
+    />
+  </TableCell>
+  
+    </TableRow>
+  ))}
+</TableBody>
+          </Table>
+          <div className="border p-2 mt-4 bg-gray-100">
+  <h4 className="font-bold">Debug Info:</h4>
+  <p>PKRate values: {JSON.stringify(form.watch('rows').map(r => r.PKRate))}</p>
+</div>
 
-          <FormField name="amount" control={form.control} render={({ field }) => (
-            <FormItem className="flex items-center">
-              <FormLabel className="mr-2">Amount</FormLabel>
-              <FormControl className="flex justify-end">
-                <span className="text-sm font-medium">
-                  {new Intl.NumberFormat('en-PH', {style: 'currency', currency: 'PHP',
-                  }).format(amount)}
-                </span>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )} />
+          <div className="col-span-2 flex justify-center">
+            <Button
+              type="button"
+              onClick={handleAddRow}
+              variant="ghost"
+              className="w-full sm:w-10"
+            >
+              <Plus />
+            </Button>
+          </div>
 
-          <FormField
-                control={form.control}
-                name="rowNum"
-                render={({ field }) => (
-                  <input
-                    type="hidden"
-                    {...field}
-                    value={rowNum}
-                  />
-                )}
-              />
-
-        <div className="col-span-2">
-          <Button type="submit" className="w-full sm:w-20 float-right">Submit</Button>
-        </div>
-      </form>
-    </Form>
-  )
+          <div className="col-span-2">
+            <Button type="submit" className="w-full sm:w-20 float-right">
+              Submit
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </>
+  );
 }
