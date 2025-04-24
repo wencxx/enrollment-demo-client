@@ -1,3 +1,4 @@
+import { toDate } from "date-fns"
 import { z } from "zod"
 
 export const loginSchema = z.object({
@@ -84,19 +85,15 @@ export const enrollDescriptionSchema = z.object({
 })
 
 export const enrollment1Schema = z.object({
-  yearCode: z.string()
-    .min(1, { message: "Select a year." }),
-  semCode: z.string()
-    .min(1, { message: "Select a semester." }),
-  courseCode: z.string()
-    .min(1, { message: "Select a course." }),
+  pkCode: z.string().optional(),
+  voucher: z.string().optional(),
   studentCode: z.string()
     .min(1, { message: "Select a student." }),
-  date: z.date()
-    .refine((val) => val <= new Date(), { message: "Date must be today or earlier." }),
-  enrollStatusCode: z.string()
-    .min(1, { message: "Please confirm status." }),
-    aYearCode: z.number().min(1, { message: "Select an academic year." }),
+  pkedCode: z.string()
+    .min(1, { message: "Select an enrollment description." }),
+  regularStudent: z.boolean(),
+  approveStudent: z.boolean().optional(),
+  tDate: z.string().optional(),
 })
 
 export const enrollment2Schema = z.object({

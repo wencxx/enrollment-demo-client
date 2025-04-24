@@ -40,3 +40,37 @@ export type Rate2Col = {
     yearDesc: string
     courseDesc: string
 }
+
+export type StudentCol = {
+    studentCode: string
+    studentID: string
+    firstName: number
+    middleName: string
+    lastName: string
+    suffix: string
+    enrollStatusCode: string
+    genderCode: string
+}
+
+export type EnrollDescCol = {
+    pkedCode: string
+    yearDesc: string
+    courseDesc: number
+    semDesc: string
+    sectionDesc: string
+    aYearDesc: string
+}
+
+export type Enrollment1Col = {
+    pkCode: string
+    studentCode: string
+    yearDesc: string
+    semDesc: string
+    courseDesc: string
+    sectionDesc: string
+    aYearDesc: string
+    firstName: string
+    middleName: string
+    lastName: string
+    suffix: string
+}

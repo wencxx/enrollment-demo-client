@@ -25,7 +25,8 @@ export default function Enrollment2() {
   const fetchEnrollment2 = async () => {
     try {
       setLoading(true)
-      const response = await axios.get<Enrollment2Details[]>(`${plsConnect()}/api/Enrollment2/Enrollment2Controller/AllData`);
+      const response = await axios.get<Enrollment2Details[]>(`${plsConnect()}/api/Enrollment2/AllData`);
+      console.log("FULL API RESPONSE SAMPLE:", response.data[0]); // Log first item
       const updatedData = response.data.map((item) => ({
         ...item,
         fullName: `${item.FirstName} ${item.MiddleName ? item.MiddleName + ' ' : ''}${item.LastName}`,
@@ -62,7 +63,8 @@ export default function Enrollment2() {
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
 
-      <Toaster />
+        <Toaster />
+
     </>
   )
 }

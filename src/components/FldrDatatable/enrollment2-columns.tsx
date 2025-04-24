@@ -139,6 +139,11 @@ export const columnsEnrolled: ColumnDef<Enrollment2Col>[] = [
             </Button>
         )
     },
+    cell: ({ row }) => {
+        const value = row.getValue("classStart");
+        console.log("Class Start value:", value); // Add this for debugging
+        return value || "N/A";
+    }
 },
 {
     accessorKey: "classEnd",

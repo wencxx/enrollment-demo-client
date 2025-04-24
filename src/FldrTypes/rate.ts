@@ -4,3 +4,8 @@ export type Rate = {
     noUnits: number,
     rateAmount: number,
 }
+
+export type rateDesc = {
+    pkRate: string,
+    rdDesc: string
+}

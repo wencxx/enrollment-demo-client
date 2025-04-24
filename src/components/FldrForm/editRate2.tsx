@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils";
 import { rate2Schema } from "@/FldrSchema/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
+import { z } from "zod";
 
 type Rate2FormData = z.infer<typeof rate2Schema>;
 
@@ -81,7 +82,7 @@ const [pkRate] = useState(toEdit);
             if (pkRate) {
                 const entryRes = await axios.get(`${plsConnect()}/API/WEBAPI/RateController/ListRate2`);
                 const entryData = entryRes.data.find((entry: Rate2FormData) => entry.pkRate === pkRate);
-      
+                
                 form.reset({
                   pkRate: entryData.pkRate,
                   noUnits: entryData.noUnits,

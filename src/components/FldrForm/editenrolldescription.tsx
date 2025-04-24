@@ -131,7 +131,7 @@ export function EnrollDesciprtionForm({ data, getEnrollDescription }: { data: En
   useEffect(() => {
     if (data) {
       form.reset(data);
-    }
+      }
   }, [data]);
 
 

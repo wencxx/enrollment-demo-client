@@ -1,10 +1,6 @@
 export interface ScheduleItem {
+  pkedCode: string
   scheduleCode: string
-  courseCode: string
-  courseDesc: string
-  yearCode: string
-  yearDesc: string
-  section: string
   subjectCode: string
   subjectDesc: string
   day: string
