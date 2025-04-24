@@ -114,7 +114,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-      <h2 className="text-lg font-semibold">Enter enrollment1</h2>
+      <h2 className="text-lg font-semibold">Add enrollment1</h2>
       </div>
       <div className="max-h-[90vh] overflow-y-auto">
       <Form {...form}>
