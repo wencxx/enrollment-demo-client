@@ -4,6 +4,8 @@ import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { approvedColumns } from "@/components/FldrDatatable/enrollment1approved-columns"
+import { allStudentsColumn } from "@/components/FldrDatatable/enrollment1allstudents-columns"
+import { pendingColumn } from "@/components/FldrDatatable/enrollment1pending-columns"
 import { DataTable } from "@/components/FldrDatatable/data-table";
 import { Enrollment1Col, StudentCol } from "@/FldrTypes/kim-types"
 import {
@@ -12,10 +14,10 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { pendingColumns } from "@/components/FldrDatatable/enrollment1pending-columns"
 
 export default function Enrollment1() {
   const [approved, setApproved] = useState<Enrollment1Col[]>([]);
+  const [allStudents, setAllStudents] = useState<StudentCol[]>([]);
   const [pending, setPending] = useState<StudentCol[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -32,7 +34,15 @@ export default function Enrollment1() {
       setApproved(approvedData);
       console.log(approvedData)
 
-      const pendingRes = await axios.get<StudentCol[]>(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`);
+      const allRes = await axios.get<StudentCol[]>(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`);
+      const allData = allRes.data.map((item) => ({
+        ...item,
+        fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}${item.suffix ? ' '+item.suffix : ''}`,
+      }));
+      setAllStudents(allData);
+      console.log(allData)
+
+      const pendingRes = await axios.get<StudentCol[]>(`${plsConnect()}/API/WebAPI/StudentController/ListNewStudent`);
       const pendingData = pendingRes.data.map((item) => ({
         ...item,
         fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}${item.suffix ? ' '+item.suffix : ''}`,
@@ -57,17 +67,29 @@ export default function Enrollment1() {
       <div className="container py-6">
         <div className="space-x-2">
         <Tabs defaultValue="pending" className="w-[full]">
-          <TabsList className="grid w-[20vw] grid-cols-2">
-            <TabsTrigger value="pending">Students</TabsTrigger>
+          <TabsList className="grid w-[30vw] grid-cols-3">
+          <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="allStudents">All</TabsTrigger>
             <TabsTrigger value="approved">Approved</TabsTrigger>
           </TabsList>
           <TabsContent value="pending">
             <div className="mt-4">
               <DataTable 
-                columns={pendingColumns} 
+                columns={pendingColumn} 
                 data={pending} 
                 loading={loading} 
-                title="students" 
+                title="new students" 
+                onRefresh={getData}
+              />
+            </div>
+          </TabsContent>
+          <TabsContent value="allStudents">
+            <div className="mt-4">
+              <DataTable 
+                columns={allStudentsColumn} 
+                data={allStudents} 
+                loading={loading} 
+                title="all students" 
                 onRefresh={getData}
               />
             </div>

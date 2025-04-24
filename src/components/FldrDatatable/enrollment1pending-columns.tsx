@@ -12,7 +12,7 @@ import {
 import { EntryEnrollment1Form } from "../FldrForm/entryEnrollment1"
 
 
-export const pendingColumns: ColumnDef<StudentCol>[] = [
+export const pendingColumn: ColumnDef<StudentCol>[] = [
   {
     id: "select",
     header: ({ table }) => (
