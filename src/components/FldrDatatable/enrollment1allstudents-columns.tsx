@@ -1,8 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Eye } from "lucide-react"
+import { ArrowUpDown, Stamp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Enrollment1Col } from "@/FldrTypes/kim-types"
+import { StudentCol } from "@/FldrTypes/kim-types"
 import { useState } from "react"
 import {
   Dialog,
@@ -10,9 +10,9 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog"
 import { EntryEnrollment1Form } from "../FldrForm/entryEnrollment1"
-import { ViewEnrollment1Form } from "../FldrForm/viewEnrollment1"
 
-export const approvedColumns: ColumnDef<Enrollment1Col>[] = [
+
+export const allStudentsColumn: ColumnDef<StudentCol>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -49,20 +49,6 @@ export const approvedColumns: ColumnDef<Enrollment1Col>[] = [
       )
     },
   },
-  // {
-  //   accessorKey: "studentCode",
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant="ghost"
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-  //       >
-  //         Student Code
-  //         <ArrowUpDown className="ml-2 h-4 w-4" />
-  //       </Button>
-  //     )
-  //   },
-  // },
   {
     accessorKey: "fullName",
     header: ({ column }) => {
@@ -78,27 +64,13 @@ export const approvedColumns: ColumnDef<Enrollment1Col>[] = [
     },
   },
   {
-    accessorKey: "pkedDesc",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Enrollment Description
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-  {
     id: "actions",
     cell: ({ row, table }) => {
       const [isDialogOpen, setIsDialogOpen] = useState(false);
-      const [pkRate, setPKRate] = useState("");
+      const [code, setCode] = useState("");
 
       const handleDialogOpen = (code: string) => {
-        setPKRate(code);
+        setCode(code);
         setIsDialogOpen(true);
       };
 
@@ -115,15 +87,14 @@ export const approvedColumns: ColumnDef<Enrollment1Col>[] = [
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0"
-            onClick={() => handleDialogOpen(row.original.pkCode)}>
-                <span className="sr-only">Edit rate2</span>
-                <Eye className="h-4 w-4" />
+            onClick={() => handleDialogOpen(row.original.studentCode)}>
+                <span className="sr-only">Enrollment1</span>
+                <Stamp className="h-4 w-4" />
             </Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
-                {/* list of details */}
-                <ViewEnrollment1Form
-                  toEdit={pkRate} 
+                <EntryEnrollment1Form
+                  toEdit={code} 
                   onCancel={handleUpdate}
                 />
             </DialogContent>

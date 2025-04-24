@@ -82,9 +82,9 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
   const onSubmit = async (values: Enrollment1FormData) => {
     try {
       setIsLoading(true);
-        console.log("Edited:", values);
+        console.log("Values:", values);
         const response = await axios.post(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/InsertEnrollment1`, values);
-        toast("Edited successfully.");
+        toast("Enrolled successfully.");
       
       console.log("API response:", response.data);
       if (onSuccess) {
