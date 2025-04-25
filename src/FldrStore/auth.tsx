@@ -9,42 +9,73 @@ interface AuthState {
     currentUser: User | null
     token: string | null
     auth: boolean | null
+    permissions: string[]
+    loading: boolean
     login: (credentials: z.infer<typeof loginSchema>, navigate: any) => Promise<void>
     logout: () => void
-}
+    rehydrate: () => void
+  }
 
-const useAuthStore = create<AuthState>((set) => ({
+  const useAuthStore = create<AuthState>((set) => ({
     currentUser: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
     token: localStorage.getItem('token') || null,
     auth: !!localStorage.getItem('token'),
-    login: async (credentials: z.infer<typeof loginSchema>, navigate) => {
-        try {
-            const res: any = await axios.get(`${plsConnect()}/API/WebAPI/tblUserAll/GetLoginAllUserInfo?strUserName=${credentials.username}&strPassword=${credentials.password}`)
-
-            set({ currentUser: res.data })
-            set({ auth: true })
-            localStorage.setItem('user', JSON.stringify(res.data))
-            localStorage.setItem('token', res.data.token)
-
-            const role = res.data.groupName
-            
-            if (role === 'Admin') {
-                navigate('/enrollment/enrollment2')
-            } else if (role === 'Student') {
-                navigate('/enrollment/enrollment2')
-            }
-        } catch (error: unknown) {
-            console.log(error)
-            set({ auth: false })
-        }
+    permissions: localStorage.getItem('permissions') ? JSON.parse(localStorage.getItem('permissions')!) : [],
+    loading: true,
+    rehydrate: () => {
+        const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null
+        const token = localStorage.getItem('token')
+        const permissions = localStorage.getItem('permissions') ? JSON.parse(localStorage.getItem('permissions')!) : []
+    
+        set({
+          currentUser: user,
+          token: token,
+          auth: !!token,
+          permissions,
+          loading: false,
+        })
+      },
+  
+    login: async (credentials, navigate) => {
+      try {
+        set({ loading: true })
+        const res: any = await axios.get(`${plsConnect()}/API/WebAPI/tblUserAll/GetLoginAllUserInfo?strUserName=${credentials.username}&strPassword=${credentials.password}`)
+  
+        const user = res.data
+        const token = user.token
+        const groupCode = user.groupCode
+  
+        const permRes = await axios.get(`${plsConnect()}/api/Permission/ListPermissions?groupCode=${groupCode}`)
+        console.log("permissions para sa role:", permRes.data)
+        const permissions = permRes.data.map((p: any) => p.objectName)
+  
+        localStorage.setItem('user', JSON.stringify(user))
+        localStorage.setItem('token', token)
+        localStorage.setItem('permissions', JSON.stringify(permissions))
+  
+        set({
+          currentUser: user,
+          token: token,
+          auth: true,
+          permissions,
+          loading: false
+        })
+  
+        const role = user.groupName
+        if (role === 'Admin') navigate('/dashboard')
+        else if (role === 'Student') navigate('/student/application')
+      } catch (error) {
+        console.error(error)
+        set({ auth: false, loading: false })
+      }
     },
-    logout: async () => {
-        localStorage.removeItem('user')
-        localStorage.removeItem('token')
-
-        set({ auth: false })
-        set({ currentUser: null })
+  
+    logout: () => {
+      localStorage.removeItem('user')
+      localStorage.removeItem('token')
+      localStorage.removeItem('permissions')
+      set({ auth: false, currentUser: null, permissions: [], loading: false })
     }
-}))
+  }))
 
 export default useAuthStore
