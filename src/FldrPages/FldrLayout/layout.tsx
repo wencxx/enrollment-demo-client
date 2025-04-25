@@ -5,11 +5,10 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
-import { Outlet } from "react-router-dom"
+import { Outlet, Navigate, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Sun, Moon } from 'lucide-react'
 import useAuthStore from '@/FldrStore/auth';
-import { Navigate, useLocation } from 'react-router-dom';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,8 +21,23 @@ import { Toaster } from "@/components/ui/sonner"
 
 function Layout() {
   const [theme, setTheme] = useState(localStorage.getItem('theme'))
-
   const location = useLocation()
+  const { auth: authenticated, permissions, loading, rehydrate } = useAuthStore()
+  const currentPath = location.pathname
+
+  useEffect(() => {
+    rehydrate()
+    console.log("REHYDRATED NA SYA")
+  }, [])
+
+  console.log("current route:", currentPath)
+
+  // Apply theme on mount
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    }
+  }, [theme])
 
   // toggle mode
   const toggleMode = () => {
@@ -48,34 +62,37 @@ function Layout() {
     }
   }
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    }
-  }, []);
+  console.log("HELP", {
+    authenticated,
+    permissions,
+    currentPath,
+    loading
+  })
 
-  // check if authenticated
-  const store = useAuthStore()
-  const authenticated = store.auth
-  const user = store.currentUser
+const publicRoutes = ['/login', '/unauthorize']
 
-  // Check if the user is authorized to access the current route
-  const isAuthorized = () => {
-    const path = location.pathname.split('/')[2] || '/'
-    const authorizedPaths: Record<string, string[]> = {
-      'Admin': ['course', 'student', 'rate', 'enrollment1', 'enrollment2', 'ratecourse', '/', 'grades', 'profile', 'application', 'statement-of-account', 'users', 'subject-prerequisite', 'schedules', 'routes', 'AY', 'grant-permission', 'professors', 'highschool', 'elementary', 'town', 'room', 'section', 'rate1', 'rate2', 'ratedesc', 'enroll-description', 'enrollment'],
-      // Students should not access enrollment
-      'Student': ['application', 'grades', 'profile', 'statement-of-account']
-    }
-    return user && authorizedPaths[user.groupName]?.includes(path)
-  }
- 
-  if (!authenticated) return <Navigate to='/login' />
-  if (!isAuthorized()) return <Navigate to='/unauthorize' />
+if (publicRoutes.includes(currentPath)) {
+  return <Outlet />
+}
+
+if (loading) {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <span className="text-lg font-semibold">Loading...</span>
+    </div>
+  )
+}
+
+if (!authenticated) {
+  return <Navigate to='/login' />
+}
+
+if (!permissions.includes(currentPath)) {
+  return <Navigate to="/unauthorize" />
+}
 
   return (
-    <SidebarProvider  >
+    <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import Login from '@/FldrPages/login'
 import Register from '@/FldrPages/register'
 import Layout from '@/FldrPages/FldrLayout/layout'
@@ -34,7 +34,7 @@ import Rate2 from "./FldrPages/FldrEntry/rate2"
 const routes = [
   {
     element: <Dashboard />,
-    path: '/',
+    path: '/dashboard',
   },
   {
     element: <Schedules />,
@@ -166,6 +166,7 @@ function App() {
     <div className="font-inter">
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
@@ -173,29 +174,6 @@ function App() {
             {routes.map((route, index) => (
               <Route key={index} path={route.path} element={route.element} />
             ))}
-
-            {/* <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="schedules" element={<Schedules />} />
-            <Route path="entry/course" element={<Course />} />
-            <Route path="entry/student" element={<Student />} />
-            <Route path="entry/rate" element={<Rate />} />
-            <Route path="entry/subject-prerequisite" element={<Subject />} />
-            <Route path="entry/ratecourse" element={<RateCourse />} />
-            <Route path="entry/AY" element={<AcademicYearPage />} />
-            <Route path="enrollment/enrollment1" element={<Enrollment1 />} />
-            <Route path="enrollment/enrollment2" element={<Enrollment2 />} />
-            <Route path="student/application" element={<Application />} />
-            <Route path="student/grades" element={<Grades />} />
-            <Route path="student/profile" element={<StudentProfile />} />
-            <Route path="student/statement-of-account" element={<StatementOfAccount />} />
-            <Route path="permissions/users" element={<Users />} />
-            <Route path="permissions/grant-permission" element={<GrantPermission />} />
-            <Route path="permissions/routes" element={<RoutePage />} />
-
-            <Route path="entry/room" element={<Room />} />
-            <Route path="entry/section" element={<Section />} /> */}
-
           </Route>
           <Route path="/unauthorize" element={<Unauthorized />} />
         </Routes>
