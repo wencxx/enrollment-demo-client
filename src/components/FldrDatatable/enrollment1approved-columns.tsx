@@ -7,6 +7,7 @@ import { useState } from "react"
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog"
 import { EntryEnrollment1Form } from "../FldrForm/entryEnrollment1"
@@ -121,6 +122,9 @@ export const approvedColumns: ColumnDef<Enrollment1Col>[] = [
             </Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
+                <DialogTitle>
+                  <h2 className="text-lg font-semibold">Enrollment details</h2>
+                </DialogTitle>
                 {/* list of details */}
                 <ViewEnrollment1Form
                   toEdit={pkRate} 

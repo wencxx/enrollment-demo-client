@@ -16,7 +16,7 @@ import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { grantedPermissions } from "@/FldrTypes/routes";
 
-function GrantPermission() {
+function GrantPermissionNOTUSED() {
     const [grantedPerm, setGrantedPerm] = useState<grantedPermissions[]>([])
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -64,4 +64,4 @@ function GrantPermission() {
     );
 }
 
-export default GrantPermission;
+export default GrantPermissionNOTUSED;
