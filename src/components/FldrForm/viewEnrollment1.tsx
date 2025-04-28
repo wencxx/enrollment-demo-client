@@ -155,9 +155,6 @@ export function ViewEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
-      <h2 className="text-lg font-semibold">Enrollment 1 Details</h2>
-      </div>
       <div className="max-h-[90vh] overflow-y-auto">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -424,7 +421,7 @@ export function ViewEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enroll
           )}
         />
 
-        <div className="flex space-x-4 mt-2">
+        <div className="flex space-x-4 mt-2 mb-2">
 
         <div className="flex-1">
             <FormField

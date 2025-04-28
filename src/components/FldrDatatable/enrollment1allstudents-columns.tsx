@@ -7,6 +7,7 @@ import { useState } from "react"
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog"
 import { EntryEnrollment1Form } from "../FldrForm/entryEnrollment1"
@@ -93,6 +94,9 @@ export const allStudentsColumn: ColumnDef<StudentCol>[] = [
             </Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
+                <DialogTitle>
+                  <h2 className="text-lg font-semibold">Enroll student</h2>
+                </DialogTitle>
                 <EntryEnrollment1Form
                   toEdit={code} 
                   onCancel={handleUpdate}
