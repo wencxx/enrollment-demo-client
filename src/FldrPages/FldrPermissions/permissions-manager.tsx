@@ -1,8 +1,4 @@
-import { columns } from "@/components/FldrDatatable/permissions-columns";
-import { DataTable } from "@/components/FldrDatatable/data-table";
-import { GrantPermForm } from "@/components/FldrForm/entrygrantperm"
 import { Button } from "@/components/ui/button"
-import { Plus } from 'lucide-react'
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
@@ -10,7 +6,6 @@ import { Group } from "@/FldrTypes/routes";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -137,18 +132,17 @@ function GrantPermission() {
         </>
       )}
 
-      {/* Selected Group + Permission Editor */}
       {selectedGroup && (
         <div className="mt-8">
           <h3 className="text-xl font-semibold mb-4">
             Editing Permissions for: <span className="text-gray-600">{selectedGroup.groupName}</span>
           </h3>
 
-          {/* Here is where the Permissions editor (Allowed/Not Allowed) will go */}
+          {/* editor */}
           <div className="flex gap-8">
             <div className="w-1/2">
               <h4 className="font-bold mb-2">Allowed</h4>
-                {/* Allowed Permissions */}
+                {/* allowed */}
                 <div className="border rounded-md p-4 min-h-[200px] flex flex-col gap-2">
                 {permissionsLoading ? (
                     <div className="text-center text-gray-500">Loading...</div>
@@ -170,8 +164,7 @@ function GrantPermission() {
 
             <div className="w-1/2">
               <h4 className="font-bold mb-2">Not Allowed</h4>
-                {/* Not Allowed list here */}
-                {/* Not Allowed Permissions */}
+                {/* not allowed */}
                 <div className="border rounded-md p-4 min-h-[200px] flex flex-col gap-2">
                 {permissionsLoading ? (
                     <div className="text-center text-gray-500">Loading...</div>
