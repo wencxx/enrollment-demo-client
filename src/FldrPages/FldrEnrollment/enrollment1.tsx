@@ -68,7 +68,7 @@ export default function Enrollment1() {
         <div className="space-x-2">
         <Tabs defaultValue="pending" className="w-[full]">
           <TabsList className="grid w-[30vw] grid-cols-3">
-          <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="pending">Pending</TabsTrigger>
             <TabsTrigger value="allStudents">All</TabsTrigger>
             <TabsTrigger value="approved">Approved</TabsTrigger>
           </TabsList>

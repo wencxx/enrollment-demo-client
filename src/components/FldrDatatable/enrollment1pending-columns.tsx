@@ -10,6 +10,7 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog"
 import { EntryEnrollment1Form } from "../FldrForm/entryEnrollment1"
+import { DialogTitle } from "@radix-ui/react-dialog"
 
 
 export const pendingColumn: ColumnDef<StudentCol>[] = [
@@ -93,7 +94,10 @@ export const pendingColumn: ColumnDef<StudentCol>[] = [
             </Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
-                <EntryEnrollment1Form
+            <DialogTitle>
+            <h2 className="text-lg font-semibold">Enroll new student</h2>
+            </DialogTitle>
+            <EntryEnrollment1Form
                   toEdit={code} 
                   onCancel={handleUpdate}
                 />

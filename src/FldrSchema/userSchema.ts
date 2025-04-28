@@ -105,9 +105,10 @@ export const enrollment2Schema = z.object({
   scheduleDayCode: z.string().min(1, { message: "Select a day." }),
   classStart: z.string().min(1, { message: "Enter class start time." }),
   classEnd: z.string().min(1, { message: "Enter class end time." }),
-  noUnits: z.number().min(1, { message: "Units required." }),
+  noUnits: z.number().min(0, { message: "Units required." }),
   rateAmount: z.number().min(0, { message: "Rate amount required." }),
   amount: z.number().min(0, { message: "Amount required." }),
+  rateTypeCode: z.string().optional(),
 });
 
 export const enrollmentMergedSchema = z.object({

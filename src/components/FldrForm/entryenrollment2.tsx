@@ -83,6 +83,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
           noUnits: 0,
           rateAmount: 0,
           amount: 0,
+          rateTypeCode: "",
         },
       ],
     },
@@ -100,6 +101,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
   const [professors, setProfessors] = useState<ComboOption[]>([]);
   const [rooms, setRooms] = useState<ComboOption[]>([]);
   const [days, setDays] = useState<ComboOption[]>([]);
+  
 
 
   // Fetch dropdown data
@@ -142,21 +144,35 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
 
     // fetch NoUnits and RateAmount
     const rows = watch("rows");
-    useEffect(() => {
-      rows.forEach((row, idx) => {
-        if (row.subjectCode) {
-          axios
-            .get(`${plsConnect()}/api/Enrollment2/GetSubjectDetails/${row.subjectCode}`)
-            .then(res => {
-              setValue(`rows.${idx}.PKRate`, res.data.pkRate);
-              setValue(`rows.${idx}.noUnits`, res.data.noUnits);
-              setValue(`rows.${idx}.rateAmount`, res.data.rateAmount);
-              setValue(`rows.${idx}.amount`, res.data.noUnits * res.data.rateAmount);
-            });
-        }
-      });
-    }, [rows.map(r => r.subjectCode).join(",")]);
 
+    
+//     useEffect(() => {
+//       rows.forEach((row, idx) => {
+//         if (row.subjectCode) {
+//           axios
+//             .get(`${plsConnect()}/api/Enrollment2/GetSubjectDetails/${row.subjectCode}`)
+//             .then(res => {
+//               setValue(`rows.${idx}.PKRate`, res.data.pkRate);
+//               setValue(`rows.${idx}.noUnits`, res.data.noUnits);
+//               setValue(`rows.${idx}.rateAmount`, res.data.rateAmount);
+//               setValue(`rows.${idx}.amount`, res.data.noUnits === 0 ? res.data.rateAmount : res.data.noUnits * res.data.rateAmount
+//               );
+
+//           // Store rateTypeCode
+//           setValue(`rows.${idx}.rateTypeCode`, res.data.rateTypeCode);
+          
+//           // Clear related fields if not a subject
+//           if (res.data.rateTypeCode !== "1") {
+//             setValue(`rows.${idx}.professorCode`, "00000");
+//             setValue(`rows.${idx}.roomCode`, "000");
+//             setValue(`rows.${idx}.scheduleDayCode`, "00");
+//             setValue(`rows.${idx}.classStart`, "00:00");
+//             setValue(`rows.${idx}.classEnd`, "00:00");
+//           }
+//         });
+//     }
+//   });
+// }, [rows.map(r => r.subjectCode).join(",")]);
 
   const handleAddRow = () => {
     const nextRowNum =
@@ -173,14 +189,20 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
       noUnits: 0,
       rateAmount: 0,
       amount: 0,
+      rateTypeCode: "",
     });
   };
 
   const handleRemoveRow = (index: number) => {
     remove(index);
-    // Re-number rows
-    fields.forEach((_, i) => setValue(`rows.${i}.rowNum`, i + 1));
-  };
+  }
+  useEffect(() => {
+    // This runs after fields array has been properly updated by remove()
+    fields.forEach((_, i) => {
+      setValue(`rows.${i}.rowNum`, i + 1);
+    });
+  }, [fields, setValue]);
+
 
   const onSubmit = async (values: Enrollment2FormData) => {
     console.log("Original form values:", values);
@@ -218,9 +240,17 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
       onSubmitSuccess();
       onAddRate();
       toast("Enrollment submitted successfully.");
-    } catch (error) {
-      console.error("Error submitting enrollment:", error);
-      toast("Error submitting enrollment.");
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.status === 409) {
+          toast.error("Entry already exists.")
+        }
+        else {
+          const errorMessage = error.response?.data?.message || "Error submitting form."
+          toast.error(errorMessage);
+          console.error("API error:", error.response?.data)
+        }
+      }
     }
   };
 
@@ -306,7 +336,11 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
             </TableHeader>
             
             <TableBody>
-  {fields.map((item, index) => (
+  {fields.map((item, index) => {
+        const rateTypeCode = form.watch(`rows.${index}.rateTypeCode`);
+        const isSubject = rateTypeCode === "1";
+
+        return (
     <TableRow key={item.id}>
       {/* Subject */}
       <TableCell>
@@ -348,10 +382,24 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
                               const res = await axios.get(
                                 `${plsConnect()}/api/Enrollment2/GetSubjectDetails/${s.value}`
                               );
-                              form.setValue(`rows.${index}.PKRate`, res.data.pkRate); // <-- Set PKRate
-                              form.setValue(`rows.${index}.noUnits`, res.data.noUnits); // <-- Set NoUnits
-                              form.setValue(`rows.${index}.rateAmount`, res.data.rateAmount); // <-- Set RateAmount
-                              form.setValue(`rows.${index}.amount`, res.data.noUnits * res.data.rateAmount); // <-- Set Amount
+                              form.setValue(`rows.${index}.PKRate`, res.data.pkRate);
+                              form.setValue(`rows.${index}.noUnits`, res.data.noUnits);
+                              form.setValue(`rows.${index}.rateAmount`, res.data.rateAmount);
+                              form.setValue(`rows.${index}.amount`, 
+                                res.data.noUnits === 0 ? res.data.rateAmount : res.data.noUnits * res.data.rateAmount
+                              );
+                              
+                              // Store rateTypeCode
+                              form.setValue(`rows.${index}.rateTypeCode`, res.data.rateTypeCode);
+                              
+                              // Clear related fields if not a subject
+                              if (res.data.rateTypeCode !== "1") {
+                                form.setValue(`rows.${index}.professorCode`, "00000");
+                                form.setValue(`rows.${index}.roomCode`, "000");
+                                form.setValue(`rows.${index}.scheduleDayCode`, "00");
+                                form.setValue(`rows.${index}.classStart`, "00:00");
+                                form.setValue(`rows.${index}.classEnd`, "00:00");
+                              }
                             } catch {
                               toast("Failed to fetch subject details.");
                             }
@@ -389,6 +437,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
                   <Button
                     variant="outline"
                     role="combobox"
+                    disabled={!isSubject}
                     className={cn(
                       "w-full justify-between",
                       !field.value && "text-muted-foreground"
@@ -447,6 +496,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
                   <Button
                     variant="outline"
                     role="combobox"
+                    disabled={!isSubject}
                     className={cn(
                       "w-full justify-between",
                       !field.value && "text-muted-foreground"
@@ -505,6 +555,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
                   <Button
                     variant="outline"
                     role="combobox"
+                    disabled={!isSubject}
                     className={cn(
                       "w-full justify-between",
                       !field.value && "text-muted-foreground"
@@ -551,26 +602,189 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
           )}
         />
       </TableCell>
-      {/* Class Start */}
-      <TableCell>
-        <FormField
-          control={form.control}
-          name={`rows.${index}.classStart`}
-          render={({ field }) => (
-            <Input {...field} placeholder="Start (e.g. 08:00)" />
-          )}
-        />
-      </TableCell>
-      {/* Class End */}
-      <TableCell>
-        <FormField
-          control={form.control}
-          name={`rows.${index}.classEnd`}
-          render={({ field }) => (
-            <Input {...field} placeholder="End (e.g. 09:00)" />
-          )}
-        />
-      </TableCell>
+{/* Class Start */}
+<TableCell>
+  <FormField
+    control={form.control}
+    name={`rows.${index}.classStart`}
+    render={({ field }) => (
+      <Popover>
+        <PopoverTrigger asChild>
+          <FormControl>
+            <Button
+              variant="outline"
+              role="combobox"
+              disabled={!isSubject}
+              className={cn(
+                "w-full justify-between",
+                !field.value && "text-muted-foreground"
+              )}
+            >
+              {field.value || "Select start time"}
+              <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+            </Button>
+          </FormControl>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <div className="p-3 grid grid-cols-2 gap-2">
+            <div className="space-y-2">
+              <p className="text-xs font-medium">Hour</p>
+              <Select
+                onValueChange={(hour) => {
+                  const [_, minute, ampm] = (field.value || "12:00 AM").split(/[:\s]/);
+                  field.onChange(`${hour}:${minute || "00"} ${ampm || "AM"}`);
+                }}
+                defaultValue={(field.value || "12:00 AM").split(/[:\s]/)[0] || "12"}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Hour" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 12 }, (_, i) => (
+                    <SelectItem key={i} value={(i === 0 ? 12 : i).toString()}>
+                      {(i === 0 ? 12 : i).toString()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs font-medium">Minute</p>
+              <Select
+                onValueChange={(minute) => {
+                  const [hour, _, ampm] = (field.value || "12:00 AM").split(/[:\s]/);
+                  field.onChange(`${hour || "12"}:${minute} ${ampm || "AM"}`);
+                }}
+                defaultValue={(field.value || "12:00 AM").split(/[:\s]/)[1] || "00"}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Minute" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["00", "15", "30", "45"].map((minute) => (
+                    <SelectItem key={minute} value={minute}>
+                      {minute}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs font-medium">AM/PM</p>
+              <Select
+                onValueChange={(ampm) => {
+                  const [hour, minute] = (field.value || "12:00 AM").split(/[:\s]/);
+                  field.onChange(`${hour || "12"}:${minute || "00"} ${ampm}`);
+                }}
+                defaultValue={(field.value || "12:00 AM").split(/[:\s]/)[2] || "AM"}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="AM/PM" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="AM">AM</SelectItem>
+                  <SelectItem value="PM">PM</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    )}
+  />
+</TableCell>
+
+{/* Class End - Same structure as Class Start */}
+<TableCell>
+  <FormField
+    control={form.control}
+    name={`rows.${index}.classEnd`}
+    render={({ field }) => (
+      <Popover>
+        <PopoverTrigger asChild>
+          <FormControl>
+            <Button
+              variant="outline"
+              role="combobox"
+              disabled={!isSubject}
+              className={cn(
+                "w-full justify-between",
+                !field.value && "text-muted-foreground"
+              )}
+            >
+              {field.value || "Select end time"}
+              <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+            </Button>
+          </FormControl>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <div className="p-3 grid grid-cols-2 gap-2">
+            <div className="space-y-2">
+              <p className="text-xs font-medium">Hour</p>
+              <Select
+                onValueChange={(hour) => {
+                  const [_, minute, ampm] = (field.value || "12:00 AM").split(/[:\s]/);
+                  field.onChange(`${hour}:${minute || "00"} ${ampm || "AM"}`);
+                }}
+                defaultValue={(field.value || "12:00 AM").split(/[:\s]/)[0] || "12"}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Hour" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 12 }, (_, i) => (
+                    <SelectItem key={i} value={(i === 0 ? 12 : i).toString()}>
+                      {(i === 0 ? 12 : i).toString()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs font-medium">Minute</p>
+              <Select
+                onValueChange={(minute) => {
+                  const [hour, _, ampm] = (field.value || "12:00 AM").split(/[:\s]/);
+                  field.onChange(`${hour || "12"}:${minute} ${ampm || "AM"}`);
+                }}
+                defaultValue={(field.value || "12:00 AM").split(/[:\s]/)[1] || "00"}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Minute" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["00", "15", "30", "45"].map((minute) => (
+                    <SelectItem key={minute} value={minute}>
+                      {minute}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs font-medium">AM/PM</p>
+              <Select
+                onValueChange={(ampm) => {
+                  const [hour, minute] = (field.value || "12:00 AM").split(/[:\s]/);
+                  field.onChange(`${hour || "12"}:${minute || "00"} ${ampm}`);
+                }}
+                defaultValue={(field.value || "12:00 AM").split(/[:\s]/)[2] || "AM"}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="AM/PM" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="AM">AM</SelectItem>
+                  <SelectItem value="PM">PM</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    )}
+  />
+</TableCell>
       {/* No. of Units */}
       <TableCell>
         <FormField
@@ -591,8 +805,8 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
           )}
         />
       </TableCell>
-      {/* Remove Row */}
 
+      {/* Remove Row */}
   <TableCell>
     <Button
       type="button"
@@ -603,7 +817,8 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
       <Trash size={16} />
     </Button>
     
-    {/* Move PKRate hidden input INSIDE the TableCell */}
+    {/* HIDDEN INPUTS */}
+{/* PKRate */}
     <FormField
       control={form.control}
       name={`rows.${index}.PKRate`}
@@ -611,16 +826,27 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
         <input type="hidden" {...field} />
       )}
     />
+
+    {/* RATETYPECODE */}
+    <FormField
+  control={form.control}
+  name={`rows.${index}.rateTypeCode`}
+  render={({ field }) => (
+    <input type="hidden" {...field} />
+  )}
+/>
   </TableCell>
   
     </TableRow>
-  ))}
+        );
+      }
+  )}
 </TableBody>
           </Table>
-          <div className="border p-2 mt-4 bg-gray-100">
+          {/* <div className="border p-2 mt-4 bg-gray-100">
   <h4 className="font-bold">Debug Info:</h4>
   <p>PKRate values: {JSON.stringify(form.watch('rows').map(r => r.PKRate))}</p>
-</div>
+</div> */}
 
           <div className="col-span-2 flex justify-center">
             <Button
