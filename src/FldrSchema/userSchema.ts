@@ -106,6 +106,14 @@ export const enrollment2Schema = z.object({
   amount: z.number(),
 });
 
+
+export const enrollment3Schema = z.object({
+  pkCode: z.string().min(1, { message: "Select a student." }),
+  credit: z.coerce.number(),
+  debit: z.coerce.number(),
+  remarks: z.string(),
+});
+
 export const enrollmentMergedSchema = z.object({
   yearCode: z.string()
     .min(1, { message: "Select a year." }),

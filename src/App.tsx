@@ -9,6 +9,7 @@ import Student from "./FldrPages/FldrEntry/student"
 import Rate from "./FldrPages/FldrEntry/rate"
 import Enrollment1 from "./FldrPages/FldrEnrollment/enrollment1"
 import Enrollment2 from "./FldrPages/FldrEnrollment/enrollment2"
+import Enrollment3 from "./FldrPages/FldrEnrollment/enrollment3"
 import Unauthorized from "@/FldrPages/redirects/unauthorized"
 import RateCourse from "@/FldrPages/FldrEntry/ratecourse"
 import Application from "./FldrPages/FldrStudent/application/application"
@@ -86,6 +87,10 @@ const routes = [
   {
     element: <Enrollment2 />,
     path: '/enrollment/enrollment2',
+  },
+  {
+    element: <Enrollment3 />,
+    path: '/enrollment/enrollment3',
   },
   {
     element: <Application />,

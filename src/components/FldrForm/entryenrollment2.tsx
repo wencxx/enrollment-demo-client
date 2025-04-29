@@ -53,6 +53,11 @@ interface Enrollment2FormProps {
   closeModal: () => void;
 }
 
+type mapData = {
+  label: string;
+  value: string;
+}
+
 export function Enrollment2Form({ closeModal }: Enrollment2FormProps) {
   const form = useForm<Enrollment2FormData>({
     resolver: zodResolver(enrollment2Schema),
@@ -65,7 +70,7 @@ export function Enrollment2Form({ closeModal }: Enrollment2FormProps) {
     mode: 'onChange',
   });
 
-  const [student, setStudent] = useState<StudentCol[]>([])
+  const [student, setStudent] = useState<mapData[]>([])
 
   async function fetchStudent() {
     try {
@@ -80,7 +85,7 @@ export function Enrollment2Form({ closeModal }: Enrollment2FormProps) {
     }
   }
 
-  const [rates, setRate] = useState<RateCol[]>([]);
+  const [rates, setRate] = useState<mapData[]>([]);
 
   const fetchRate = async () => {
     try {
