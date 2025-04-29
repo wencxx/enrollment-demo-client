@@ -146,11 +146,6 @@ const data = {
           url: "entry/enroll-description",
           authorizeUsers: ['Admin']
         },
-        {
-          title: "Enrollment2",
-          url: "enrollment/enrollment2",
-          authorizeUsers: ['Admin']
-        }
       ],
     },
   ],
