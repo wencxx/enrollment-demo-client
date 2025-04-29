@@ -59,12 +59,12 @@ type Enrollment2FormProps = {
 type ComboOption = { label: string; value: string };
 
 
-<!-- type mapData = {
-  label: string;
-  value: string;
-}
+// type mapData = {
+//   label: string;
+//   value: string;
+// }
 
-export function Enrollment2Form({ closeModal }: Enrollment2FormProps) { -->
+// export function Enrollment2Form({ closeModal }: Enrollment2FormProps) { 
 
 export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormProps) {
 
@@ -99,23 +99,23 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
     mode: "onChange",
   });
 
+// WENCY CHANGES:
+//  const [student, setStudent] = useState<mapData[]>([])
 
-<!--   const [student, setStudent] = useState<mapData[]>([])
+//   async function fetchStudent() {
+//     try {
+//       const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`)
+//       const mappedStudent = response.data.map((item: StudentCol) => ({
+//           label: `${item.firstName} ${item.middleName} ${item.lastName}`,
+//           value: item.pkCode,
+//       }))
+//       setStudent(mappedStudent)
+//     } catch (error: any) {
+//         console.error("Error fetching students:", error)
+//     }
+//   }
 
-  async function fetchStudent() {
-    try {
-      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`)
-      const mappedStudent = response.data.map((item: StudentCol) => ({
-          label: `${item.firstName} ${item.middleName} ${item.lastName}`,
-          value: item.pkCode,
-      }))
-      setStudent(mappedStudent)
-    } catch (error: any) {
-        console.error("Error fetching students:", error)
-    }
-  }
-
-  const [rates, setRate] = useState<mapData[]>([]); -->
+//   const [rates, setRate] = useState<mapData[]>([]);
 
   const { control, handleSubmit, setValue, watch } = form;
   const { fields, append, remove } = useFieldArray({

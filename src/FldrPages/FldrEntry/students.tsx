@@ -92,7 +92,7 @@ export default function Students() {
                 <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                    This will reset the enrollment status of all <strong>Approved</strong> students to <strong>Pending</strong>. This action cannot be undone.
+                    This will reset the enrollment status of all <strong>Approved</strong> students to <strong>Pending</strong>, to end the semester and prepare for re-enrollment. This action cannot be undone.
                 </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
