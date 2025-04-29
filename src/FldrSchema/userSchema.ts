@@ -1,3 +1,4 @@
+import { toDate } from "date-fns"
 import { z } from "zod"
 
 export const loginSchema = z.object({
@@ -84,26 +85,30 @@ export const enrollDescriptionSchema = z.object({
 })
 
 export const enrollment1Schema = z.object({
-  yearCode: z.string()
-    .min(1, { message: "Select a year." }),
-  semCode: z.string()
-    .min(1, { message: "Select a semester." }),
-  courseCode: z.string()
-    .min(1, { message: "Select a course." }),
+  pkCode: z.string().optional(),
+  voucher: z.string().optional(),
   studentCode: z.string()
     .min(1, { message: "Select a student." }),
-  date: z.date()
-    .refine((val) => val <= new Date(), { message: "Date must be today or earlier." }),
-  enrollStatusCode: z.string()
-    .min(1, { message: "Please confirm status." }),
-    aYearCode: z.number().min(1, { message: "Select an academic year." }),
+  pkedCode: z.string()
+    .min(1, { message: "Select an enrollment description." }),
+  regularStudent: z.boolean(),
+  approveStudent: z.boolean().optional(),
+  tDate: z.string().optional(),
 })
 
 export const enrollment2Schema = z.object({
   pkCode: z.string().min(1, { message: "Select a student." }),
   rowNum: z.number(),
-  rateCode: z.string().min(1, { message: "Select a rate." }),
-  amount: z.number(),
+  subjectCode: z.string().min(1, { message: "Select a subject." }),
+  professorCode: z.string().min(1, { message: "Select a professor." }),
+  roomCode: z.string().min(1, { message: "Select a room." }),
+  scheduleDayCode: z.string().min(1, { message: "Select a day." }),
+  classStart: z.string().min(1, { message: "Enter class start time." }),
+  classEnd: z.string().min(1, { message: "Enter class end time." }),
+  noUnits: z.number().min(0, { message: "Units required." }),
+  rateAmount: z.number().min(0, { message: "Rate amount required." }),
+  amount: z.number().min(0, { message: "Amount required." }),
+  rateTypeCode: z.string().optional(),
 });
 
 
@@ -239,3 +244,36 @@ export const gradeGenSchema = z.object({
   pkCode: z.string().min(1),
   userCode: z.string().min(1)
 });
+
+export const roomSchema = z.object({
+  roomCode: z.string().optional(),
+  roomDesc: z.string().min(2, {
+    message: "Room description must be at least 2 characters.",
+  }),
+})
+
+export const sectionSchema = z.object({
+  sectionCode: z.string().optional(),
+  sectionDesc: z.string().min(2, {
+    message: "Section description must be at least 2 characters.",
+  }),
+})
+
+export const rateDescSchema = z.object({
+  OldRDID: z.string().optional(),
+  RDID: z.string().min(2, {
+    message: "Rate Id cannot be empty.",
+  }),
+  RDDesc: z.string().min(2, {
+    message: "Rate description cannot be empty",
+  })
+})
+
+export const rate2Schema = z.object({
+  pkRate: z.string().optional(),
+  pkRate1: z.string().min(1),
+  rdCode: z.string().min(1),
+  rateTypeCode: z.string().min(1),
+  noUnits: z.number().int().min(0, 'Number of units cannot be negative'),
+  rateAmount: z.number().min(0, 'Rate amount must be greater than 0'),
+})

@@ -15,14 +15,27 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useEffect, useState } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { EnrollDescCol, StudentCol } from "@/FldrTypes/kim-types";
+import { Check } from "lucide-react";
+import { EnrollDescCol, Enrollment1Col, StudentCol } from "@/FldrTypes/kim-types";
 import { cn } from "@/lib/utils";
 import { enrollment1Schema } from "@/FldrSchema/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Input } from "../ui/input";
 
-type Enrollment1FormData = z.infer<typeof enrollment1Schema>;
+// type Enrollment1FormData = z.infer<typeof enrollment1Schema>;
+type Enrollment1FormData = {
+    studentCode: string;
+    pkedCode: string;
+    regularStudent: boolean;
+    approveStudent: boolean;
+    tDate: string;
+    yearDesc: string;
+    semDesc: string;
+    courseDesc: string;
+    sectionDesc: string;
+    aYearDesc: string;
+}
 
 interface Enrollment1FormProps {
     toEdit?: string;
@@ -30,18 +43,18 @@ interface Enrollment1FormProps {
     onSuccess?: () => void;
 }
 
-export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrollment1FormProps) {
+export function ViewEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrollment1FormProps) {
   const form = useForm<Enrollment1FormData>({
           resolver: zodResolver(enrollment1Schema),
-          defaultValues: {
-            regularStudent: true,
-          },
+        //   defaultValues: {
+        //     regularStudent: true,
+        //   },
         });
 
   const [isLoading, setIsLoading] = useState(false);
   const [students, setStudents] = useState<StudentCol[]>([])
   const [enrollDesc, setEnrollDesc] = useState<EnrollDescCol[]>([])
-  const [studentCode] = useState(toEdit);
+  const [pkCode] = useState(toEdit);
 
   useEffect(() => {
         async function fetchData() {
@@ -49,7 +62,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
           try {
             const studentsRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`)
             const mappedStudentsRes = studentsRes.data.map((item: StudentCol) => ({
-              label: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName} ${item.suffix} - ${item.studentCode}`,
+              label: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName} ${item.suffix}`,
               value: item.studentCode,
             }))
             setStudents(mappedStudentsRes)
@@ -61,14 +74,43 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
             }))
             setEnrollDesc(mappedEDRes)
 
-            if (studentCode) {
-                const entryRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`);
-                const entryData = entryRes.data.find((entry: StudentCol) => entry.studentCode === studentCode);
-      
+            // extra details fetch
+
+            // if (pkCode) {
+            //     const entryRes = await axios.get(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/ListEnrollment1`);
+            //     const entryData = entryRes.data.find((entry: Enrollment1Col) => entry.pkCode === pkCode);
+
+            //     const pkedCode = entryData.pkedCode;
+            //     if (pkedCode) {
+            //       const descRes = await axios.get(`${plsConnect()}/api/EnrollDescription`);
+            //       const descData = descRes.data.find((desc: EnrollDescCol) => desc.pkedCode === pkedCode);
+
+            //       form.reset({
+            //         studentCode: entryData.studentCode,
+            //         pkedCode: pkedCode,
+            //         regularStudent: entryData.regularStudent,
+            //         approveStudent: entryData.approveStudent,
+            //         tDate: entryData.tDate,
+            //         yearDesc: descData.yearDesc,
+            //         semDesc: descData.semDesc,
+            //         courseDesc: descData.courseDesc,
+            //         sectionDesc: descData.sectionDesc,
+            //         aYearDesc: descData.aYearDesc,
+            //       });
+            //     }
+            //   }
+
+            if (pkCode) {
+              const entryRes = await axios.get(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/ListEnrollment1`);
+              const entryData = entryRes.data.find((entry: Enrollment1Col) => entry.pkCode === pkCode);
                 form.reset({
                   studentCode: entryData.studentCode,
+                  pkedCode: entryData.pkedCode,
+                  regularStudent: entryData.regularStudent,
+                  approveStudent: entryData.approveStudent,
+                  tDate: entryData.tDate,
                 });
-              }
+            }
           } catch (error) {
             console.error("Error fetching data:", error)
             toast("Error fetching data.")
@@ -77,14 +119,14 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
           }
         }
         fetchData()
-      }, [studentCode])
+      }, [pkCode])
 
   const onSubmit = async (values: Enrollment1FormData) => {
     try {
       setIsLoading(true);
-        console.log("Values:", values);
+        console.log("Edited:", values);
         const response = await axios.post(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/InsertEnrollment1`, values);
-        toast("Enrolled successfully.");
+        toast("Edited successfully.");
       
       console.log("API response:", response.data);
       if (onSuccess) {
@@ -117,17 +159,20 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
+        {/* start row */}
+        <div className="flex flex-wrap gap-4">
+        <div className="flex-1 min-w-[200px]">
         <FormField
           control={form.control}
           name="studentCode"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Student</FormLabel>
+              <FormLabel>Full Name</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                        disabled
+                    disabled
                       variant="outline"
                       role="combobox"
                       className={cn(
@@ -142,6 +187,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
                             (students) => students.value === field.value
                           )?.label
                         : "Select student"}
+                      {/* <ChevronsUpDown className="opacity-50" /> */}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -182,6 +228,131 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
             </FormItem>
           )}
         />
+        </div>
+
+        <div className="flex-1 min-w-[200px]">
+        <FormField
+            disabled
+            control={form.control}
+            name="studentCode"
+            render={({ field }) => (
+            <FormItem>
+                <FormLabel>Student Code</FormLabel>
+                <FormControl>
+                <Input className="not-muted-disabled" {...field} />
+                </FormControl>
+            </FormItem>
+            )}
+        />
+        </div>
+
+        <div className="flex-1 min-w-[200px]">
+        <FormField
+            disabled
+                control={form.control}
+                name="tDate"
+                render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Date of Transaction</FormLabel>
+                    <FormControl>
+                    <Input className="not-muted-disabled" {...field} />
+                    </FormControl>
+                </FormItem>
+                )}
+            />
+        </div>
+    </div>
+
+        {/* end */}
+
+      {/* extra details */}
+        {/* start row */}
+        {/* <div className="flex flex-wrap gap-4">
+        <div className="flex-1 min-w-[200px]">
+        <FormField
+            disabled
+            control={form.control}
+            name="courseDesc"
+            render={({ field }) => (
+            <FormItem>
+                <FormLabel>Course</FormLabel>
+                <FormControl>
+                <Input className="not-muted-disabled" {...field} />
+                </FormControl>
+            </FormItem>
+            )}
+        />
+        </div>
+
+        <div className="flex-1 min-w-[200px]">
+        <FormField
+            disabled
+            control={form.control}
+            name="yearDesc"
+            render={({ field }) => (
+            <FormItem>
+                <FormLabel>Year</FormLabel>
+                <FormControl>
+                <Input className="not-muted-disabled" {...field} />
+                </FormControl>
+            </FormItem>
+            )}
+        />
+        </div>
+
+        <div className="flex-1 min-w-[200px]">
+        <FormField
+            disabled
+                control={form.control}
+                name="semDesc"
+                render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Semester</FormLabel>
+                    <FormControl>
+                    <Input className="not-muted-disabled" {...field} />
+                    </FormControl>
+                </FormItem>
+                )}
+            />
+        </div>
+    </div>
+
+        <div className="flex flex-wrap gap-4">
+        <div className="flex-1 min-w-[200px]">
+        <FormField
+            disabled
+            control={form.control}
+            name="sectionDesc"
+            render={({ field }) => (
+            <FormItem>
+                <FormLabel>Section</FormLabel>
+                <FormControl>
+                <Input className="not-muted-disabled" {...field} />
+                </FormControl>
+            </FormItem>
+            )}
+        />
+        </div>
+
+        <div className="flex-1 min-w-[200px]">
+        <FormField
+            disabled
+            control={form.control}
+            name="aYearDesc"
+            render={({ field }) => (
+            <FormItem>
+                <FormLabel>Academic Year</FormLabel>
+                <FormControl>
+                <Input className="not-muted-disabled" {...field} />
+                </FormControl>
+            </FormItem>
+            )}
+        />
+        </div>
+    </div> */}
+
+        {/* end */}
+        {/* end extra details */}
 
         <FormField
           control={form.control}
@@ -193,12 +364,14 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
+                    disabled
                       variant="outline"
                       role="combobox"
                       className={cn(
                         "flex w-auto justify-between items-start text-left gap-2 min-h-[2.5rem] h-auto",
                         !field.value && "text-muted-foreground",
-                        "whitespace-normal break-words p-2"
+                        "whitespace-normal break-words p-2",
+                        "not-muted-disabled"
                     )}
                     >
                       {field.value
@@ -206,7 +379,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
                             (enrollDesc) => enrollDesc.value === field.value
                           )?.label
                         : "Select enrollment description"}
-                      <ChevronsUpDown className="opacity-50" />
+                      {/* <ChevronsUpDown className="opacity-50" /> */}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -248,7 +421,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
           )}
         />
 
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 mt-2 mb-2">
 
         <div className="flex-1">
             <FormField
@@ -258,6 +431,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
                   <FormControl>
                     <Checkbox
+                    disabled
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
@@ -270,10 +444,31 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
             />
           </div>
 
+          <div className="flex-1">
+            <FormField
+              control={form.control}
+              name="approveStudent"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+                  <FormControl>
+                    <Checkbox
+                        disabled
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Approved</FormLabel>
+                  </div>
+                </FormItem>
+              )}
+            />
+          </div>
+
         </div>
 
 
-          <div className="flex justify-end gap-2">
+          {/* <div className="flex justify-end gap-2">
            <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <span className="flex items-center">
@@ -285,7 +480,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
                 </span>
               ) : ("Submit")}
             </Button>
-            </div>
+            </div> */}
         </form>
       </Form>
       </div>

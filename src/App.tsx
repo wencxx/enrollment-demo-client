@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import Login from '@/FldrPages/login'
 import Register from '@/FldrPages/register'
 import Layout from '@/FldrPages/FldrLayout/layout'
@@ -17,7 +17,7 @@ import Grades from "./FldrPages/FldrStudent/grades"
 import StudentProfile from "./FldrPages/FldrStudent/profile"
 import StatementOfAccount from "./FldrPages/FldrStudent/statement-of-account"
 import Users from "./FldrPages/FldrPermissions/users"
-import GrantPermission from "./FldrPages/FldrPermissions/assign-permission"
+import GrantPermission from "./FldrPages/FldrPermissions/permissions-manager"
 import RoutePage from "./FldrPages/FldrPermissions/routes"
 import Subject from "./FldrPages/FldrEntry/subject-prerequisite"
 import AcademicYearPage from "./FldrPages/FldrEntry/academicyear"
@@ -26,19 +26,37 @@ import HighSchool from "./FldrPages/FldrEntry/highschool"
 import Elementary from "./FldrPages/FldrEntry/elementary"
 import Town from "./FldrPages/FldrEntry/town"
 import EnrollDescription from "./FldrPages/FldrEntry/enrolldescription"
+import Room from "./FldrPages/FldrEntry/room"
+import Section from "./FldrPages/FldrEntry/section"
+import Rate1 from "./FldrPages/FldrEntry/rate1"
+import RateDesc from "./FldrPages/FldrEntry/ratedesc"
+import Rate2 from "./FldrPages/FldrEntry/rate2"
+import Students from "./FldrPages/FldrEntry/students"
 
 const routes = [
   {
     element: <Dashboard />,
-    path: '/',
+    path: '/dashboard',
   },
   {
     element: <Schedules />,
     path: '/schedules',
   },
   {
+    element: <Students />,
+    path: '/students',
+  },
+  {
     element: <Course />,
     path: '/entry/course',
+  },
+  {
+    element: <Room />,
+    path: '/entry/room',
+  },
+  {
+    element: <Section />,
+    path: '/entry/section',
   },
   {
     element: <Student />,
@@ -75,6 +93,18 @@ const routes = [
   {
     element: <Town />,
     path: '/entry/town',
+  },
+  {
+    element: <Rate1 />,
+    path: '/entry/rate1',
+  },
+  {
+    element: <Rate2 />,
+    path: '/entry/rate2',
+  },
+  {
+    element: <RateDesc />,
+    path: '/entry/ratedesc',
   },
   {
     element: <EnrollDescription />,
@@ -122,14 +152,34 @@ const routes = [
   },
 ]
 
+// const useTabVisibility = () => {
+//   useEffect(() => {
+//     const handleVisibilityChange = () => {
+//       if (document.hidden) {
+//         document.title = "B4l1K n@ b@bY! 😢";
+//       } else {
+//         document.title = "Enrollment System";
+//       }
+//     };
+
+//     document.addEventListener("visibilitychange", handleVisibilityChange);
+//     return () => {
+//       document.removeEventListener("visibilitychange", handleVisibilityChange);
+//     };
+//   }, []);
+// };
+
+
 function App() {
 
   return (
     <div className="font-inter">
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
           <Route element={<Layout />}>
             {routes.map((route, index) => (
               <Route key={index} path={route.path} element={route.element} />

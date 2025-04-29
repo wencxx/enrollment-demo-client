@@ -17,49 +17,49 @@ function Dashboard() {
         irregularChange: 0
     })
 
-    const fetchCount = async () => {
-        try {
-            const applicant = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StudentCount/1`);
-            const irregular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/0`, {
-                params: { validated: 1 }
-            });
-            const regular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/1`, {
-                params: { validated: 1 }
-            });
-            setStudentCount({
-                applicant: applicant.data,
-                irregular: irregular.data,
-                regular: regular.data,
-            })
-        } catch (error) {
-            console.error("Error fetching student count:", error);
-        }
-    };
+    // const fetchCount = async () => {
+    //     try {
+    //         const applicant = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StudentCount/1`);
+    //         const irregular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/0`, {
+    //             params: { validated: 1 }
+    //         });
+    //         const regular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/1`, {
+    //             params: { validated: 1 }
+    //         });
+    //         setStudentCount({
+    //             applicant: applicant.data,
+    //             irregular: irregular.data,
+    //             regular: regular.data,
+    //         })
+    //     } catch (error) {
+    //         console.error("Error fetching student count:", error);
+    //     }
+    // };
 
-    const fetchStudentStats = async () => {
-        try {
-            const response = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCountChart`);
+    // const fetchStudentStats = async () => {
+    //     try {
+    //         const response = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCountChart`);
 
-            const formattedData = response.data.map((item: any) => ({
-                year: item?.year ?? 0,
-                regular: item?.regular ?? 0,
-                irregular: item?.irregular ?? 0,
-            }));
-            setStudentsCount(formattedData);
-        } catch (error) {
-            console.error("Error fetching student stats:", error);
-        }
-    };
+    //         const formattedData = response.data.map((item: any) => ({
+    //             year: item?.year ?? 0,
+    //             regular: item?.regular ?? 0,
+    //             irregular: item?.irregular ?? 0,
+    //         }));
+    //         setStudentsCount(formattedData);
+    //     } catch (error) {
+    //         console.error("Error fetching student stats:", error);
+    //     }
+    // };
 
-    useEffect(() => {
-        fetchCount();
-        fetchStudentStats();
-    }, []);
+    // useEffect(() => {
+    //     fetchCount();
+    //     fetchStudentStats();
+    // }, []);
 
 
-    useEffect(() => {
-        console.log("Data passed to ChartMain:", studentsCount);
-    }, [studentsCount]);
+    // useEffect(() => {
+    //     console.log("Data passed to ChartMain:", studentsCount);
+    // }, [studentsCount]);
 
     const cardData = [
         {

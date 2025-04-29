@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 // import { format } from "date-fns";
 // import { Badge } from "@/components/ui/badge"
 // import moment from 'moment'
-import { Enrollment1Col } from "@/FldrTypes/enrollment1"
+import { Enrollment2Col } from "@/FldrTypes/enrollment2"
 import { Badge } from "../ui/badge"
 
 import { useState } from "react"
@@ -17,10 +17,9 @@ import {
   DialogTitle,
   DialogHeader
 } from "@/components/ui/dialog"
-import { EditStudent } from "../FldrForm/editstudent"
 import { VoidEnrolledForm } from "../FldrForm/voidEnrolled"
 
-export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
+export const columnsEnrolled: ColumnDef<Enrollment2Col>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -44,125 +43,185 @@ export const columnsEnrolled: ColumnDef<Enrollment1Col>[] = [
         enableHiding: false,
       },
     {
-        accessorKey: "studentCode",
+        accessorKey: "pkCode",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Student Code
+                    PK
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
     },
     {
-        accessorKey: "fullName",
+        accessorKey: "rowNum",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Full Name
+                    Row Num
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
     },
     {
-        accessorKey: "studentStatus",
+        accessorKey: "rdDesc",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Status
+                    Subject
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
-        cell: ({ row }) => {
-            const status: boolean = row.getValue("studentStatus");
-            // true is Regular, false is Irreg
-            const displayStatus = status ? "Regular" : "Irregular";
-          
-            return (
-              <div className="flex">
-                {displayStatus}
-              </div>
-            );
-          },
     },
     {
-      accessorKey: "void",
+      accessorKey: "professorName",
       header: ({ column }) => {
           return (
               <Button
                   variant="ghost"
                   onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
               >
-                  Enrollment Status
+                  Professor
                   <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
           )
       },
-      cell: ({ row }) => {
-           let variantType: "approve" | "disapprove" = "disapprove";
-          const status: boolean = row.getValue("void");
-          const displayStatus = status ? "Void" : "Active";
-          //reused custom badge colors: disapprove (red) and approve (green)
-          if (status === true) {
-              variantType = "disapprove";
-            } else if (status === false) {
-              variantType = "approve";
-            }
-
-          return (
-            <div className="flex">
-              <Badge variant={variantType}>
-                  {displayStatus}
-              </Badge>
-            </div>
-          );
-        },
   },
-    {
-        id: "actions",
-        cell: ({ row }) => {
-          const [isVoidDialogOpen, setIsVoidDialogOpen] = useState(false);
-          const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
+  {
+    accessorKey: "roomDesc",
+    header: ({ column }) => {
+        return (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Room
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        )
+    },
+}, 
+{
+    accessorKey: "scheduleDayDesc",
+    header: ({ column }) => {
+        return (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Day
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        )
+    },
+},
+{
+    accessorKey: "classStart",
+    header: ({ column }) => {
+        return (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Class Start
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        )
+    },
+    cell: ({ row }) => {
+        const value = row.getValue("classStart");
+        console.log("Class Start value:", value); // Add this for debugging
+        return value || "N/A";
+    }
+},
+{
+    accessorKey: "classEnd",
+    header: ({ column }) => {
+        return (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Class End
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        )
+    },
+},
+{
+    accessorKey: "noUnits",
+    header: ({ column }) => {
+        return (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Units
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        )
+    },
+},
+{
+    accessorKey: "amount",
+    header: ({ column }) => {
+        return (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Amount
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        )
+    },
+},
+
+    // {
+    //     id: "actions",
+    //     cell: ({ row }) => {
+    //       const [isVoidDialogOpen, setIsVoidDialogOpen] = useState(false);
+    //       const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
           
-          const [studentCode, setStudentCode] = useState("");
+    //       const [studentCode, setStudentCode] = useState("");
 
-          const handleDialogOpen = (code: string) => {
-            setStudentCode(code);
-            setIsVoidDialogOpen(true);
-          };
+    //       const handleDialogOpen = (code: string) => {
+    //         setStudentCode(code);
+    //         setIsVoidDialogOpen(true);
+    //       };
 
-          const closeModal = () => {
-            setIsVoidDialogOpen(false)
-          }
-          return (
-            <>  
-                <Dialog open={isVoidDialogOpen} onOpenChange={setIsVoidDialogOpen}>
-                    <DialogTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.studentCode)}>
-                        <span className="sr-only">Open menu</span>
-                        <Ban className="h-4 w-4" />
-                    </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-h-[90vh] overflow-y-auto" aria-labelledby="dialog-title">
-                        <DialogHeader>
-                        {/* <DialogTitle className="mb-4">Void enrolled student</DialogTitle> */}
-                        </DialogHeader>
-                        <VoidEnrolledForm studentCode={studentCode} closeModal={closeModal}/>
-                    </DialogContent>
-                </Dialog>
-            </>
-          )
-        },
-      },
+    //       const closeModal = () => {
+    //         setIsVoidDialogOpen(false)
+    //       }
+    //       return (
+    //         <>  
+    //             <Dialog open={isVoidDialogOpen} onOpenChange={setIsVoidDialogOpen}>
+    //                 <DialogTrigger asChild>
+    //                 <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.studentCode)}>
+    //                     <span className="sr-only">Open menu</span>
+    //                     <Ban className="h-4 w-4" />
+    //                 </Button>
+    //                 </DialogTrigger>
+    //                 <DialogContent className="max-h-[90vh] overflow-y-auto" aria-labelledby="dialog-title">
+    //                     <DialogHeader>
+    //                     {/* <DialogTitle className="mb-4">Void enrolled student</DialogTitle> */}
+    //                     </DialogHeader>
+    //                     <VoidEnrolledForm studentCode={studentCode} closeModal={closeModal}/>
+    //                 </DialogContent>
+    //             </Dialog>
+    //         </>
+    //       )
+    //     },
+    //   },
 ]

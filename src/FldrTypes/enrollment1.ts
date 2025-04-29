@@ -1,11 +1,11 @@
-export type Enrollment1Col = {
-    studentCode: string
-    firstName: string
-    lastName: string
-    middleName: string
-    studentStatus: boolean
-    void: boolean
-}
+// export type Enrollment1Col = {
+//     studentCode: string
+//     firstName: string
+//     lastName: string
+//     middleName: string
+//     studentStatus: boolean
+//     void: boolean
+// }
 
 export type studentProfile = {
     pkCode: string
