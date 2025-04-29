@@ -188,40 +188,40 @@ export const columnsEnrolled: ColumnDef<Enrollment2Col>[] = [
     },
 },
 
-    {
-        id: "actions",
-        cell: ({ row }) => {
-          const [isVoidDialogOpen, setIsVoidDialogOpen] = useState(false);
-          const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
+    // {
+    //     id: "actions",
+    //     cell: ({ row }) => {
+    //       const [isVoidDialogOpen, setIsVoidDialogOpen] = useState(false);
+    //       const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
           
-          const [studentCode, setStudentCode] = useState("");
+    //       const [studentCode, setStudentCode] = useState("");
 
-          const handleDialogOpen = (code: string) => {
-            setStudentCode(code);
-            setIsVoidDialogOpen(true);
-          };
+    //       const handleDialogOpen = (code: string) => {
+    //         setStudentCode(code);
+    //         setIsVoidDialogOpen(true);
+    //       };
 
-          const closeModal = () => {
-            setIsVoidDialogOpen(false)
-          }
-          return (
-            <>  
-                <Dialog open={isVoidDialogOpen} onOpenChange={setIsVoidDialogOpen}>
-                    <DialogTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.studentCode)}>
-                        <span className="sr-only">Open menu</span>
-                        <Ban className="h-4 w-4" />
-                    </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-h-[90vh] overflow-y-auto" aria-labelledby="dialog-title">
-                        <DialogHeader>
-                        {/* <DialogTitle className="mb-4">Void enrolled student</DialogTitle> */}
-                        </DialogHeader>
-                        <VoidEnrolledForm studentCode={studentCode} closeModal={closeModal}/>
-                    </DialogContent>
-                </Dialog>
-            </>
-          )
-        },
-      },
+    //       const closeModal = () => {
+    //         setIsVoidDialogOpen(false)
+    //       }
+    //       return (
+    //         <>  
+    //             <Dialog open={isVoidDialogOpen} onOpenChange={setIsVoidDialogOpen}>
+    //                 <DialogTrigger asChild>
+    //                 <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.studentCode)}>
+    //                     <span className="sr-only">Open menu</span>
+    //                     <Ban className="h-4 w-4" />
+    //                 </Button>
+    //                 </DialogTrigger>
+    //                 <DialogContent className="max-h-[90vh] overflow-y-auto" aria-labelledby="dialog-title">
+    //                     <DialogHeader>
+    //                     {/* <DialogTitle className="mb-4">Void enrolled student</DialogTitle> */}
+    //                     </DialogHeader>
+    //                     <VoidEnrolledForm studentCode={studentCode} closeModal={closeModal}/>
+    //                 </DialogContent>
+    //             </Dialog>
+    //         </>
+    //       )
+    //     },
+    //   },
 ]

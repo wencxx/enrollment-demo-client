@@ -279,7 +279,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
                         >
                       {field.value
                         ? students.find((s) => s.value === field.value)?.label
-                        : "Select Student, course, year, and semester"}
+                        : "Select Student, course, year, and section"}
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
                       </FormControl>
