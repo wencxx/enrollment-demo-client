@@ -50,6 +50,12 @@ export type StudentCol = {
     suffix: string
     enrollStatusCode: string
     genderCode: string
+
+    address: string
+    birthDate: Date
+    contactNo: string
+    emailAddress: string
+    userCode: string
 }
 
 export type EnrollDescCol = {
@@ -73,4 +79,9 @@ export type Enrollment1Col = {
     middleName: string
     lastName: string
     suffix: string
+}
+
+export type EnrollStatusCol = {
+    enrollStatusCode: string
+    enrollStatusDesc: string
 }
