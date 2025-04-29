@@ -150,7 +150,7 @@ const data = {
           title: "Enroll Description",
           url: "entry/enroll-description",
           authorizeUsers: ['Admin']
-        }
+        },
       ],
     },
   ],
