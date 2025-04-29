@@ -42,6 +42,11 @@ const data = {
       name: 'Schedules',
       url: '/schedules',
       icon: Calendar1,
+    },
+    {
+      name: 'Students',
+      url: '/students',
+      icon: User,
     }
   ],
   menuStudent: [
@@ -145,11 +150,6 @@ const data = {
           title: "Enroll Description",
           url: "entry/enroll-description",
           authorizeUsers: ['Admin']
-        },
-        {
-          title: "Enrollment2",
-          url: "enrollment/enrollment2",
-          authorizeUsers: ['Admin']
         }
       ],
     },
@@ -208,8 +208,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent className="scrollbar-hidden">
         {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuDashboard} />}
-        {/* {(user && (user.groupName === 'Admin' || user.groupName === 'Student')) && <SingleMenu data={data.menuStudent} title="Student" />} */}
-        {(user && (user.groupName === 'Student')) && <SingleMenu data={data.menuStudent} title="Student" />}
+        {(user && (user.groupName === 'Admin' || user.groupName === 'Student')) && <SingleMenu data={data.menuStudent} title="Student" />}
+        {/* {(user && (user.groupName === 'Student')) && <SingleMenu data={data.menuStudent} title="Student" />} */}
         {(user && (user.groupName === 'Admin')) && <MenuMain items={data.menuMain} />}
         {(user && (user.groupName === 'Admin')) && <MenuEnrollment items={data.menuEnrollment} /> } 
         {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuPersmissions} title="Permissions" />}

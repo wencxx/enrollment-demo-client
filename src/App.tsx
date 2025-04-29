@@ -30,6 +30,7 @@ import Section from "./FldrPages/FldrEntry/section"
 import Rate1 from "./FldrPages/FldrEntry/rate1"
 import RateDesc from "./FldrPages/FldrEntry/ratedesc"
 import Rate2 from "./FldrPages/FldrEntry/rate2"
+import Students from "./FldrPages/FldrEntry/students"
 
 const routes = [
   {
@@ -39,6 +40,10 @@ const routes = [
   {
     element: <Schedules />,
     path: '/schedules',
+  },
+  {
+    element: <Students />,
+    path: '/students',
   },
   {
     element: <Course />,

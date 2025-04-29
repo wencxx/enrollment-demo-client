@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Stamp } from "lucide-react"
+import { ArrowUpDown, Edit, Eye, Stamp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { StudentCol } from "@/FldrTypes/kim-types"
@@ -7,13 +7,14 @@ import { useState } from "react"
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog"
-import { EntryEnrollment1Form } from "../FldrForm/entryEnrollment1"
-import { DialogTitle } from "@radix-ui/react-dialog"
+import { ViewStudent } from "../FldrForm/viewStudent"
+import { EditEnrollStatus } from "../FldrForm/editenrollstatus"
 
 
-export const pendingColumn: ColumnDef<StudentCol>[] = [
+export const allStudentsCol: ColumnDef<StudentCol>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -70,9 +71,18 @@ export const pendingColumn: ColumnDef<StudentCol>[] = [
       const [isDialogOpen, setIsDialogOpen] = useState(false);
       const [code, setCode] = useState("");
 
+      const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+      const [editCode, setEditCode] = useState("");
+      
+
       const handleDialogOpen = (code: string) => {
         setCode(code);
         setIsDialogOpen(true);
+      };
+
+      const handleEditDialogOpen = (editCode: string) => {
+        setEditCode(editCode);
+        setIsEditDialogOpen(true);
       };
 
       const handleUpdate = () => {
@@ -84,25 +94,55 @@ export const pendingColumn: ColumnDef<StudentCol>[] = [
         }
       };
 
+      const handleEditUpdate = () => {
+        setIsEditDialogOpen(false);
+        const onRefresh = table.options.meta?.refreshData;
+        if (typeof onRefresh === 'function') {
+          console.log("Refreshing...");
+          onRefresh();
+        }
+      };
+
       return (
+        <>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0"
             onClick={() => handleDialogOpen(row.original.studentCode)}>
                 <span className="sr-only">Enrollment1</span>
-                <Stamp className="h-4 w-4" />
+                <Eye className="h-4 w-4" />
             </Button>
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
-            <DialogTitle>
-              <h2 className="text-lg font-semibold">Enroll new student</h2>
-            </DialogTitle>
-            <EntryEnrollment1Form
+                <DialogTitle>
+                  <h2 className="text-lg font-semibold">Student details</h2>
+                </DialogTitle>
+                <ViewStudent
                   toEdit={code} 
                   onCancel={handleUpdate}
                 />
             </DialogContent>
         </Dialog>
+
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+            <DialogTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0"
+            onClick={() => handleEditDialogOpen(row.original.studentCode)}>
+                <span className="sr-only">Enroll status</span>
+                <Edit className="h-4 w-4" />
+            </Button>
+            </DialogTrigger>
+            <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[30dvw] lg:!max-w-[35dvw] scrollbar-hidden" aria-labelledby="dialog-title">
+                <DialogTitle>
+                <h2 className="text-lg font-semibold">Update enrollment status</h2>
+                </DialogTitle>
+                <EditEnrollStatus
+                toEdit={editCode} 
+                onCancel={handleEditUpdate}
+                />
+            </DialogContent>
+        </Dialog>
+        </>
       );
     },
 },

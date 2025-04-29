@@ -18,6 +18,7 @@ import {
 export default function Enrollment1() {
   const [approved, setApproved] = useState<Enrollment1Col[]>([]);
   const [allStudents, setAllStudents] = useState<StudentCol[]>([]);
+  const [oldStudents, setOldStudents] = useState<StudentCol[]>([]);
   const [pending, setPending] = useState<StudentCol[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -32,7 +33,7 @@ export default function Enrollment1() {
         pkedDesc: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc} - ${item.sectionDesc} (${item.aYearDesc})`,
       }));
       setApproved(approvedData);
-      console.log(approvedData)
+      // console.log(approvedData)
 
       const allRes = await axios.get<StudentCol[]>(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`);
       const allData = allRes.data.map((item) => ({
@@ -40,7 +41,14 @@ export default function Enrollment1() {
         fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}${item.suffix ? ' '+item.suffix : ''}`,
       }));
       setAllStudents(allData);
-      console.log(allData)
+      // console.log(allData)
+
+      const oldRes = await axios.get<StudentCol[]>(`${plsConnect()}/API/WebAPI/StudentController/ListContinuingStudent`);
+      const oldData = oldRes.data.map((item) => ({
+        ...item,
+        fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}${item.suffix ? ' '+item.suffix : ''}`,
+      }));
+      setOldStudents(oldData);
 
       const pendingRes = await axios.get<StudentCol[]>(`${plsConnect()}/API/WebAPI/StudentController/ListNewStudent`);
       const pendingData = pendingRes.data.map((item) => ({
@@ -48,7 +56,7 @@ export default function Enrollment1() {
         fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}${item.suffix ? ' '+item.suffix : ''}`,
       }));
       setPending(pendingData);
-      console.log(pendingData)
+      // console.log(pendingData)
 
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -67,10 +75,11 @@ export default function Enrollment1() {
       <div className="container py-6">
         <div className="space-x-2">
         <Tabs defaultValue="pending" className="w-[full]">
-          <TabsList className="grid w-[30vw] grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="old">Continuing</TabsTrigger>
             <TabsTrigger value="allStudents">All</TabsTrigger>
-            <TabsTrigger value="approved">Approved</TabsTrigger>
+            <TabsTrigger value="approved">Approved Enrollments</TabsTrigger>
           </TabsList>
           <TabsContent value="pending">
             <div className="mt-4">
@@ -79,6 +88,18 @@ export default function Enrollment1() {
                 data={pending} 
                 loading={loading} 
                 title="new students" 
+                onRefresh={getData}
+              />
+            </div>
+          </TabsContent>
+          {/* same columns as "All Students" */}
+          <TabsContent value="old">
+            <div className="mt-4">
+              <DataTable 
+                columns={allStudentsColumn} 
+                data={oldStudents} 
+                loading={loading} 
+                title="continuing students" 
                 onRefresh={getData}
               />
             </div>
