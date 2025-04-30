@@ -129,10 +129,11 @@ export default function StudentApplication() {
       }
     } catch (error: any) {
       console.error("Error submitting application:", error);
-      if (error.response && error.response.status === 409) {
-        toast.error("Email address already exists.");
-      } else if (error.response && error.response.data && error.response.data.message) {
-        toast.error(error.response.data.message);
+    
+      const backendMessage = error?.response?.data?.message;
+    
+      if (backendMessage) {
+        toast.error(backendMessage);
       } else {
         toast.error("Error submitting application. Please try again.");
       }
