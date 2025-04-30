@@ -123,7 +123,7 @@ export default function SchedulePage() {
   // Time slots for the timetable (7:00 AM to 9:00 PM in 30-minute intervals)
   const timeSlots = useMemo(() => {
     const slots = []
-    for (let hour = 1; hour <= 24  ; hour++) {
+    for (let hour = 1; hour <= 24; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
         const formattedHour = hour.toString().padStart(2, "0")
         const formattedMinute = minute.toString().padStart(2, "0")
@@ -442,7 +442,7 @@ export default function SchedulePage() {
                                         </p>
                                         <p>Professor: {schedule.professorName}</p>
                                         <p>Room: {schedule.roomDesc}</p>
-                                        <p>Academic Year: {schedule.aYearDesc}</p>
+                                        <p>Academic Year: {schedule.aYearDesc}</p>1
                                         <p>
                                           Time: {formatTime(schedule.classStart)} - {formatTime(schedule.classEnd)}
                                         </p>

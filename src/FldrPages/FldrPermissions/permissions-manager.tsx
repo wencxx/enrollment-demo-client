@@ -89,7 +89,7 @@ function GrantPermission() {
     
             await axios.post(`${plsConnect()}/api/Permission/SavePermissions`, payload);
             console.log("Saving permissions:", payload);
-            toast("Permissions saved successfully!");
+            toast("Permissions saved successfully. Affected users must log back in.");
         } catch (error) {
             console.error("Failed to save permissions", error); 
             toast("Failed to save. Please try again.");
@@ -101,7 +101,7 @@ function GrantPermission() {
 
     return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Permission Groups</h2>
+      <h2 className="text-2xl font-bold mb-4">User Groups</h2>
 
       {loading ? (
         <div className="text-center p-4">Loading groups...</div>

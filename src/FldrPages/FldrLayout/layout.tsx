@@ -27,10 +27,10 @@ function Layout() {
 
   useEffect(() => {
     rehydrate()
-    console.log("REHYDRATED NA SYA")
+    // console.log("REHYDRATED NA SYA")
   }, [])
 
-  console.log("current route:", currentPath)
+  // console.log("current path:", currentPath)
 
   // Apply theme on mount
   useEffect(() => {
@@ -62,12 +62,12 @@ function Layout() {
     }
   }
 
-  console.log("HELP", {
-    authenticated,
-    permissions,
-    currentPath,
-    loading
-  })
+  // console.log("HELP", {
+  //   authenticated,
+  //   permissions,
+  //   currentPath,
+  //   loading
+  // })
 
 const publicRoutes = ['/login', '/unauthorize']
 
