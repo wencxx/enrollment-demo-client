@@ -1,14 +1,12 @@
 "use client";
-import { rateSchema } from "@/FldrSchema/userSchema.ts";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { RateCourseCol } from "@/FldrTypes/ratecourse-col";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Check, ChevronsUpDown, Plus, Trash } from "lucide-react";
+import { Check, ChevronsUpDown, Edit2, Save, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Form,
@@ -17,13 +15,6 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Command,
   CommandEmpty,
@@ -37,26 +28,28 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Input } from "../ui/input";
 import { z } from "zod";
-import { enrollment2Schema } from "@/FldrSchema/userSchema.ts";
 
-type Enrollment2FormData = z.infer<typeof enrollment2Schema>;
+type ComboOption = { label: string; value: string };
+
+// Simple schema for the form
+const formSchema = z.object({
+  pkCode: z.string().min(1, { message: "Select a student." }),
+});
+
+type EnrollmentFormData = z.infer<typeof formSchema>;
 
 type Enrollment2FormProps = {
   onSubmitSuccess: () => void;
   onAddRate: () => void;
 };
 
-type ComboOption = { label: string; value: string };
+
+export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormProps) {
+  const form = useForm<EnrollmentFormData>({
+    resolver: zodResolver(formSchema),
+
+// type ComboOption = { label: string; value: string };
 
 
 // type mapData = {
@@ -66,38 +59,24 @@ type ComboOption = { label: string; value: string };
 
 // export function Enrollment2Form({ closeModal }: Enrollment2FormProps) { 
 
-export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormProps) {
+// export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormProps) {
 
-  const form = useForm<Enrollment2FormData>({
-    resolver: zodResolver(
-      z.object({
-        pkCode: z.string().min(1, { message: "Select a student." }),
-        rows: z
-          .array(enrollment2Schema.omit({ pkCode: true }))
-          .min(1, "At least one subject is required."),
-      })
-    ),
+//   const form = useForm<Enrollment2FormData>({
+//     resolver: zodResolver(
+//       z.object({
+//         pkCode: z.string().min(1, { message: "Select a student." }),
+//         rows: z
+//           .array(enrollment2Schema.omit({ pkCode: true }))
+//           .min(1, "At least one subject is required."),
+//       })
+//     ),
     defaultValues: {
       pkCode: "",
-      rows: [
-        {
-          rowNum: 1,
-          subjectCode: "",
-          PKRate: "",
-          professorCode: "",
-          roomCode: "",
-          scheduleDayCode: "",
-          classStart: "",
-          classEnd: "",
-          noUnits: 0,
-          rateAmount: 0,
-          amount: 0,
-          rateTypeCode: "",
-        },
-      ],
     },
-    mode: "onChange",
   });
+
+
+  const { control, handleSubmit, setValue } = form;
 
 // WENCY CHANGES:
 //  const [student, setStudent] = useState<mapData[]>([])
@@ -117,50 +96,44 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
 
 //   const [rates, setRate] = useState<mapData[]>([]);
 
-  const { control, handleSubmit, setValue, watch } = form;
+<!--   const { control, handleSubmit, setValue, watch } = form;
   const { fields, append, remove } = useFieldArray({
     control,
     name: "rows",
-  });
+  }); -->
+
 
   const [students, setStudents] = useState<ComboOption[]>([]);
-  const [subjects, setSubjects] = useState<ComboOption[]>([]);
-  const [professors, setProfessors] = useState<ComboOption[]>([]);
-  const [rooms, setRooms] = useState<ComboOption[]>([]);
-  const [days, setDays] = useState<ComboOption[]>([]);
-  
-
+  const [courses, setCourses] = useState<ComboOption[]>([]);
+  const [years, setYears] = useState<ComboOption[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
+  const [courseSubjects, setCourseSubjects] = useState<any[]>([]);
+  const [editMode, setEditMode] = useState(false); // New state for edit mode
 
   // Fetch dropdown data
   useEffect(() => {
     async function fetchDropdowns() {
       try {
-        const [studentsRes, subjectsRes, professorsRes, roomsRes, daysRes] = await Promise.all([
+        const [studentsRes, coursesRes, yearsRes] = await Promise.all([
           axios.get(`${plsConnect()}/api/Enrollment2/ListEnrollment2Student`),
-          axios.get(`${plsConnect()}/API/WebAPI/ListController/ListSubject`),
-          axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListProfessor`),
-          axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListRoom`),
-          axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListDay`),
+          axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`),
+          axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListYear`),
         ]);
+        
         setStudents(studentsRes.data.map((s: any) => ({
           label: `${s.firstName} ${s.middleName} ${s.lastName} (${s.courseDesc} - ${s.yearDesc} - ${s.sectionDesc})`,
           value: s.pkCode,
         })));
-        setSubjects(subjectsRes.data.map((s: any) => ({
-          label: s.rdDesc,
-          value: s.rdCode,
+        
+        setCourses(coursesRes.data.map((c: any) => ({
+          label: c.courseDesc,
+          value: c.courseCode,
         })));
-        setProfessors(professorsRes.data.map((p: any) => ({
-          label: p.professorName,
-          value: p.professorCode,
-        })));
-        setRooms(roomsRes.data.map((r: any) => ({
-          label: r.roomDesc,
-          value: r.roomCode,
-        })));
-        setDays(daysRes.data.map((d: any) => ({
-          label: d.scheduleDayDesc,
-          value: d.scheduleDayCode,
+        
+        setYears(yearsRes.data.map((y: any) => ({
+          label: y.yearDesc,
+          value: y.yearCode,
         })));
       } catch {
         toast("Error loading dropdowns");
@@ -169,95 +142,67 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
     fetchDropdowns();
   }, []);
 
-    // fetch NoUnits and RateAmount
-    const rows = watch("rows");
+  // Effect to fetch subjects when course and year change
+  useEffect(() => {
+    async function fetchCourseSubjects() {
+      if (selectedYear && selectedCourse) {
+        try {
+          const response = await axios.get(
+            `${plsConnect()}/api/Enrollment2/GetSubjectsByYearCourse/${selectedYear}/${selectedCourse}`
+          );
+          setCourseSubjects(response.data);
+          setEditMode(false); // Reset edit mode when subjects change
+        } catch (error) {
+          toast.error("Failed to fetch subjects for this course and year");
+          console.error(error);
+        }
+      } else {
+        setCourseSubjects([]);
+        setEditMode(false); // Reset edit mode when clearing subjects
+      }
+    }
+    fetchCourseSubjects();
+  }, [selectedYear, selectedCourse]);
 
-    
-//     useEffect(() => {
-//       rows.forEach((row, idx) => {
-//         if (row.subjectCode) {
-//           axios
-//             .get(`${plsConnect()}/api/Enrollment2/GetSubjectDetails/${row.subjectCode}`)
-//             .then(res => {
-//               setValue(`rows.${idx}.PKRate`, res.data.pkRate);
-//               setValue(`rows.${idx}.noUnits`, res.data.noUnits);
-//               setValue(`rows.${idx}.rateAmount`, res.data.rateAmount);
-//               setValue(`rows.${idx}.amount`, res.data.noUnits === 0 ? res.data.rateAmount : res.data.noUnits * res.data.rateAmount
-//               );
-
-//           // Store rateTypeCode
-//           setValue(`rows.${idx}.rateTypeCode`, res.data.rateTypeCode);
-          
-//           // Clear related fields if not a subject
-//           if (res.data.rateTypeCode !== "1") {
-//             setValue(`rows.${idx}.professorCode`, "00000");
-//             setValue(`rows.${idx}.roomCode`, "000");
-//             setValue(`rows.${idx}.scheduleDayCode`, "00");
-//             setValue(`rows.${idx}.classStart`, "00:00");
-//             setValue(`rows.${idx}.classEnd`, "00:00");
-//           }
-//         });
-//     }
-//   });
-// }, [rows.map(r => r.subjectCode).join(",")]);
-
-  const handleAddRow = () => {
-    const nextRowNum =
-      fields.length > 0 ? fields[fields.length - 1].rowNum + 1 : 1;
-    append({
-      rowNum: fields.length + 1,
-      subjectCode: "",
-      PKRate: "",
-      professorCode: "",
-      roomCode: "",
-      scheduleDayCode: "",
-      classStart: "",
-      classEnd: "",
-      noUnits: 0,
-      rateAmount: 0,
-      amount: 0,
-      rateTypeCode: "",
-    });
+  // Function to handle removing a subject
+  const handleRemoveSubject = (index: number) => {
+    setCourseSubjects(prevSubjects => 
+      prevSubjects.filter((_, idx) => idx !== index)
+    );
+    toast.info("Subject removed");
   };
 
-  const handleRemoveRow = (index: number) => {
-    remove(index);
-  }
-  useEffect(() => {
-    // This runs after fields array has been properly updated by remove()
-    fields.forEach((_, i) => {
-      setValue(`rows.${i}.rowNum`, i + 1);
-    });
-  }, [fields, setValue]);
+  // Toggle edit mode
+  const toggleEditMode = () => {
+    setEditMode(prev => !prev);
+  };
 
-
-  const onSubmit = async (values: Enrollment2FormData) => {
-    console.log("Original form values:", values);
-    
-    const PKRateValues = form.watch('rows').map(r => r.PKRate);
-    console.log("PKRate values from form:", PKRateValues);
-    
-    // Create a new payload that with PKRAATE
-    const payload = {
-      pkCode: values.pkCode,
-      rows: values.rows.map((row, index) => {
-        // Get PKRate from form state
-        const PKRate = form.getValues(`rows.${index}.PKRate`);
-        console.log(`Row ${index} PKRate:`, PKRate);
-        
-        return {
-          ...row,
-          PKRate: PKRate || "" // Explicitly include PKRate from form state
-        };
-      })
-    };
-    
-    console.log("Modified payload:", payload);
-
-    if (payload.rows.some(row => !row.PKRate)) {
-      toast("One or more subjects are missing PKRate. Please re-select the subject.");
+  const onSubmit = async (values: EnrollmentFormData) => {
+    if (courseSubjects.length === 0) {
+      toast.error("No subjects available for the selected course and year");
       return;
     }
+
+    // Create enrollment rows from all available subjects
+    const rows = courseSubjects.map((subject, index) => ({
+      rowNum: index + 1,
+      subjectCode: subject.rdCode,
+      PKRate: subject.pkRate,
+      professorCode: "00000", // Default value
+      roomCode: "000", // Default value
+      scheduleDayCode: "00", // Default value
+      classStart: "00:00", // Default time
+      classEnd: "00:00", // Default time
+      noUnits: subject.noUnits,
+      rateAmount: subject.rateAmount,
+      amount: subject.noUnits === 0 ? subject.rateAmount : subject.noUnits * subject.rateAmount,
+      rateTypeCode: subject.rateTypeCode,
+    }));
+
+    const payload = {
+      pkCode: values.pkCode,
+      rows: rows
+    };
     
     try {
       await axios.post(
@@ -266,7 +211,10 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
       );
       onSubmitSuccess();
       onAddRate();
-      toast("Enrollment submitted successfully.");
+      toast.success(`Successfully enrolled with ${rows.length} subjects!`, { 
+        duration: 5000, 
+        position: "top-center" 
+      });
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
         if (error.response && error.response.status === 409) {
@@ -285,14 +233,14 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
     <>
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-          <div className="col-span-2">
+          <div className="col-span-2 mb-6">
             {/* STUDENT SELECTION */}
             <FormField
-              control={form.control}
+              control={control}
               name="pkCode"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  {/* <FormLabel>Rate Course</FormLabel> */}
+                  <FormLabel>Student</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -346,548 +294,197 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormP
               )}
             />
           </div>
+          
+          {/* YEAR AND COURSE SELECTION */}
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            {/* Year Selection */}
+            <FormItem>
+              <FormLabel>Academic Year</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "w-full justify-between",
+                        !selectedYear && "text-muted-foreground"
+                      )}
+                    >
+                      {selectedYear
+                        ? years.find((y) => y.value === selectedYear)?.label
+                        : "Select Year"}
+                      <ChevronsUpDown className="opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput placeholder="Search years..." className="h-9" />
+                    <CommandList>
+                      <CommandEmpty>No year found.</CommandEmpty>
+                      <CommandGroup>
+                        {years.map((year) => (
+                          <CommandItem
+                            key={year.value}
+                            value={year.label}
+                            onSelect={() => {
+                              setSelectedYear(year.value);
+                              setCourseSubjects([]);
+                            }}
+                          >
+                            {year.label}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                selectedYear === year.value ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </FormItem>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Subject</TableHead>
-                <TableHead>Professor</TableHead>
-                <TableHead>Room</TableHead>
-                <TableHead>Day</TableHead>
-                <TableHead>Class Start</TableHead>
-                <TableHead>Class End</TableHead>
-                <TableHead>No. of Units</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead className="text-center"></TableHead>
-              </TableRow>
-            </TableHeader>
-            
-            <TableBody>
-  {fields.map((item, index) => {
-        const rateTypeCode = form.watch(`rows.${index}.rateTypeCode`);
-        const isSubject = rateTypeCode === "1";
-
-        return (
-    <TableRow key={item.id}>
-      {/* Subject */}
-      <TableCell>
-        <FormField
-          control={form.control}
-          name={`rows.${index}.subjectCode`}
-          render={({ field }) => (
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    className={cn(
-                      "w-full justify-between",
-                      !field.value && "text-muted-foreground"
-                    )}
-                  >
-                    {field.value
-                      ? subjects.find((s) => s.value === field.value)?.label
-                      : "Select Subject"}
-                    <ChevronsUpDown className="opacity-50" />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-full p-0">
-                <Command>
-                  <CommandInput placeholder="Search..." className="h-9" />
-                  <CommandList>
-                    <CommandEmpty>None found.</CommandEmpty>
-                    <CommandGroup>
-                      {subjects.map((s) => (
-                        <CommandItem
-                          value={s.label}
-                          key={s.value}
-                          onSelect={async () => {
-                            form.setValue(`rows.${index}.subjectCode`, s.value);
-                            try {
-                              const res = await axios.get(
-                                `${plsConnect()}/api/Enrollment2/GetSubjectDetails/${s.value}`
-                              );
-                              form.setValue(`rows.${index}.PKRate`, res.data.pkRate);
-                              form.setValue(`rows.${index}.noUnits`, res.data.noUnits);
-                              form.setValue(`rows.${index}.rateAmount`, res.data.rateAmount);
-                              form.setValue(`rows.${index}.amount`, 
-                                res.data.noUnits === 0 ? res.data.rateAmount : res.data.noUnits * res.data.rateAmount
-                              );
-                              
-                              // Store rateTypeCode
-                              form.setValue(`rows.${index}.rateTypeCode`, res.data.rateTypeCode);
-                              
-                              // Clear related fields if not a subject
-                              if (res.data.rateTypeCode !== "1") {
-                                form.setValue(`rows.${index}.professorCode`, "00000");
-                                form.setValue(`rows.${index}.roomCode`, "000");
-                                form.setValue(`rows.${index}.scheduleDayCode`, "00");
-                                form.setValue(`rows.${index}.classStart`, "00:00");
-                                form.setValue(`rows.${index}.classEnd`, "00:00");
-                              }
-                            } catch {
-                              toast("Failed to fetch subject details.");
-                            }
-                            field.onChange(s.value);
-                          }}
-                        >
-                          {s.label}
-                          <Check
-                            className={cn(
-                              "ml-auto",
-                              s.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          )}
-        />
-      </TableCell>
-      {/* Professor */}
-      <TableCell>
-        <FormField
-          control={form.control}
-          name={`rows.${index}.professorCode`}
-          render={({ field }) => (
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    disabled={!isSubject}
-                    className={cn(
-                      "w-full justify-between",
-                      !field.value && "text-muted-foreground"
-                    )}
-                  >
-                    {field.value
-                      ? professors.find((p) => p.value === field.value)?.label
-                      : "Select Professor"}
-                    <ChevronsUpDown className="opacity-50" />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-full p-0">
-                <Command>
-                  <CommandInput placeholder="Search..." className="h-9" />
-                  <CommandList>
-                    <CommandEmpty>None found.</CommandEmpty>
-                    <CommandGroup>
-                      {professors.map((p) => (
-                        <CommandItem
-                          value={p.label}
-                          key={p.value}
-                          onSelect={() => {
-                            form.setValue(`rows.${index}.professorCode`, p.value);
-                            field.onChange(p.value);
-                          }}
-                        >
-                          {p.label}
-                          <Check
-                            className={cn(
-                              "ml-auto",
-                              p.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          )}
-        />
-      </TableCell>
-      {/* Room */}
-      <TableCell>
-        <FormField
-          control={form.control}
-          name={`rows.${index}.roomCode`}
-          render={({ field }) => (
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    disabled={!isSubject}
-                    className={cn(
-                      "w-full justify-between",
-                      !field.value && "text-muted-foreground"
-                    )}
-                  >
-                    {field.value
-                      ? rooms.find((r) => r.value === field.value)?.label
-                      : "Select Room"}
-                    <ChevronsUpDown className="opacity-50" />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-full p-0">
-                <Command>
-                  <CommandInput placeholder="Search..." className="h-9" />
-                  <CommandList>
-                    <CommandEmpty>None found.</CommandEmpty>
-                    <CommandGroup>
-                      {rooms.map((r) => (
-                        <CommandItem
-                          value={r.label}
-                          key={r.value}
-                          onSelect={() => {
-                            form.setValue(`rows.${index}.roomCode`, r.value);
-                            field.onChange(r.value);
-                          }}
-                        >
-                          {r.label}
-                          <Check
-                            className={cn(
-                              "ml-auto",
-                              r.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          )}
-        />
-      </TableCell>
-      {/* Day */}
-      <TableCell>
-        <FormField
-          control={form.control}
-          name={`rows.${index}.scheduleDayCode`}
-          render={({ field }) => (
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    disabled={!isSubject}
-                    className={cn(
-                      "w-full justify-between",
-                      !field.value && "text-muted-foreground"
-                    )}
-                  >
-                    {field.value
-                      ? days.find((d) => d.value === field.value)?.label
-                      : "Select Day"}
-                    <ChevronsUpDown className="opacity-50" />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-full p-0">
-                <Command>
-                  <CommandInput placeholder="Search..." className="h-9" />
-                  <CommandList>
-                    <CommandEmpty>None found.</CommandEmpty>
-                    <CommandGroup>
-                      {days.map((d) => (
-                        <CommandItem
-                          value={d.label}
-                          key={d.value}
-                          onSelect={() => {
-                            form.setValue(`rows.${index}.scheduleDayCode`, d.value);
-                            field.onChange(d.value);
-                          }}
-                        >
-                          {d.label}
-                          <Check
-                            className={cn(
-                              "ml-auto",
-                              d.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          )}
-        />
-      </TableCell>
-{/* Class Start */}
-<TableCell>
-  <FormField
-    control={form.control}
-    name={`rows.${index}.classStart`}
-    render={({ field }) => (
-      <Popover>
-        <PopoverTrigger asChild>
-          <FormControl>
-            <Button
-              variant="outline"
-              role="combobox"
-              disabled={!isSubject}
-              className={cn(
-                "w-full justify-between",
-                !field.value && "text-muted-foreground"
-              )}
-            >
-              {field.value || "Select start time"}
-              <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
-            </Button>
-          </FormControl>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <div className="p-3 grid grid-cols-2 gap-2">
-            <div className="space-y-2">
-              <p className="text-xs font-medium">Hour</p>
-              <Select
-                onValueChange={(hour) => {
-                  const [_, minute, ampm] = (field.value || "12:00 AM").split(/[:\s]/);
-                  field.onChange(`${hour}:${minute || "00"} ${ampm || "AM"}`);
-                }}
-                defaultValue={(field.value || "12:00 AM").split(/[:\s]/)[0] || "12"}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Hour" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from({ length: 12 }, (_, i) => (
-                    <SelectItem key={i} value={(i === 0 ? 12 : i).toString()}>
-                      {(i === 0 ? 12 : i).toString()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <p className="text-xs font-medium">Minute</p>
-              <Select
-                onValueChange={(minute) => {
-                  const [hour, _, ampm] = (field.value || "12:00 AM").split(/[:\s]/);
-                  field.onChange(`${hour || "12"}:${minute} ${ampm || "AM"}`);
-                }}
-                defaultValue={(field.value || "12:00 AM").split(/[:\s]/)[1] || "00"}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Minute" />
-                </SelectTrigger>
-                <SelectContent>
-                  {["00", "15", "30", "45"].map((minute) => (
-                    <SelectItem key={minute} value={minute}>
-                      {minute}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <p className="text-xs font-medium">AM/PM</p>
-              <Select
-                onValueChange={(ampm) => {
-                  const [hour, minute] = (field.value || "12:00 AM").split(/[:\s]/);
-                  field.onChange(`${hour || "12"}:${minute || "00"} ${ampm}`);
-                }}
-                defaultValue={(field.value || "12:00 AM").split(/[:\s]/)[2] || "AM"}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="AM/PM" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="AM">AM</SelectItem>
-                  <SelectItem value="PM">PM</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-    )}
-  />
-</TableCell>
-
-{/* Class End - Same structure as Class Start */}
-<TableCell>
-  <FormField
-    control={form.control}
-    name={`rows.${index}.classEnd`}
-    render={({ field }) => (
-      <Popover>
-        <PopoverTrigger asChild>
-          <FormControl>
-            <Button
-              variant="outline"
-              role="combobox"
-              disabled={!isSubject}
-              className={cn(
-                "w-full justify-between",
-                !field.value && "text-muted-foreground"
-              )}
-            >
-              {field.value || "Select end time"}
-              <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
-            </Button>
-          </FormControl>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <div className="p-3 grid grid-cols-2 gap-2">
-            <div className="space-y-2">
-              <p className="text-xs font-medium">Hour</p>
-              <Select
-                onValueChange={(hour) => {
-                  const [_, minute, ampm] = (field.value || "12:00 AM").split(/[:\s]/);
-                  field.onChange(`${hour}:${minute || "00"} ${ampm || "AM"}`);
-                }}
-                defaultValue={(field.value || "12:00 AM").split(/[:\s]/)[0] || "12"}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Hour" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from({ length: 12 }, (_, i) => (
-                    <SelectItem key={i} value={(i === 0 ? 12 : i).toString()}>
-                      {(i === 0 ? 12 : i).toString()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <p className="text-xs font-medium">Minute</p>
-              <Select
-                onValueChange={(minute) => {
-                  const [hour, _, ampm] = (field.value || "12:00 AM").split(/[:\s]/);
-                  field.onChange(`${hour || "12"}:${minute} ${ampm || "AM"}`);
-                }}
-                defaultValue={(field.value || "12:00 AM").split(/[:\s]/)[1] || "00"}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Minute" />
-                </SelectTrigger>
-                <SelectContent>
-                  {["00", "15", "30", "45"].map((minute) => (
-                    <SelectItem key={minute} value={minute}>
-                      {minute}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <p className="text-xs font-medium">AM/PM</p>
-              <Select
-                onValueChange={(ampm) => {
-                  const [hour, minute] = (field.value || "12:00 AM").split(/[:\s]/);
-                  field.onChange(`${hour || "12"}:${minute || "00"} ${ampm}`);
-                }}
-                defaultValue={(field.value || "12:00 AM").split(/[:\s]/)[2] || "AM"}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="AM/PM" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="AM">AM</SelectItem>
-                  <SelectItem value="PM">PM</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-    )}
-  />
-</TableCell>
-      {/* No. of Units */}
-      <TableCell>
-        <FormField
-          control={form.control}
-          name={`rows.${index}.noUnits`}
-          render={({ field }) => (
-            <Input {...field} readOnly placeholder="Units" />
-          )}
-        />
-      </TableCell>
-      {/* Amount */}
-      <TableCell>
-        <FormField
-          control={form.control}
-          name={`rows.${index}.amount`}
-          render={({ field }) => (
-            <Input {...field} readOnly placeholder="Amount" />
-          )}
-        />
-      </TableCell>
-
-      {/* Remove Row */}
-  <TableCell>
-    <Button
-      type="button"
-      variant="ghost"
-      onClick={() => handleRemoveRow(index)}
-      className="text-red-500"
-    >
-      <Trash size={16} />
-    </Button>
-    
-    {/* HIDDEN INPUTS */}
-{/* PKRate */}
-    <FormField
-      control={form.control}
-      name={`rows.${index}.PKRate`}
-      render={({ field }) => (
-        <input type="hidden" {...field} />
-      )}
-    />
-
-    {/* RATETYPECODE */}
-    <FormField
-  control={form.control}
-  name={`rows.${index}.rateTypeCode`}
-  render={({ field }) => (
-    <input type="hidden" {...field} />
-  )}
-/>
-  </TableCell>
-  
-    </TableRow>
-        );
-      }
-  )}
-</TableBody>
-          </Table>
-          {/* <div className="border p-2 mt-4 bg-gray-100">
-  <h4 className="font-bold">Debug Info:</h4>
-  <p>PKRate values: {JSON.stringify(form.watch('rows').map(r => r.PKRate))}</p>
-</div> */}
-
-          <div className="col-span-2 flex justify-center">
-            <Button
-              type="button"
-              onClick={handleAddRow}
-              variant="ghost"
-              className="w-full sm:w-10"
-            >
-              <Plus />
-            </Button>
+            {/* Course Selection */}
+            <FormItem>
+              <FormLabel>Course</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "w-full justify-between",
+                        !selectedCourse && "text-muted-foreground"
+                      )}
+                    >
+                      {selectedCourse
+                        ? courses.find((c) => c.value === selectedCourse)?.label
+                        : "Select Course"}
+                      <ChevronsUpDown className="opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput placeholder="Search courses..." className="h-9" />
+                    <CommandList>
+                      <CommandEmpty>No course found.</CommandEmpty>
+                      <CommandGroup>
+                        {courses.map((course) => (
+                          <CommandItem
+                            key={course.value}
+                            value={course.label}
+                            onSelect={() => {
+                              setSelectedCourse(course.value);
+                              setCourseSubjects([]);
+                            }}
+                          >
+                            {course.label}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                selectedCourse === course.value ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </FormItem>
           </div>
 
-          <div className="col-span-2">
-            <Button type="submit" className="w-full sm:w-20 float-right">
+          {/* AVAILABLE SUBJECTS LIST - DISPLAY ONLY */}
+          {courseSubjects.length > 0 && (
+            <div className="border rounded-lg p-4 mb-6">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-lg font-medium">Subjects to be Added ({courseSubjects.length})</h3>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={toggleEditMode}
+                  className="flex items-center gap-1"
+                >
+                  {editMode ? (
+                    <>
+                      <Save className="h-4 w-4" />
+                      <span>Done</span>
+                    </>
+                  ) : (
+                    <>
+                      <Edit2 className="h-4 w-4" />
+                      <span>Edit</span>
+                    </>
+                  )}
+                </Button>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="py-2 px-4 text-left">Subject</th>
+                      <th className="py-2 px-4 text-right">Units</th>
+                      {/* <th className="py-2 px-4 text-right">Rate</th> */}
+                      {editMode && <th className="py-2 px-4 text-center">Action</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {courseSubjects.map((subject, idx) => (
+                      <tr key={idx} className="border-b hover:bg-gray-50">
+                        <td className="py-2 px-4">{subject.rdDesc}</td>
+                        <td className="py-2 px-4 text-right">{subject.noUnits}</td>
+                        {/* <td className="py-2 px-4 text-right">{subject.rateAmount.toFixed(2)}</td> */}
+                        {editMode && (
+                          <td className="py-2 px-4 text-center">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRemoveSubject(idx)}
+                              className="text-red-500 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="font-semibold">
+                      <td className="py-2 px-4">Total</td>
+                      <td className="py-2 px-4 text-right">
+                        {courseSubjects.reduce((sum, subject) => sum + (subject.noUnits || 0), 0)}
+                      </td>
+                      {/* <td className="py-2 px-4 text-right">
+                        {courseSubjects
+                          .reduce((sum, subject) => sum + (subject.rateAmount || 0), 0)
+                          .toFixed(2)}
+                      </td> */}
+                      {editMode && <td className="py-2 px-4"></td>}
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* SUBMIT BUTTON */}
+          <div className="flex justify-end mt-6">
+            <Button 
+              type="submit" 
+              className="w-auto"
+              disabled={!form.watch("pkCode") || courseSubjects.length === 0 || editMode}
+            >
               Submit
             </Button>
           </div>
