@@ -108,8 +108,6 @@ export function EditEnrollStatus({ toEdit = "", onCancel, onSuccess }: Rate1Form
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
-      </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
