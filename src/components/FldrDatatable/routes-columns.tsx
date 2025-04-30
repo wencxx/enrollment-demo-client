@@ -41,56 +41,56 @@ export const columns: ColumnDef<routes>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Route Name
+                Object Name
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
     },
-    {
-        accessorKey: "path",
-        header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                Route
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
-    },
-    {
-        id: "actions",
-        cell: () => {
-            return (
-                <>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <Edit className="h-4 w-4" />
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-                            <DialogHeader>
-                                <DialogTitle className="mb-4">View Course</DialogTitle>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <Eye className="h-5 w-5" />
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-                            <DialogHeader>
-                                <DialogTitle className="mb-4">View Course</DialogTitle>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-                </>
-            )
-        },
-    },
+    // {
+    //     accessorKey: "path",
+    //     header: ({ column }) => (
+    //         <Button
+    //             variant="ghost"
+    //             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //         >
+    //             Route
+    //             <ArrowUpDown className="ml-2 h-4 w-4" />
+    //         </Button>
+    //     ),
+    // },
+    // {
+    //     id: "actions",
+    //     cell: () => {
+    //         return (
+    //             <>
+    //                 <Dialog>
+    //                     <DialogTrigger asChild>
+    //                         <Button variant="ghost" className="h-8 w-8 p-0">
+    //                             <span className="sr-only">Open menu</span>
+    //                             <Edit className="h-4 w-4" />
+    //                         </Button>
+    //                     </DialogTrigger>
+    //                     <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+    //                         <DialogHeader>
+    //                             <DialogTitle className="mb-4">View Course</DialogTitle>
+    //                         </DialogHeader>
+    //                     </DialogContent>
+    //                 </Dialog>
+    //                 <Dialog>
+    //                     <DialogTrigger asChild>
+    //                         <Button variant="ghost" className="h-8 w-8 p-0">
+    //                             <span className="sr-only">Open menu</span>
+    //                             <Eye className="h-5 w-5" />
+    //                         </Button>
+    //                     </DialogTrigger>
+    //                     <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+    //                         <DialogHeader>
+    //                             <DialogTitle className="mb-4">View Course</DialogTitle>
+    //                         </DialogHeader>
+    //                     </DialogContent>
+    //                 </Dialog>
+    //             </>
+    //         )
+    //     },
+    // },
 ]

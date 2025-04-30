@@ -70,39 +70,39 @@ export const columns: ColumnDef<user2>[] = [
             </Button>
         ),
     },
-    {
-        id: "actions",
-        cell: ({ row }) => {
-            return (
-                <>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <Edit className="h-4 w-4" />
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-                            <DialogHeader>
-                                <DialogTitle className="mb-4">View Course</DialogTitle>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <Eye className="h-5 w-5" />
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-                            <DialogHeader>
-                                <DialogTitle className="mb-4">View Course</DialogTitle>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-                </>
-            )
-        },
-    },
+    // {
+    //     id: "actions",
+    //     cell: ({ row }) => {
+    //         return (
+    //             <>
+    //                 <Dialog>
+    //                     <DialogTrigger asChild>
+    //                         <Button variant="ghost" className="h-8 w-8 p-0">
+    //                             <span className="sr-only">Open menu</span>
+    //                             <Edit className="h-4 w-4" />
+    //                         </Button>
+    //                     </DialogTrigger>
+    //                     <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+    //                         <DialogHeader>
+    //                             <DialogTitle className="mb-4">View Course</DialogTitle>
+    //                         </DialogHeader>
+    //                     </DialogContent>
+    //                 </Dialog>
+    //                 <Dialog>
+    //                     <DialogTrigger asChild>
+    //                         <Button variant="ghost" className="h-8 w-8 p-0">
+    //                             <span className="sr-only">Open menu</span>
+    //                             <Eye className="h-5 w-5" />
+    //                         </Button>
+    //                     </DialogTrigger>
+    //                     <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
+    //                         <DialogHeader>
+    //                             <DialogTitle className="mb-4">View Course</DialogTitle>
+    //                         </DialogHeader>
+    //                     </DialogContent>
+    //                 </Dialog>
+    //             </>
+    //         )
+    //     },
+    // },
 ]
