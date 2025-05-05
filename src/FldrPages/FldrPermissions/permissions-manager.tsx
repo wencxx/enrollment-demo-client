@@ -12,11 +12,18 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { toast } from "sonner";
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+  } from "@/components/ui/collapsible"
+  
   
 
 function GrantPermission() {
     const [groups, setGroups] = useState<Group[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [isOpen, setIsOpen] = useState<boolean>(true);
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
     const [allObjects, setAllObjects] = useState<string[]>([]);
 
@@ -101,17 +108,25 @@ function GrantPermission() {
 
     return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">User Groups</h2>
-
       {loading ? (
         <div className="text-center p-4">Loading groups...</div>
       ) : (
         <>
+        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <div className="flex items-center justify-between mb-2">
+            <h2 className="text-2xl font-bold mb-4">User Groups</h2>
+            <CollapsibleTrigger>
+                <Button variant="outline" size="sm">
+                    <span>Collapse</span>
+                </Button>
+            </CollapsibleTrigger>
+        </div>
+        <CollapsibleContent>
         <div className="rounded-md border">
-        <Table>
+        <Table className="text-lg">
         <TableHeader>
             <TableRow>
-            <TableHead className="w-[20%]">Group Code</TableHead>
+            <TableHead className="w-[30%]">Group Code</TableHead>
             <TableHead>Group Name</TableHead>
             </TableRow>
         </TableHeader>
@@ -129,16 +144,17 @@ function GrantPermission() {
         </TableBody>
         </Table>
         </div>
+        </CollapsibleContent>
+        </Collapsible>
         </>
       )}
 
       {selectedGroup && (
-        <div className="mt-8">
+        <div className="mt-2">
           <h3 className="text-xl font-semibold mb-4">
             Editing Permissions for: <span className="text-gray-600">{selectedGroup.groupName}</span>
           </h3>
 
-          {/* editor */}
           <div className="flex gap-8">
             <div className="w-1/2">
               <h4 className="font-bold mb-2">Allowed</h4>

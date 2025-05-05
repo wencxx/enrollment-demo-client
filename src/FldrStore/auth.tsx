@@ -47,6 +47,7 @@ interface AuthState {
   
         const permRes = await axios.get(`${plsConnect()}/api/Permission/ListPermissions?groupCode=${groupCode}`)
         // console.log("permissions para sa role:", permRes.data)
+        console.log("logging in as", user.groupName)
         const permissions = permRes.data.map((p: any) => p.objectName)
   
         sessionStorage.setItem('user', JSON.stringify(user))
@@ -61,9 +62,9 @@ interface AuthState {
           loading: false
         })
   
-        const role = user.groupName
-        if (role === 'Admin') navigate('/dashboard')
-        else if (role === 'Student') navigate('/student/application')
+        const role = user.groupCode
+        if (role === '01') navigate('/dashboard')
+        else if (role === '02') navigate('/student/application')
       } catch (error) {
         console.error(error)
         set({ auth: false, loading: false })

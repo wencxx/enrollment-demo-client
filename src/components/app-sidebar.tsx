@@ -93,63 +93,63 @@ const data = {
       title: "Entry",
       url: "#",
       icon: FileInput,
-      authorizeUsers: ['Admin'],
+      // authorizeUsers: ['01'],
       items: [
         {
           title: "Course",
           url: "entry/course",
-          authorizeUsers: ['Admin']
+          // authorizeUsers: ['01']
         },
         {
           title: "Professors",
           url: "entry/professors",
-          authorizeUsers: ['Admin']
+          // authorizeUsers: ['01']
         },
         {
           title: "High School",
           url: "entry/highschool",
-          authorizeUsers: ['Admin']
+          // authorizeUsers: ['01']
         },
         {
           title: "Elementary",
           url: "entry/elementary",
-          authorizeUsers: ['Admin']
+          // authorizeUsers: ['01']
         },
 
         {
           title: "Town/City",
           url: "entry/town",
-          authorizeUsers: ['Admin']
+          // authorizeUsers: ['01']
         },
         {
           title: "Room",
           url: "entry/room",
-          authorizeUsers: ['Admin']
+          // authorizeUsers: ['01']
         },
         {
           title: "Section",
           url: "entry/section",
-          authorizeUsers: ['Admin']
+          // authorizeUsers: ['01']
         },
         {
           title: "Rate 1",
           url: "entry/rate1",
-          authorizeUsers: ['Admin']
+          // authorizeUsers: ['01']
         },
         {
           title: "Rate 2",
           url: "entry/rate2",
-          authorizeUsers: ['Admin']
+          // authorizeUsers: ['01']
         },
         {
           title: "Rate Description",
           url: "entry/ratedesc",
-          authorizeUsers: ['Admin']
+          // authorizeUsers: ['01']
         },
         {
           title: "Enroll Description",
           url: "entry/enroll-description",
-          authorizeUsers: ['Admin']
+          // authorizeUsers: ['01']
         },
       ],
     },
@@ -159,22 +159,22 @@ const data = {
       title: "Enrollment",
       url: "#",
       icon: ChartColumn,
-      authorizeUsers: ['Admin'],
+      // authorizeUsers: ['01'],
       items: [
         {
           title: "Enrollment 1",
           url: "enrollment/enrollment1",
-          authorizeUsers: ['Admin']
+          // authorizeUsers: ['01']
         },
         {
           title: "Enrollment 2",
           url: "enrollment/enrollment2",
-          authorizeUsers: ['Admin']
+          authorizeUsers: ['01']
         },
         {
           title: "Enrollment 3",
           url: "enrollment/enrollment3",
-          authorizeUsers: ['Admin']
+          authorizeUsers: ['01']
         },
       ],
     },
@@ -206,13 +206,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </div>
         </SidebarMenuButton>
       </SidebarHeader>
-      <SidebarContent className="scrollbar-hidden">
+      {/* IGNORE THIS COMMENTED OUT PART */}
+      {/* <SidebarContent className="scrollbar-hidden">
         {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuDashboard} />}
         {(user && (user.groupName === 'Admin' || user.groupName === 'Student')) && <SingleMenu data={data.menuStudent} title="Student" />}
-        {/* {(user && (user.groupName === 'Student')) && <SingleMenu data={data.menuStudent} title="Student" />} */}
+        {(user && (user.groupName === 'Student')) && <SingleMenu data={data.menuStudent} title="Student" />}
         {(user && (user.groupName === 'Admin')) && <MenuMain items={data.menuMain} />}
         {(user && (user.groupName === 'Admin')) && <MenuEnrollment items={data.menuEnrollment} /> } 
         {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuPersmissions} title="Permissions" />}
+      </SidebarContent> */}
+      <SidebarContent className="scrollbar-hidden">
+        <SingleMenu data={data.menuDashboard} />
+        <SingleMenu data={data.menuStudent} title="Student" />
+        <MenuMain items={data.menuMain} />
+        <MenuEnrollment items={data.menuEnrollment} />
+        <SingleMenu data={data.menuPersmissions} title="Permissions" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
