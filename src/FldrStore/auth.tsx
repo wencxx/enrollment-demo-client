@@ -46,7 +46,7 @@ interface AuthState {
         const groupCode = user.groupCode
   
         const permRes = await axios.get(`${plsConnect()}/api/Permission/ListPermissions?groupCode=${groupCode}`)
-        console.log("permissions para sa role:", permRes.data)
+        // console.log("permissions para sa role:", permRes.data)
         const permissions = permRes.data.map((p: any) => p.objectName)
   
         sessionStorage.setItem('user', JSON.stringify(user))
