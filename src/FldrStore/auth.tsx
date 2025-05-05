@@ -17,15 +17,15 @@ interface AuthState {
   }
 
   const useAuthStore = create<AuthState>((set) => ({
-    currentUser: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
-    token: localStorage.getItem('token') || null,
-    auth: !!localStorage.getItem('token'),
-    permissions: localStorage.getItem('permissions') ? JSON.parse(localStorage.getItem('permissions')!) : [],
+    currentUser: sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')!) : null,
+    token: sessionStorage.getItem('token') || null,
+    auth: !!sessionStorage.getItem('token'),
+    permissions: sessionStorage.getItem('permissions') ? JSON.parse(sessionStorage.getItem('permissions')!) : [],
     loading: true,
     rehydrate: () => {
-        const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null
-        const token = localStorage.getItem('token')
-        const permissions = localStorage.getItem('permissions') ? JSON.parse(localStorage.getItem('permissions')!) : []
+        const user = sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')!) : null
+        const token = sessionStorage.getItem('token')
+        const permissions = sessionStorage.getItem('permissions') ? JSON.parse(sessionStorage.getItem('permissions')!) : []
     
         set({
           currentUser: user,
@@ -49,9 +49,9 @@ interface AuthState {
         console.log("permissions para sa role:", permRes.data)
         const permissions = permRes.data.map((p: any) => p.objectName)
   
-        localStorage.setItem('user', JSON.stringify(user))
-        localStorage.setItem('token', token)
-        localStorage.setItem('permissions', JSON.stringify(permissions))
+        sessionStorage.setItem('user', JSON.stringify(user))
+        sessionStorage.setItem('token', token)
+        sessionStorage.setItem('permissions', JSON.stringify(permissions))
   
         set({
           currentUser: user,
@@ -71,9 +71,9 @@ interface AuthState {
     },
   
     logout: () => {
-      localStorage.removeItem('user')
-      localStorage.removeItem('token')
-      localStorage.removeItem('permissions')
+      sessionStorage.removeItem('user')
+      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('permissions')
       set({ auth: false, currentUser: null, permissions: [], loading: false })
     }
   }))
