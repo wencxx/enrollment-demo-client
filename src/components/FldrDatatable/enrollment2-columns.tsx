@@ -1,14 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Eye, Ban } from "lucide-react"
+import { ArrowUpDown, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-
-// import { format } from "date-fns";
-// import { Badge } from "@/components/ui/badge"
-// import moment from 'moment'
-import { Enrollment2Col } from "@/FldrTypes/enrollment2"
 import { Badge } from "../ui/badge"
-
 import { useState } from "react"
 import {
   Dialog,
@@ -17,211 +11,125 @@ import {
   DialogTitle,
   DialogHeader
 } from "@/components/ui/dialog"
-import { VoidEnrolledForm } from "../FldrForm/voidEnrolled"
+import { Enrollment2Form } from "../FldrForm/entryenrollment2"
 
-export const columnsEnrolled: ColumnDef<Enrollment2Col>[] = [
-    {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
-    {
-        accessorKey: "pkCode",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    PK
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    {
-        accessorKey: "rowNum",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Row Num
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    {
-        accessorKey: "rdDesc",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Subject
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            )
-        },
-    },
-    {
-      accessorKey: "professorName",
-      header: ({ column }) => {
-          return (
-              <Button
-                  variant="ghost"
-                  onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-              >
-                  Professor
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-              </Button>
-          )
-      },
+export const columnsEnrolled: ColumnDef<any>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
-    accessorKey: "roomDesc",
+    accessorKey: "fullName",
     header: ({ column }) => {
-        return (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                Room
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        )
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Student Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
     },
-}, 
-{
-    accessorKey: "scheduleDayDesc",
+  },
+  {
+    accessorKey: "yearDesc",
     header: ({ column }) => {
-        return (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                Day
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        )
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Year
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
     },
-},
-{
-    accessorKey: "classStart",
+  },
+  {
+    accessorKey: "courseDesc",
     header: ({ column }) => {
-        return (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                Class Start
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        )
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Course
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
     },
+  },
+  {
+    accessorKey: "sectionDesc",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Section
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
+    id: "actions",
+    header: "Actions",
     cell: ({ row }) => {
-        const value = row.getValue("classStart");
-        console.log("Class Start value:", value); // Add this for debugging
-        return value || "N/A";
-    }
-},
-{
-    accessorKey: "classEnd",
-    header: ({ column }) => {
-        return (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                Class End
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        )
-    },
-},
-{
-    accessorKey: "noUnits",
-    header: ({ column }) => {
-        return (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                Units
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        )
-    },
-},
-{
-    accessorKey: "amount",
-    header: ({ column }) => {
-        return (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                Amount
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        )
-    },
-},
+      const [isDialogOpen, setIsDialogOpen] = useState(false);
+      const student = {
+        pkCode: row.original.pkCode,
+        firstName: row.original.FirstName,
+        middleName: row.original.MiddleName || "",
+        lastName: row.original.LastName,
+        fullName: row.original.fullName,
+        courseDesc: row.original.courseDesc,
+        courseCode: row.original.courseCode,
+        yearDesc: row.original.yearDesc,
+        yearCode: row.original.yearCode,
+        sectionDesc: row.original.sectionDesc
+      };
 
-    // {
-    //     id: "actions",
-    //     cell: ({ row }) => {
-    //       const [isVoidDialogOpen, setIsVoidDialogOpen] = useState(false);
-    //       const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
-          
-    //       const [studentCode, setStudentCode] = useState("");
-
-    //       const handleDialogOpen = (code: string) => {
-    //         setStudentCode(code);
-    //         setIsVoidDialogOpen(true);
-    //       };
-
-    //       const closeModal = () => {
-    //         setIsVoidDialogOpen(false)
-    //       }
-    //       return (
-    //         <>  
-    //             <Dialog open={isVoidDialogOpen} onOpenChange={setIsVoidDialogOpen}>
-    //                 <DialogTrigger asChild>
-    //                 <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.studentCode)}>
-    //                     <span className="sr-only">Open menu</span>
-    //                     <Ban className="h-4 w-4" />
-    //                 </Button>
-    //                 </DialogTrigger>
-    //                 <DialogContent className="max-h-[90vh] overflow-y-auto" aria-labelledby="dialog-title">
-    //                     <DialogHeader>
-    //                     {/* <DialogTitle className="mb-4">Void enrolled student</DialogTitle> */}
-    //                     </DialogHeader>
-    //                     <VoidEnrolledForm studentCode={studentCode} closeModal={closeModal}/>
-    //                 </DialogContent>
-    //             </Dialog>
-    //         </>
-    //       )
-    //     },
-    //   },
+      return (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="flex items-center gap-1">
+              <Plus className="h-3.5 w-3.5" />
+              <span>Enroll</span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[70dvw] lg:!max-w-[60dvw]">
+            <DialogHeader>
+              <DialogTitle>Enroll Student: {student.fullName}</DialogTitle>
+            </DialogHeader>
+            <Enrollment2Form 
+              onSubmitSuccess={() => setIsDialogOpen(false)} 
+              onAddRate={() => {}} 
+              preselectedStudent={student}
+            />
+          </DialogContent>
+        </Dialog>
+      )
+    },
+  },
 ]
