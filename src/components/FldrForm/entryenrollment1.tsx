@@ -122,7 +122,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
           name="studentCode"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Student</FormLabel>
+              <FormLabel className="text-md">Student</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -133,7 +133,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
                       className={cn(
                             "flex w-auto justify-between items-start text-left gap-2 min-h-[2.5rem] h-auto",
                             !field.value && "text-muted-foreground",
-                            "whitespace-normal break-words p-2",
+                            "whitespace-normal break-words p-2 text-md",
                             "not-muted-disabled"
                         )}
                     >
@@ -188,7 +188,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
           name="pkedCode"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Enrollment Description</FormLabel>
+              <FormLabel className="text-md">Enrollment Description</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -198,7 +198,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
                       className={cn(
                         "flex w-auto justify-between items-start text-left gap-2 min-h-[2.5rem] h-auto",
                         !field.value && "text-muted-foreground",
-                        "whitespace-normal break-words p-2"
+                        "whitespace-normal break-words p-2 text-md"
                     )}
                     >
                       {field.value
@@ -263,7 +263,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>Regular</FormLabel>
+                    <FormLabel className="text-md">Regular</FormLabel>
                   </div>
                 </FormItem>
               )}

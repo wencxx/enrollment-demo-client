@@ -59,6 +59,7 @@ export function NavUser() {
 
   const handleLogout = () => {
     store.logout()
+    window.location.href = "/login"
   }
 
   const updateTheme = (color: string) => {
@@ -190,7 +191,7 @@ export function NavUser() {
             >
               {user && (
                 <Avatar className="h-8 w-8 rounded-lg !text-black dark:!text-white">
-                  <AvatarImage src={user?.groupName} alt={user?.groupName} />
+                  <AvatarImage src={user?.groupCode} alt={user?.groupCode} />
                   {user.fullName && (
                     <AvatarFallback className="rounded-lg uppercase">{user.fullName ? user.fullName.split(' ')[0].slice(0, 1) + user.fullName.split(' ')[1].slice(0, 1) : ''}</AvatarFallback>
                   )}
