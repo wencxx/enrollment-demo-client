@@ -17,19 +17,6 @@ import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { group } from "@/FldrTypes/group";
 import { User } from "@/FldrTypes/user";
 
-const data = [
-    {
-        fullName: 'Wency Baterna',
-        userName: 'wencxx',
-        groupName: 'Admin',
-    },
-    {
-        fullName: 'Windill Salleva',
-        userName: 'wndll',
-        groupName: 'Cutie',
-    }
-]
-
 function Users() {
     const [groups, setGroups] = useState<group[]>([])
     const [users, setUsers] = useState<User[]>([])
