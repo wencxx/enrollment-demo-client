@@ -26,11 +26,11 @@ export function MenuEnrollment({
     url: string
     icon?: LucideIcon
     isActive?: boolean
-    authorizeUsers: string[]
+    // authorizeUsers: string[]
     items?: {
       title: string
       url: string,
-      authorizeUsers: string[]
+      // authorizeUsers: string[]
     }[]
   }[]
 }) {
@@ -49,7 +49,7 @@ export function MenuEnrollment({
             key={item.title}
             asChild
             defaultOpen={item.isActive}
-            className={`group/collapsible ${user && !item.authorizeUsers?.includes(user.groupName) && 'hidden'}`}
+            // className={`group/collapsible ${user && !item.authorizeUsers?.includes(user.groupCode) && 'hidden'}`}
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -62,7 +62,8 @@ export function MenuEnrollment({
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem className={`${user && !subItem.authorizeUsers?.includes(user.groupName) && 'hidden'}`} key={subItem.title}>
+                    // <SidebarMenuSubItem className={`${user && !subItem.authorizeUsers?.includes(user.groupCode) && 'hidden'}`} key={subItem.title}>
+                    <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
                         <NavLink to={subItem.url} className={`${subItem.url === location.pathname.slice(1) && 'bg-gray-100'}`}>
                           <span>{subItem.title}</span>

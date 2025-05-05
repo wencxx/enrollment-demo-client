@@ -71,10 +71,10 @@ function Login({
 
     useEffect(() => {
         if (authenticated) {
-            const role = store.currentUser?.groupName
-            if (role === 'Admin') {
+            const role = store.currentUser?.groupCode
+            if (role === '01') {
                 navigate('/')
-            } else if (role === 'Student') {
+            } else if (role === '02') {
                 navigate('/student/application')
             } else {
                 navigate('/')

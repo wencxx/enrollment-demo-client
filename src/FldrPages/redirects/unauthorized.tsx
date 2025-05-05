@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 
 export default function Unauthorized() {
+  console.log("Unauthorized page loaded")
   const handleGoBack = () => {
     window.history.go(-3)
   }
