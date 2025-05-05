@@ -59,6 +59,7 @@ export function NavUser() {
 
   const handleLogout = () => {
     store.logout()
+    window.location.href = "/login"
   }
 
   const updateTheme = (color: string) => {
