@@ -13,5 +13,6 @@ export type User = {
 
 export type user2 = {
     fullName: string,
-    userName: string
+    userName: string,
+    userCode: string
 }

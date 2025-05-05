@@ -85,3 +85,8 @@ export type EnrollStatusCol = {
     enrollStatusCode: string
     enrollStatusDesc: string
 }
+
+export type GroupCol = {
+    groupCode: string
+    groupName: string
+}
