@@ -56,6 +56,7 @@ type Enrollment2FormProps = {
   preselectedStudent: Student;
 };
 
+
 export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent }: Enrollment2FormProps) {
   const form = useForm<EnrollmentFormData>({
     resolver: zodResolver(formSchema),
@@ -63,6 +64,67 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
   });
 
   const { control, handleSubmit } = form;
+
+
+//export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormProps) {
+ // const form = useForm<EnrollmentFormData>({
+   // resolver: zodResolver(formSchema),
+
+// type ComboOption = { label: string; value: string };
+
+
+// type mapData = {
+//   label: string;
+//   value: string;
+// }
+
+// export function Enrollment2Form({ closeModal }: Enrollment2FormProps) { 
+
+// export function Enrollment2Form({ onSubmitSuccess, onAddRate }: Enrollment2FormProps) {
+
+//   const form = useForm<Enrollment2FormData>({
+//     resolver: zodResolver(
+//       z.object({
+//         pkCode: z.string().min(1, { message: "Select a student." }),
+//         rows: z
+//           .array(enrollment2Schema.omit({ pkCode: true }))
+//           .min(1, "At least one subject is required."),
+//       })
+//     ),
+  //  defaultValues: {
+   //   pkCode: "",
+   // },
+ // });
+
+
+  //const { control, handleSubmit, setValue } = form;
+
+// WENCY CHANGES:
+//  const [student, setStudent] = useState<mapData[]>([])
+
+//   async function fetchStudent() {
+//     try {
+//       const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`)
+//       const mappedStudent = response.data.map((item: StudentCol) => ({
+//           label: `${item.firstName} ${item.middleName} ${item.lastName}`,
+//           value: item.pkCode,
+//       }))
+//       setStudent(mappedStudent)
+//     } catch (error: any) {
+//         console.error("Error fetching students:", error)
+//     }
+//   }
+
+//   const [rates, setRate] = useState<mapData[]>([]);
+
+ //const { control, handleSubmit, setValue, watch } = form;
+ // const { fields, append, remove } = useFieldArray({
+  //  control,
+  //  name: "rows",
+ // }); 
+
+
+  //const [students, setStudents] = useState<ComboOption[]>([]);
 
   const [courses, setCourses] = useState<ComboOption[]>([]);
   const [years, setYears] = useState<ComboOption[]>([]);
