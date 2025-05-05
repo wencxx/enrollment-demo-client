@@ -61,7 +61,7 @@ export type StudentCol = {
 export type EnrollDescCol = {
     pkedCode: string
     yearDesc: string
-    courseDesc: number
+    courseDesc: string
     semDesc: string
     sectionDesc: string
     aYearDesc: string
@@ -79,6 +79,9 @@ export type Enrollment1Col = {
     middleName: string
     lastName: string
     suffix: string
+    tDate: string
+    regularStudent: boolean
+    approveStudent: boolean
 }
 
 export type EnrollStatusCol = {
