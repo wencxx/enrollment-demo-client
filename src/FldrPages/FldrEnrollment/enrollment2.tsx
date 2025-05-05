@@ -36,7 +36,7 @@ export default function Enrollment2() {
   return (
     <>
       <div className="container mx-auto py-4">
-        <h1 className="text-2xl font-bold mb-6">Subject Enrollment</h1>
+        <h1 className="text-2xl font-bold mb-6">Subject Loading</h1>
         
         <ScrollArea className="overflow-x-auto min-w-full whitespace-nowrap rounded-md">
           <DataTable 

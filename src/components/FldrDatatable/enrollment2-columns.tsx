@@ -120,7 +120,9 @@ export const columnsEnrolled: ColumnDef<any>[] = [
           </DialogTrigger>
           <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[70dvw] lg:!max-w-[60dvw]">
             <DialogHeader>
-              <DialogTitle>Enroll Student: {student.fullName}</DialogTitle>
+              <DialogTitle>Load Subjects for Student 
+                {/* {student.fullName} */}
+                </DialogTitle>
             </DialogHeader>
             <Enrollment2Form 
               onSubmitSuccess={() => setIsDialogOpen(false)} 
