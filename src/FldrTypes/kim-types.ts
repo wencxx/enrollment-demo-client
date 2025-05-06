@@ -44,7 +44,7 @@ export type Rate2Col = {
 export type StudentCol = {
     studentCode: string
     studentID: string
-    firstName: number
+    firstName: string
     middleName: string
     lastName: string
     suffix: string
@@ -52,7 +52,7 @@ export type StudentCol = {
     genderCode: string
 
     address: string
-    birthDate: Date
+    birthDate: string
     contactNo: string
     emailAddress: string
     userCode: string

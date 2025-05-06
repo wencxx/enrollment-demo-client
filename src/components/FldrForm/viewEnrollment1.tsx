@@ -68,7 +68,7 @@ export function ViewEnrollment1Form({ toEdit, onCancel }: Props) {
               <p className="text-lg font-medium">{displayValue(student?.studentCode)}</p>
             </div>
             <div>
-              <h3 className="text-sm font-medium text-gray-500">Date</h3>
+              <h3 className="text-sm font-medium text-gray-500">Transaction Date</h3>
               <p className="text-lg font-medium">{displayValue(enrollmentData?.tDate)}</p>
             </div>
             <div>
