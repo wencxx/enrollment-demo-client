@@ -76,7 +76,7 @@ export default function Enrollment1() {
         <div className="space-x-2">
         <Tabs defaultValue="pending" className="w-[full]">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="pending">Applicants</TabsTrigger>
             <TabsTrigger value="old">Continuing</TabsTrigger>
             <TabsTrigger value="allStudents">All</TabsTrigger>
             <TabsTrigger value="approved">Approved Enrollments</TabsTrigger>
@@ -87,7 +87,7 @@ export default function Enrollment1() {
                 columns={pendingColumn} 
                 data={pending} 
                 loading={loading} 
-                title="new students" 
+                title="new applicants" 
                 onRefresh={getData}
               />
             </div>

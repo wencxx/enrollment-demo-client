@@ -5,13 +5,25 @@ import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { useEffect, useState } from "react";
 
+interface Student {
+    enrollStatusCode: string; //whether approved or pending or disapproved
+    [key: string]: any;
+  }
+
+  interface EnrollmentStatus {
+    regularStudent: boolean;
+    [key: string]: any;
+  }
+
 function Dashboard() {
     const [studentCount, setStudentCount] = useState({
         applicant: 0,
+        enrolled: 0
+    });
+    const [enrolledCount, setEnrolledCount] = useState({
         irregular: 0,
         regular: 0,
     });
-    const [studentsCount, setStudentsCount] = useState([]);
     const [yearComparison, setYearComparison] = useState({
         regularChange: 0,
         irregularChange: 0
@@ -61,6 +73,39 @@ function Dashboard() {
     //     console.log("Data passed to ChartMain:", studentsCount);
     // }, [studentsCount]);
 
+    useEffect(() => {
+        const fetchCount = async () => {
+          try {
+            const studentRes = await axios.get<[Student]>(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`);
+            const students = studentRes.data;
+
+            const enrollStatusRes = await axios.get<[EnrollmentStatus]>(`${plsConnect()}/API/WEBAPI/Enrollment1Controller/ListEnrollment1`);
+            const enrollStatus = enrollStatusRes.data;
+      
+            const applicants = students.filter((student) => student.enrollStatusCode === "1").length;
+            const enrolled = students.filter((student) => student.enrollStatusCode === "2").length;
+            
+            const regular = enrollStatus.filter((status) => status.regularStudent === true).length;
+            const irregular = enrollStatus.filter((status) => status.regularStudent === false).length;
+
+            setStudentCount({
+              applicant: applicants,
+              enrolled: enrolled,
+            });
+
+            setEnrolledCount({
+                regular: regular,
+                irregular: irregular,
+              });
+
+          } catch (error) {
+            console.error("Error fetching student data:", error);
+          }
+        };
+      
+        fetchCount();
+      }, []);
+
     const cardData = [
         {
             title: 'Applicants',
@@ -70,17 +115,17 @@ function Dashboard() {
         {
             title: 'Enrolled students',
             icon: UserCheck,
-            data: studentCount.regular + studentCount.irregular
+            data: studentCount.enrolled
         },
         {
             title: 'Regular students',
             icon: User,
-            data: studentCount.regular
+            data: enrolledCount.regular
         },
         {
             title: 'Irregular students',
             icon: User,
-            data: studentCount.irregular
+            data: enrolledCount.irregular
         }
     ]
 
@@ -95,20 +140,20 @@ function Dashboard() {
                                 <card.icon />
                             </div>
                             <div>
-                                <h4 className="text-4xl font-bold">+{card.data}</h4>
-                                <p className="text-sm font-semibold text-neutral-700">+20% from last year</p>
+                                <h4 className="text-4xl font-bold">{card.data}</h4>
+                                {/* <p className="text-sm font-semibold text-neutral-700">+20% from last year</p> */}
                             </div>
                         </Card>
                     ))}
                 </div>
-                <div className="grid auto-rows-min gap-4 lg:grid-cols-2">
+                {/* <div className="grid auto-rows-min gap-4 lg:grid-cols-2">
                     <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
                         <ChartMain chartData={studentsCount} title="Number of students categorized by status" />
                     </Card>
                     <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
                         <ChartMain chartData={studentsCount} defaultChart={'bar'} title="Number of students categorized by gender" />
                     </Card>
-                </div>
+                </div> */}
             </div>
         </>
     );
