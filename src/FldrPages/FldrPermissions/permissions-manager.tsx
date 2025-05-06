@@ -117,13 +117,13 @@ function GrantPermission() {
             <h2 className="text-2xl font-bold mb-4">User Groups</h2>
             <CollapsibleTrigger>
                 <Button variant="outline" size="sm">
-                    <span>Collapse</span>
+                    <span>{isOpen ? "Hide" : "Show"}</span>
                 </Button>
             </CollapsibleTrigger>
         </div>
         <CollapsibleContent>
         <div className="rounded-md border">
-        <Table className="text-lg">
+        <Table className="text-md">
         <TableHeader>
             <TableRow>
             <TableHead className="w-[30%]">Group Code</TableHead>

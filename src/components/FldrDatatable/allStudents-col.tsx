@@ -115,7 +115,7 @@ export const allStudentsCol: ColumnDef<StudentCol>[] = [
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
                 <DialogTitle>
-                  <h2 className="text-lg font-semibold">Student details</h2>
+                  <h2 className="text-lg font-semibold ps-6">Student details</h2>
                 </DialogTitle>
                 <ViewStudent
                   toEdit={code} 

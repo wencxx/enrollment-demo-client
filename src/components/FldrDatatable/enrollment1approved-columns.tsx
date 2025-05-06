@@ -123,7 +123,7 @@ export const approvedColumns: ColumnDef<Enrollment1Col>[] = [
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
                 <DialogTitle>
-                  <h2 className="text-lg font-semibold">Enrollment details</h2>
+                  <h2 className="text-lg font-semibold ps-6">Enrollment details</h2>
                 </DialogTitle>
                 {/* list of details */}
                 <ViewEnrollment1Form
