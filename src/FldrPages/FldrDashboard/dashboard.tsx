@@ -1,5 +1,5 @@
 import { UserCheck, UserPen, User } from "lucide-react";
-import { Card } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartMain } from "@/components/Fldrcharts/chart-main";
 import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
@@ -13,6 +13,8 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
+import RegularChart from "@/components/Fldrcharts/regular-chart";
+import { title } from "process";
 
 function Dashboard() {
     const [academicYears, setAcademicYears] = useState<AYCol[]>([]);
@@ -25,10 +27,14 @@ function Dashboard() {
         irregular: 0,
         regular: 0,
     });
-    // const [yearComparison, setYearComparison] = useState({
-    //     regularChange: 0,
-    //     irregularChange: 0
-    // })
+
+    // charts
+    const [chartData, setChartData] = useState<
+        { year: string; regular: number; irregular: number }[]
+    >([]);
+
+    const [startYear, setStartYear] = useState("");
+    const [endYear, setEndYear] = useState("");
 
     useEffect(() => {
         const fetchCount = async () => {
@@ -96,10 +102,29 @@ function Dashboard() {
         fetchAcademicYears();
     }, []);
 
+    const fetchChartData = async (startYear: string, endYear: string) => {
+        try {
+          const response = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/GetCountsByYearRange`, {
+            params: { startYear, endYear },
+          });
+    
+          const data = response.data; // Assume the API returns an array of { year, regular, irregular }
+          setChartData(data);
+        } catch (error) {
+          console.error("Error fetching chart data:", error);
+        }
+      };
+    
+      useEffect(() => {
+        if (startYear && endYear) {
+          fetchChartData(startYear, endYear);
+        }
+      }, [startYear, endYear]);
+
     return (
         <>
             <div className="flex flex-col gap-4">
-                <div className="flex justify-end mb-4">
+                <div className="flex mb-2">
                 <Select 
                     value={selectedYear}
                     onValueChange={(value) => setSelectedYear(value)} // Use onValueChange for functionality
@@ -118,6 +143,7 @@ function Dashboard() {
                     </SelectContent>
                 </Select>
                 </div>
+                
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
                     {cardData.map((card) => (
                         <Card key={card.title} className="h-fit rounded-xl p-5">
@@ -132,14 +158,57 @@ function Dashboard() {
                         </Card>
                     ))}
                 </div>
-                {/* <div className="grid auto-rows-min gap-4 lg:grid-cols-2">
+                <div className="flex gap-4 mb-2">
+                <Select
+                    value={startYear}
+                    onValueChange={(value) => setStartYear(value)}
+                >
+                    <SelectTrigger className="w-[180px] border rounded px-4 py-2">
+                    <SelectValue placeholder="Start AY" />
+                    </SelectTrigger>
+                    <SelectContent>
+                    <SelectGroup>
+                        {academicYears.map((year) => (
+                        <SelectItem key={year.aYearCode} value={year.aYearCode}>
+                            {year.aYearDesc}
+                        </SelectItem>
+                        ))}
+                    </SelectGroup>
+                    </SelectContent>
+                </Select>
+
+                <Select
+                    value={endYear}
+                    onValueChange={(value) => setEndYear(value)}
+                >
+                    <SelectTrigger className="w-[180px] border rounded px-4 py-2">
+                    <SelectValue placeholder="End AY" />
+                    </SelectTrigger>
+                    <SelectContent>
+                    <SelectGroup>
+                        {academicYears.map((year) => (
+                        <SelectItem key={year.aYearCode} value={year.aYearCode}>
+                            {year.aYearDesc}
+                        </SelectItem>
+                        ))}
+                    </SelectGroup>
+                    </SelectContent>
+                </Select>
+                </div>
+                {/* add charts */}
+                <div className="grid auto-rows-min gap-4 lg:grid-cols-2">
                     <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
-                        <ChartMain chartData={studentsCount} title="Number of students categorized by status" />
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                            <span>Regular vs Irregular Students by Academic Year</span>
+                            </CardTitle>
+                        </CardHeader>
+                        <RegularChart data={chartData} />
                     </Card>
                     <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
-                        <ChartMain chartData={studentsCount} defaultChart={'bar'} title="Number of students categorized by gender" />
+                        {/* gender */}
                     </Card>
-                </div> */}
+                </div>
             </div>
         </>
     );
