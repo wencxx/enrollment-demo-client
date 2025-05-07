@@ -4,11 +4,13 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
 
 interface ChartData {
   year: string;
-  regular: number;
-  irregular: number;
+  yearDesc: string;
+  male: number;
+  female: number;
+  other: number;
 }
 
-const RegularChart = ({ data }: { data: ChartData[] }) => {
+const GenderChart = ({ data }: { data: ChartData[] }) => {
   return (
     <div className="p-4">
       <ChartContainer config={lineConfig}>
@@ -30,15 +32,21 @@ const RegularChart = ({ data }: { data: ChartData[] }) => {
           <YAxis />
           <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
                   <Bar
-                    dataKey="regular"
+                    dataKey="male"
                     type="monotone"
                     fill="var(--color-regular)"
                     strokeWidth={2}
                   />
                   <Bar
-                    dataKey="irregular"
+                    dataKey="female"
                     type="monotone"
                     fill="var(--color-irregular)"
+                    strokeWidth={2}
+                  />
+                  <Bar
+                    dataKey="other"
+                    type="monotone"
+                    fill="var(--color-other)"
                     strokeWidth={2}
                   />
         </BarChart>
@@ -47,4 +55,4 @@ const RegularChart = ({ data }: { data: ChartData[] }) => {
   );
 };
 
-export default RegularChart;
+export default GenderChart;

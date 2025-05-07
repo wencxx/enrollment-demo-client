@@ -1,6 +1,5 @@
 import { UserCheck, UserPen, User } from "lucide-react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChartMain } from "@/components/Fldrcharts/chart-main";
 import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { useEffect, useState } from "react";
@@ -14,11 +13,14 @@ import {
     SelectValue,
   } from "@/components/ui/select"
 import RegularChart from "@/components/Fldrcharts/regular-chart";
-import { title } from "process";
+import GenderChart from "@/components/Fldrcharts/gender-chart";
 
 function Dashboard() {
+    // to populate kay wala ta "current year"
+    const defaultYear = "001";
+
     const [academicYears, setAcademicYears] = useState<AYCol[]>([]);
-    const [selectedYear, setSelectedYear] = useState("");
+    const [selectedYear, setSelectedYear] = useState(defaultYear);
     const [studentCount, setStudentCount] = useState({
         applicant: 0,
         enrolled: 0
@@ -29,12 +31,15 @@ function Dashboard() {
     });
 
     // charts
-    const [chartData, setChartData] = useState<
-        { year: string; regular: number; irregular: number }[]
+    const [regChartData, setRegChartData] = useState<
+        { year: string; yearDesc: string; regular: number; irregular: number }[]
+    >([]);
+    const [genderChartData, setGenderChartData] = useState<
+        { year: string; yearDesc: string; male: number; female: number; other: number; }[]
     >([]);
 
-    const [startYear, setStartYear] = useState("");
-    const [endYear, setEndYear] = useState("");
+    const [startYear, setStartYear] = useState(defaultYear);
+    const [endYear, setEndYear] = useState(defaultYear);
 
     useEffect(() => {
         const fetchCount = async () => {
@@ -104,12 +109,17 @@ function Dashboard() {
 
     const fetchChartData = async (startYear: string, endYear: string) => {
         try {
-          const response = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/GetCountsByYearRange`, {
+          const responseReg = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/GetRegularData`, {
             params: { startYear, endYear },
           });
-    
-          const data = response.data; // Assume the API returns an array of { year, regular, irregular }
-          setChartData(data);
+          const regData = responseReg.data;
+          setRegChartData(regData);
+
+          const responseGender = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/GetGenderData`, {
+            params: { startYear, endYear },
+          });
+          const genderData = responseGender.data;
+          setGenderChartData(genderData);
         } catch (error) {
           console.error("Error fetching chart data:", error);
         }
@@ -124,10 +134,10 @@ function Dashboard() {
     return (
         <>
             <div className="flex flex-col gap-4">
-                <div className="flex mb-2">
+                <div className="flex">
                 <Select 
                     value={selectedYear}
-                    onValueChange={(value) => setSelectedYear(value)} // Use onValueChange for functionality
+                    onValueChange={(value) => setSelectedYear(value)}
                     >
                     <SelectTrigger className="w-[180px] border rounded px-4 py-2">
                         <SelectValue placeholder="Select AY" />
@@ -158,55 +168,61 @@ function Dashboard() {
                         </Card>
                     ))}
                 </div>
-                <div className="flex gap-4 mb-2">
-                <Select
-                    value={startYear}
-                    onValueChange={(value) => setStartYear(value)}
-                >
-                    <SelectTrigger className="w-[180px] border rounded px-4 py-2">
-                    <SelectValue placeholder="Start AY" />
-                    </SelectTrigger>
-                    <SelectContent>
-                    <SelectGroup>
-                        {academicYears.map((year) => (
-                        <SelectItem key={year.aYearCode} value={year.aYearCode}>
-                            {year.aYearDesc}
-                        </SelectItem>
-                        ))}
-                    </SelectGroup>
-                    </SelectContent>
-                </Select>
-
-                <Select
-                    value={endYear}
-                    onValueChange={(value) => setEndYear(value)}
-                >
-                    <SelectTrigger className="w-[180px] border rounded px-4 py-2">
-                    <SelectValue placeholder="End AY" />
-                    </SelectTrigger>
-                    <SelectContent>
-                    <SelectGroup>
-                        {academicYears.map((year) => (
-                        <SelectItem key={year.aYearCode} value={year.aYearCode}>
-                            {year.aYearDesc}
-                        </SelectItem>
-                        ))}
-                    </SelectGroup>
-                    </SelectContent>
-                </Select>
+                <div className="flex items-center gap-4">
+                        <h3 className="text-sm font-medium text-gray-500">From</h3>
+                        <Select
+                            value={startYear}
+                            onValueChange={(value) => setStartYear(value)}
+                        >
+                            <SelectTrigger className="w-[30] border rounded px-4 py-2">
+                            <SelectValue placeholder="Start AY" />
+                            </SelectTrigger>
+                            <SelectContent>
+                            <SelectGroup>
+                                {academicYears.map((year) => (
+                                <SelectItem key={year.aYearCode} value={year.aYearCode}>
+                                    {year.aYearDesc}
+                                </SelectItem>
+                                ))}
+                            </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                        <h3 className="text-sm font-medium text-gray-500">To</h3>
+                        <Select
+                            value={endYear}
+                            onValueChange={(value) => setEndYear(value)}
+                        >
+                            <SelectTrigger className="w-[30] border rounded px-4 py-2">
+                            <SelectValue placeholder="End AY" />
+                            </SelectTrigger>
+                            <SelectContent>
+                            <SelectGroup>
+                                {academicYears.map((year) => (
+                                <SelectItem key={year.aYearCode} value={year.aYearCode}>
+                                    {year.aYearDesc}
+                                </SelectItem>
+                                ))}
+                            </SelectGroup>
+                            </SelectContent>
+                        </Select>
                 </div>
-                {/* add charts */}
+                
                 <div className="grid auto-rows-min gap-4 lg:grid-cols-2">
                     <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
                         <CardHeader>
                             <CardTitle className="flex justify-between items-center">
-                            <span>Regular vs Irregular Students by Academic Year</span>
+                            <span>Student Status</span>
                             </CardTitle>
                         </CardHeader>
-                        <RegularChart data={chartData} />
+                        <RegularChart data={regChartData} />
                     </Card>
                     <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
-                        {/* gender */}
+                    <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                            <span>Gender</span>
+                            </CardTitle>
+                        </CardHeader>
+                        <GenderChart data={genderChartData} />
                     </Card>
                 </div>
             </div>
