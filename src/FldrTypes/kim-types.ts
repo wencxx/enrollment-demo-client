@@ -93,3 +93,8 @@ export type GroupCol = {
     groupCode: string
     groupName: string
 }
+
+export type AYCol = {
+    aYearCode: string
+    aYearDesc: string
+}

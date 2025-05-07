@@ -1,5 +1,4 @@
-export type StudentsCount =  {
-    year: number,
-    regular: number,
-    irregular: number,
-}
+export type StudentsCount = {
+    label: string;
+    value: number;
+  };
