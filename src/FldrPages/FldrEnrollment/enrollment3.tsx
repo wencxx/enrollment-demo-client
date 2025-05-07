@@ -8,38 +8,36 @@ import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
 import { Plus } from 'lucide-react'
 import { useState, useEffect } from "react"
-import { Enrollment1Col } from "@/FldrTypes/enrollment1"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { columnsEnrolled } from "@/components/FldrDatatable/enrollment2-columns";
+import { columnsEnrolled } from "@/components/FldrDatatable/enrollment3-columns";
 import { DataTable } from "@/components/FldrDatatable/data-table";
 import { DialogTitle } from "@radix-ui/react-dialog"
+import { Enrollment3Type2 } from "@/FldrTypes/enrollment3"
 
 export default function Enrollment3() {
   const [isDialogOpen, setDialogOpen] = useState(false)
-  // enrolled students
-  const [list, setList] = useState<Enrollment1Col[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [list, setList] = useState<Enrollment3Type2[]>([])
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const fetchEnrollment1 = async () => {
+  const fetchEnrollment3 = async () => {
     try {
-      setLoading(true)
-      const response = await axios.get<Enrollment1Col[]>(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`);
-      const updatedData = response.data.map((item) => ({
-        ...item,
-        fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}`,
-      }));
-      setList(updatedData);
+      const res = await axios.get(`${plsConnect()}/WebApi/Assessment/Enrollment3`);
+
+      if (res.status === 200) {
+        setList(res.data)
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
+
   useEffect(() => {
-    fetchEnrollment1();
+    fetchEnrollment3();
   }, []);
 
   return (
@@ -53,7 +51,7 @@ export default function Enrollment3() {
         </DialogTrigger>
         <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[60dvw] lg:!max-w-[50dvw]" aria-labelledby="dialog-title">
           <DialogTitle id="dialog-title" className="text-lg font-medium">Enrollment 3</DialogTitle>
-          <Enrollment3Form/>
+          <Enrollment3Form setList={setList} setDialogOpen={setDialogOpen} />
         </DialogContent>
       </Dialog>
 
@@ -61,7 +59,6 @@ export default function Enrollment3() {
         <DataTable columns={columnsEnrolled} data={list} loading={loading} title="approved students" />
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
-
       <Toaster />
     </>
   )

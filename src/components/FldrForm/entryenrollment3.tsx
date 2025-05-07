@@ -2,12 +2,10 @@ import { enrollment3Schema } from "@/FldrSchema/userSchema.ts"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { StudentCol } from "@/FldrTypes/students-col"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
-import { Plus, Minus, ChevronsUpDown, Check } from 'lucide-react'
+import { ChevronsUpDown, Check } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -17,15 +15,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import useAuthStore from "@/FldrStore/auth"
-import { RateCol } from "@/components/FldrDatatable/rate-columns";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -41,21 +30,18 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { cn } from "@/lib/utils"
-
-type Enrollment2FormData = {
-  pkCode: string;
-  credit: number;
-  debit: number;
-  remarks: string;
-};
+import { Enrollment3Type } from "@/FldrTypes/enrollment3"
+import { toast } from "sonner"
+import { Enrollment3Type2 } from "@/FldrTypes/enrollment3"
 
 type mapStudentsCol = {
   label: string;
   value: string;
+  totalAmount: number;
 }
 
-export function Enrollment3Form() {
-  const form = useForm<Enrollment2FormData>({
+export function Enrollment3Form({ setList, setDialogOpen }: { setList: React.Dispatch<React.SetStateAction<Enrollment3Type2[]>>, setDialogOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+  const form = useForm<Enrollment3Type2>({
     resolver: zodResolver(enrollment3Schema),
     defaultValues: {
       pkCode: "",
@@ -68,27 +54,56 @@ export function Enrollment3Form() {
 
   const [student, setStudent] = useState<mapStudentsCol[]>([])
 
-  async function fetchStudent() {
+
+  const fetchEnrollment2 = async () => {
     try {
-      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollment1WithName`)
-      const mappedStudent = response.data.map((item: StudentCol) => ({
-        label: `${item.firstName} ${item.middleName} ${item.lastName}`,
-        value: item.pkCode,
-      }))
-      setStudent(mappedStudent)
-    } catch (error: any) {
-      console.error("Error fetching students:", error)
+      const res = await axios.get(`${plsConnect()}/api/Enrollment2/AllData`);
+
+      if (res.status) {
+        const studentMap = new Map<string, mapStudentsCol>();
+
+        res.data.forEach((item: Enrollment3Type) => {
+          const fullName = `${item.firstName} ${item.middleName} ${item.lastName}`;
+          const existing = studentMap.get(item.pkCode);
+
+          if (existing) {
+            existing.totalAmount += item.amount;
+          } else {
+            studentMap.set(item.pkCode, {
+              label: fullName,
+              value: item.pkCode,
+              totalAmount: item.amount,
+            });
+          }
+        });
+
+        const aggregatedStudents = Array.from(studentMap.values());
+        setStudent(aggregatedStudents);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
-  }
+  };
+
 
   useEffect(() => {
-    fetchStudent()
-  }, [])
+    fetchEnrollment2();
+  }, []);
 
+  const onSubmit = async (values: Enrollment3Type2) => {
+    try {
+      const res = await axios.post(`${plsConnect()}/WebApi/Assessment/Enrollment3/${values.pkCode}`, values);
 
-
-  const onSubmit = async (values: Enrollment2FormData) => {
-    console.log(values)
+      if(res.status === 200) {
+        toast.success("Successfully added enrollment 3")
+        setList((prev) => [res.data, ...prev]);
+        setDialogOpen(false)
+      }else{
+        toast.error("Failed adding enrollment 3")
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (
@@ -135,6 +150,7 @@ export function Enrollment3Form() {
                             key={student.value}
                             onSelect={() => {
                               form.setValue("pkCode", student.value);
+                              form.setValue("debit", student.totalAmount);
                               field.onChange(student.value);
                             }}
                           >
