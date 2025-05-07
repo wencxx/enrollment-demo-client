@@ -58,12 +58,7 @@ export function EnrollDesciprtionForm({ getEnrollDescription }: { getEnrollDescr
   const [years, setYears] = useState<year[]>([])
   const [course, setCourse] = useState<course[]>([])
   const [semesters, setSemesters] = useState<semester[]>([])
-  const [academicYears, setAcademicYears] = useState<academic[]>([
-    {
-      aYearCode: "001",
-      aYearDesc: "2025-2026",
-    }
-  ])
+  const [academicYears, setAcademicYears] = useState<academic[]>([])
 
   const [sections, setSections] = useState<section[]>([])
 
@@ -91,13 +86,13 @@ export function EnrollDesciprtionForm({ getEnrollDescription }: { getEnrollDescr
     }
   }
 
-  // const getAY = async () => {
-  //     const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListAcademicYear`)
+  const getAY = async () => {
+      const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListAcademicYear`)
 
-  //     if(res.status === 200) {
-  //         setAcademicYears(res.data)
-  //     }
-  // }
+      if(res.status === 200) {
+          setAcademicYears(res.data)
+      }
+  }
 
   const getSection = async () => {
     const res = await axios(`${plsConnect()}/API/WebAPI/ListController/ListSection`)
@@ -111,7 +106,7 @@ export function EnrollDesciprtionForm({ getEnrollDescription }: { getEnrollDescr
     getYears()
     getCourse()
     getSem()
-    // getAY()
+    getAY()
     getSection()
   }, [])
 
