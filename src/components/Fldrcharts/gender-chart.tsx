@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { lineConfig } from "./config";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
 
