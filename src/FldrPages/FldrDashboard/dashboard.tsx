@@ -208,14 +208,7 @@ function Dashboard() {
                 </div>
                 
                 <div className="grid auto-rows-min gap-4 lg:grid-cols-2">
-                    <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
-                        <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                            <span>Student Status</span>
-                            </CardTitle>
-                        </CardHeader>
-                        <RegularChart data={regChartData} />
-                    </Card>
+                    <RegularChart data={regChartData} />
                     <GenderChart data={genderChartData} />
                 </div>
             </div>
