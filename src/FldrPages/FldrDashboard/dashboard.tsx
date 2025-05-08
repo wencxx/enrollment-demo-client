@@ -216,14 +216,7 @@ function Dashboard() {
                         </CardHeader>
                         <RegularChart data={regChartData} />
                     </Card>
-                    <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
-                    <CardHeader>
-                            <CardTitle className="flex justify-between items-center">
-                            <span>Gender</span>
-                            </CardTitle>
-                        </CardHeader>
-                        <GenderChart data={genderChartData} />
-                    </Card>
+                    <GenderChart data={genderChartData} />
                 </div>
             </div>
         </>
