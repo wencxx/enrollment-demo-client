@@ -12,4 +12,8 @@ export const lineConfig = {
       label: "Irregular",
       color: "hsl(var(--chart-2))",
     },
+    other: {
+      label: "Other",
+      color: "hsl(var(--chart-3))",
+    },
 } satisfies ChartConfig

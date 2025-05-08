@@ -210,7 +210,10 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-full min-w-[var(--radix-popover-trigger-width)]">
+                <PopoverContent className="w-full min-w-[var(--radix-popover-trigger-width)]"
+                // override nlng gd bc default none? for some reason
+                style={{ pointerEvents: "auto" }}
+                >
                   <Command>
                     <CommandInput
                       placeholder="Search..."
@@ -224,8 +227,8 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
                             value={enrollDesc.label}
                             key={enrollDesc.value}
                             onSelect={() => {
-                                form.setValue("pkedCode", enrollDesc.value);
-                                field.onChange(enrollDesc.value);
+                              form.setValue("pkedCode", enrollDesc.value); 
+                              field.onChange(enrollDesc.value); // Trigger field change
                             }}
                           >
                             {enrollDesc.label}
