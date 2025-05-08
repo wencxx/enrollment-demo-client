@@ -95,13 +95,15 @@ export const columnsEnrolled: ColumnDef<any>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const [isDialogOpen, setIsDialogOpen] = useState(false);
+      const onRefresh = table.options.meta?.refreshData;
+      
       const student = {
         pkCode: row.original.pkCode,
-        firstName: row.original.FirstName,
-        middleName: row.original.MiddleName || "",
-        lastName: row.original.LastName,
+        firstName: row.original.firstName,
+        middleName: row.original.middleName || "",
+        lastName: row.original.lastName,
         fullName: row.original.fullName,
         courseDesc: row.original.courseDesc,
         courseCode: row.original.courseCode,
@@ -109,29 +111,32 @@ export const columnsEnrolled: ColumnDef<any>[] = [
         yearCode: row.original.yearCode,
         sectionDesc: row.original.sectionDesc
       };
-
+  
       return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm" className="flex items-center gap-1">
               <Plus className="h-3.5 w-3.5" />
-              <span>Enroll</span>
+              <span>Load</span>
             </Button>
           </DialogTrigger>
           <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[70dvw] lg:!max-w-[60dvw]">
             <DialogHeader>
-              <DialogTitle>Load Subjects for Student 
-                {/* {student.fullName} */}
-                </DialogTitle>
+              <DialogTitle>Load Subjects for {student.fullName}</DialogTitle>
             </DialogHeader>
             <Enrollment2Form 
-              onSubmitSuccess={() => setIsDialogOpen(false)} 
-              onAddRate={() => {}} 
+              onSubmitSuccess={() => {
+                setIsDialogOpen(false);
+                if (onRefresh) onRefresh();
+              }} 
+              onAddRate={() => {
+                if (onRefresh) onRefresh();
+              }} 
               preselectedStudent={student}
             />
           </DialogContent>
         </Dialog>
-      )
-    },
-  },
+      );
+    }
+  }
 ]

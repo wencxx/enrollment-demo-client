@@ -121,7 +121,6 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
     [filteredSubjects, courseSubjects]
   );
 
-  // Load dropdowns (courses & years)
   useEffect(() => {
     async function fetchDropdowns() {
       try {
@@ -158,7 +157,6 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
           `${plsConnect()}/api/Enrollment2/AllData?pkCode=${preselectedStudent.pkCode}`
         );
         
-        // Filter subjects for this student
         const studentEnrollments = response.data.filter((item: any) => 
           item.pkCode === preselectedStudent.pkCode
         );
@@ -188,7 +186,6 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
     fetchCurrentEnrollments();
   }, [preselectedStudent]);
 
-  // Load subjects for student's course & year
   useEffect(() => {
     if (!preselectedStudent || !courses.length || !years.length || !enrolledPkRates) return;
     
@@ -271,7 +268,6 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
       return;
     }
 
-    // Create enrollment rows
     const rows = courseSubjects.map((subject, index) => ({
       rowNum: index + 1,
       subjectCode: subject.rdCode,
@@ -320,13 +316,11 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
 
     setDeletingEnrollment(true);
     try {
-      // Call the API endpoint for deleting enrollments
       await axios.post(`${plsConnect()}/api/Enrollment2/DeleteEnrollment2`, {
         pkCode: preselectedStudent.pkCode,
         pkRate: enrollmentToDelete.pkRate || enrollmentToDelete.PKRate
       });
 
-      // Update the currentEnrollments state
       setCurrentEnrollments(prev => 
         prev.filter(e => (e.pkRate || e.PKRate) !== (enrollmentToDelete.pkRate || enrollmentToDelete.PKRate))
       );
@@ -357,7 +351,6 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
           );
           
           if (deletedSubject) {
-            // Add back to the courseSubjects array
             setCourseSubjects(prev => [...prev, deletedSubject]);
           }
         }

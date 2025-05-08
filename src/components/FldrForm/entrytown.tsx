@@ -29,7 +29,7 @@ export function TownForm({ setOpenForm, getTown }: { setOpenForm: (open: boolean
 
   const onSubmit = async (values: TownFormData) => {
     try {
-      const response = await axios.post(`${plsConnect()}/api/Elementary`, values)
+      const response = await axios.post(`${plsConnect()}/api/TownCity`, values)
 
       console.log("Data submitted successfully:", response.data)
       setOpenForm(false)
