@@ -45,85 +45,85 @@ const GenderChart = ({ data }: { data: ChartData[] }) => {
               </Select>
           </CardHeader>
           <div className="p-4">
-      <ChartContainer config={lineConfig}>
-      {chartType === "area" ? (
-          <AreaChart
-            data={data}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
-            <CartesianGrid />
-            <XAxis
-              dataKey="yearDesc"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-            />
-            <YAxis />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Area
-              dataKey="male"
-              type="natural"
-              fill="var(--color-regular)"
-              fillOpacity={0.4}
-              stroke="var(--color-regular)"
-              stackId="a"
-            />
-            <Area
-              dataKey="female"
-              type="natural"
-              fill="var(--color-irregular)"
-              fillOpacity={0.4}
-              stroke="var(--color-irregular)"
-              stackId="b"
-            />
-            <Area
-              dataKey="other"
-              type="natural"
-              fill="var(--color-other)"
-              fillOpacity={0.4}
-              stroke="var(--color-other)"
-              stackId="c"
-            />
-          </AreaChart>
-        ) : (
-          <BarChart
-            data={data}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
-            <CartesianGrid />
-            <XAxis
-              dataKey="yearDesc"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-            />
-            <YAxis />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Bar
-              dataKey="male"
-              fill="var(--color-regular)"
-              strokeWidth={2}
-            />
-            <Bar
-              dataKey="female"
-              fill="var(--color-irregular)"
-              strokeWidth={2}
-            />
-            <Bar
-              dataKey="other"
-              fill="var(--color-other)"
-              strokeWidth={2}
-            />
-          </BarChart>
-        )}
-      </ChartContainer>
-    </div>
+            <ChartContainer config={lineConfig}>
+            {chartType === "area" ? (
+                <AreaChart
+                  data={data}
+                  margin={{
+                    left: 12,
+                    right: 12,
+                  }}
+                >
+                  <CartesianGrid />
+                  <XAxis
+                    dataKey="yearDesc"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                  />
+                  <YAxis />
+                  <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                  <Area
+                    dataKey="male"
+                    type="natural"
+                    fill="var(--color-regular)"
+                    fillOpacity={0.4}
+                    stroke="var(--color-regular)"
+                    stackId="a"
+                  />
+                  <Area
+                    dataKey="female"
+                    type="natural"
+                    fill="var(--color-irregular)"
+                    fillOpacity={0.4}
+                    stroke="var(--color-irregular)"
+                    stackId="b"
+                  />
+                  <Area
+                    dataKey="other"
+                    type="natural"
+                    fill="var(--color-other)"
+                    fillOpacity={0.4}
+                    stroke="var(--color-other)"
+                    stackId="c"
+                  />
+                </AreaChart>
+              ) : (
+                <BarChart
+                  data={data}
+                  margin={{
+                    left: 12,
+                    right: 12,
+                  }}
+                >
+                  <CartesianGrid />
+                  <XAxis
+                    dataKey="yearDesc"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                  />
+                  <YAxis />
+                  <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                  <Bar
+                    dataKey="male"
+                    fill="var(--color-regular)"
+                    strokeWidth={2}
+                  />
+                  <Bar
+                    dataKey="female"
+                    fill="var(--color-irregular)"
+                    strokeWidth={2}
+                  />
+                  <Bar
+                    dataKey="other"
+                    fill="var(--color-other)"
+                    strokeWidth={2}
+                  />
+                </BarChart>
+              )}
+            </ChartContainer>
+          </div>
     </Card>
     
   );
