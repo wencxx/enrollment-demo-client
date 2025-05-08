@@ -14,6 +14,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { Badge } from "lucide-react"
 
 export default function Enrollment1() {
   const [approved, setApproved] = useState<Enrollment1Col[]>([]);
@@ -76,8 +77,23 @@ export default function Enrollment1() {
         <div className="space-x-2">
         <Tabs defaultValue="pending" className="w-[full]">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="pending">Applicants</TabsTrigger>
-            <TabsTrigger value="old">Continuing</TabsTrigger>
+            <TabsTrigger value="pending">
+              Applicants
+              {allData.length > 0 && (
+                  <Badge className="ml-2 bg-blue-100 text-blue-700">
+                    {allData.length}
+                  </Badge>
+                )}
+              
+              </TabsTrigger>
+            <TabsTrigger value="old">
+              Continuing
+              {oldStudents.length > 0 && (
+                  <Badge className="ml-2 bg-blue-100 text-blue-700">
+                    {oldStudents.length}
+                  </Badge>
+                )}
+            </TabsTrigger>
             <TabsTrigger value="allStudents">All</TabsTrigger>
             <TabsTrigger value="approved">Approved Enrollments</TabsTrigger>
           </TabsList>

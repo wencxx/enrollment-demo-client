@@ -1,31 +1,70 @@
 import { Toaster } from "@/components/ui/sonner"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { useState, useEffect } from "react"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { columnsEnrolled } from "@/components/FldrDatatable/enrollment2-columns";
-import { DataTable } from "@/components/FldrDatatable/data-table";
+import { columnsEnrolled } from "@/components/FldrDatatable/enrollment2-columns"
+import { DataTable } from "@/components/FldrDatatable/data-table"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
+import { toast } from "sonner"
 
 export default function Enrollment2() {
-  // enrolled students
-  const [list, setList] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [allStudents, setAllStudents] = useState<any[]>([]);
+  const [studentsWithSubjects, setStudentsWithSubjects] = useState<any[]>([]);
+  const [studentsWithoutSubjects, setStudentsWithoutSubjects] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchStudents = async () => {
+    setIsLoading(true);
     try {
-      setLoading(true)
-      const response = await axios.get(`${plsConnect()}/api/Enrollment2/ListEnrollment2Student`);
+      // Get all enrolled students
+      const studentsResponse = await axios.get(
+        `${plsConnect()}/api/Enrollment2/ListEnrollment2Student`
+      );
       
-      const updatedData = response.data.map((item: any) => ({
+      // Format student names
+      const students = studentsResponse.data.map((item: any) => ({
         ...item,
         fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}`,
       }));
       
-      setList(updatedData);
+      setAllStudents(students);
+      
+      // Get all enrollment details to filter students with subjects
+      const enrollmentsResponse = await axios.get(
+        `${plsConnect()}/api/Enrollment2/AllData`
+      );
+      
+      const enrollments = enrollmentsResponse.data;
+      
+      // Get unique PKCodes that have enrollments
+      const studentsWithEnrollments = new Set();
+      enrollments.forEach((enrollment: any) => {
+        studentsWithEnrollments.add(enrollment.pkCode);
+      });
+      
+      // Filter students with and without subjects
+      const withSubjects = students.filter((student: any) => 
+        studentsWithEnrollments.has(student.pkCode)
+      );
+      
+      const withoutSubjects = students.filter((student: any) => 
+        !studentsWithEnrollments.has(student.pkCode)
+      );
+      
+      setStudentsWithSubjects(withSubjects);
+      setStudentsWithoutSubjects(withoutSubjects);
     } catch (error) {
       console.error("Error fetching data:", error);
+      toast.error("Failed to load students");
     } finally {
-      setLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -35,18 +74,67 @@ export default function Enrollment2() {
 
   return (
     <>
-      <div className="container mx-auto py-4">
-        <h1 className="text-2xl font-bold mb-6">Subject Loading</h1>
-        
-        <ScrollArea className="overflow-x-auto min-w-full whitespace-nowrap rounded-md">
-          <DataTable 
-            columns={columnsEnrolled} 
-            data={list} 
-            loading={loading} 
-            title="Students" 
-          />
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+      <div className="container py-6">
+        <div className="space-y-4">
+          <Tabs defaultValue="all" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="all">
+                All Students
+                {allStudents.length > 0 && (
+                  <Badge className="ml-2 bg-gray-200 text-gray-700">
+                    {allStudents.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="no-subjects">
+                No Subjects
+                {studentsWithoutSubjects.length > 0 && (
+                  <Badge className="ml-2 bg-blue-100 text-blue-700">
+                    {studentsWithoutSubjects.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="with-subjects">
+                With Subjects
+                {studentsWithSubjects.length > 0 && (
+                  <Badge className="ml-2 bg-green-100 text-green-700">
+                    {studentsWithSubjects.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="all" className="mt-4">
+              <DataTable
+                columns={columnsEnrolled}
+                data={allStudents}
+                title="Students"
+                loading={isLoading}
+                onRefresh={fetchStudents}
+              />
+            </TabsContent>
+            
+            <TabsContent value="no-subjects" className="mt-4">
+              <DataTable
+                columns={columnsEnrolled}
+                data={studentsWithoutSubjects}
+                title="Students Without Subjects"
+                loading={isLoading}
+                onRefresh={fetchStudents}
+              />
+            </TabsContent>
+            
+            <TabsContent value="with-subjects" className="mt-4">
+              <DataTable
+                columns={columnsEnrolled}
+                data={studentsWithSubjects}
+                title="Students With Subjects"
+                loading={isLoading}
+                onRefresh={fetchStudents}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
 
         <Toaster />
       </div>
