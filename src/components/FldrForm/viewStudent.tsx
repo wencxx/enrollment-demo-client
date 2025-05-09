@@ -47,12 +47,10 @@ interface StudentProps {
     onCancel?: () => void;
 }
 
-export function ViewStudent({ toEdit = "", onCancel }: StudentProps) {
+export function ViewStudent({ toEdit = "" }: StudentProps) {
 
   const [isLoading, setIsLoading] = useState(false);
   const [student, setStudent] = useState<StudentCol | null>(null);
-  const [enrollDesc, setEnrollDesc] = useState<EnrollDescCol | null>(null);
-  const [enrollmentData, setEnrollmentData] = useState<Enrollment1Col | null>(null);
 
   useEffect(() => {
     async function fetchData() {
