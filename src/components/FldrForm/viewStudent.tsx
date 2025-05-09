@@ -132,10 +132,6 @@ export function ViewStudent({ toEdit = "", onCancel }: StudentProps) {
                     </p>
                   </div>
                 </div>
-      
-                <div className="flex justify-end mt-6">
-                  <Button variant="secondary" onClick={onCancel}>Close</Button>
-                </div>
               </CardContent>
           </div>
     </>
