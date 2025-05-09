@@ -119,7 +119,7 @@ export const allStudentsCol: ColumnDef<StudentCol>[] = [
                 </DialogTitle>
                 <ViewStudent
                   toEdit={code} 
-                  onCancel={handleUpdate}
+                  // onCancel={handleUpdate}
                 />
             </DialogContent>
         </Dialog>
