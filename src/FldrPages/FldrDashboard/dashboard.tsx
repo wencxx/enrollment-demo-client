@@ -1,5 +1,5 @@
 import { UserCheck, UserPen, User } from "lucide-react";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ import GenderChart from "@/components/Fldrcharts/gender-chart";
 
 function Dashboard() {
     // to populate kay wala ta "current year"
+    
     const defaultYear = "001";
 
     const [academicYears, setAcademicYears] = useState<AYCol[]>([]);

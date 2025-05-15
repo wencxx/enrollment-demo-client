@@ -135,7 +135,7 @@ export function Enrollment3Form({ setList, setDialogOpen }: { setList: React.Dis
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
+                <PopoverContent className="w-full p-0" style={{ pointerEvents: "auto" }}>
                   <Command>
                     <CommandInput
                       placeholder="Search..."

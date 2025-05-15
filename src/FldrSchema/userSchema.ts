@@ -278,3 +278,10 @@ export const rate2Schema = z.object({
   noUnits: z.number().int().min(0, 'Number of units cannot be negative'),
   rateAmount: z.number().min(0, 'Rate amount must be greater than 0'),
 })
+
+export const userGroupDataSchema = z.object({
+  groupCode: z.string().optional(),
+  groupName: z.string().min(2, {
+    message: "Group name must be at least 2 characters.",
+  }),
+})
