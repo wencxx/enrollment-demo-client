@@ -62,13 +62,6 @@ function Layout() {
     }
   }
 
-  // console.log("HELP", {
-  //   authenticated,
-  //   permissions,
-  //   currentPath,
-  //   loading
-  // })
-
 const publicRoutes = ['/login', '/unauthorize']
 
 if (publicRoutes.includes(currentPath)) {
