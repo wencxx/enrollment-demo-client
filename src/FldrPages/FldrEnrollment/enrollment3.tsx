@@ -26,6 +26,7 @@ export default function Enrollment3() {
       const res = await axios.get(`${plsConnect()}/WebApi/Assessment/Enrollment3`);
 
       if (res.status === 200) {
+        console.log(res.data)
         setList(res.data)
       }
     } catch (error) {

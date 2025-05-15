@@ -94,11 +94,11 @@ export function Enrollment3Form({ setList, setDialogOpen }: { setList: React.Dis
     try {
       const res = await axios.post(`${plsConnect()}/WebApi/Assessment/Enrollment3/${values.pkCode}`, values);
 
-      if(res.status === 200) {
+      if (res.status === 200) {
         toast.success("Successfully added enrollment 3")
         setList((prev) => [res.data, ...prev]);
         setDialogOpen(false)
-      }else{
+      } else {
         toast.error("Failed adding enrollment 3")
       }
     } catch (error) {
@@ -178,12 +178,12 @@ export function Enrollment3Form({ setList, setDialogOpen }: { setList: React.Dis
 
         <FormField
           control={form.control}
-          name="credit"
+          name="debit"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Credit</FormLabel>
+              <FormLabel>Balance</FormLabel>
               <FormControl>
-                <Input type="number" {...field} />
+                <Input type="number" {...field} readOnly />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -192,10 +192,10 @@ export function Enrollment3Form({ setList, setDialogOpen }: { setList: React.Dis
 
         <FormField
           control={form.control}
-          name="debit"
+          name="credit"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Debit</FormLabel>
+              <FormLabel>Amount Paid</FormLabel>
               <FormControl>
                 <Input type="number" {...field} />
               </FormControl>
@@ -203,6 +203,7 @@ export function Enrollment3Form({ setList, setDialogOpen }: { setList: React.Dis
             </FormItem>
           )}
         />
+
 
         <FormField
           control={form.control}
