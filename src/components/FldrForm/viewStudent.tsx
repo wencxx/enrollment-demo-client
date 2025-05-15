@@ -1,46 +1,9 @@
-import { useForm } from "react-hook-form";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import axios from "axios";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    //   FormMessage,
-} from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox"
 import { useEffect, useState } from "react";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Check } from "lucide-react";
-import { EnrollDescCol, Enrollment1Col, StudentCol } from "@/FldrTypes/kim-types";
-import { cn } from "@/lib/utils";
-import { enrollment1Schema } from "@/FldrSchema/userSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Input } from "../ui/input";
+import { StudentCol } from "@/FldrTypes/kim-types";
 import { CardContent } from "@/components/ui/card";
-
-type StudentData = {
-    studentCode: string;
-    firstName: number;
-    middleName: string;
-    lastName: string;
-    suffix: string;
-
-    enrollStatusCode: string;
-    enrollStatusDesc: string;
-    genderCode: string;
-
-    address: string;
-    birthDate: string;
-    contactNo: string;
-    emailAddress: string;
-    userCode: string;
-}
 
 interface StudentProps {
     toEdit?: string;
@@ -49,12 +12,10 @@ interface StudentProps {
 
 export function ViewStudent({ toEdit = "" }: StudentProps) {
 
-  const [isLoading, setIsLoading] = useState(false);
   const [student, setStudent] = useState<StudentCol | null>(null);
 
   useEffect(() => {
     async function fetchData() {
-      setIsLoading(true);
       try {
         const studentRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`)
 
@@ -68,9 +29,7 @@ export function ViewStudent({ toEdit = "" }: StudentProps) {
       } catch (err) {
         console.error(err);
         toast.error("Failed to load enrollment details.");
-      } finally {
-        setIsLoading(false);
-      }
+      } 
     }
     if (toEdit) fetchData();
   }, [toEdit]);
