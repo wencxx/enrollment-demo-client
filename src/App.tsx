@@ -1,4 +1,8 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom"
 import Login from '@/FldrPages/login'
 import Register from '@/FldrPages/register'
 import Layout from '@/FldrPages/FldrLayout/layout'
@@ -33,163 +37,152 @@ import RateDesc from "./FldrPages/FldrEntry/ratedesc"
 import Rate2 from "./FldrPages/FldrEntry/rate2"
 import Students from "./FldrPages/FldrEntry/students"
 
-const routes = [
+const router = createBrowserRouter([
   {
-    element: <Dashboard />,
-    path: '/dashboard',
+    path: "/",
+    element: <Navigate to="/dashboard" replace />,
   },
   {
-    element: <Schedules />,
-    path: '/schedules',
+    path: "/login",
+    element: <Login />,
   },
   {
-    element: <Students />,
-    path: '/students',
+    path: "/register",
+    element: <Register />,
   },
   {
-    element: <Course />,
-    path: '/entry/course',
+    path: "/unauthorize",
+    element: <Unauthorized />,
   },
   {
-    element: <Room />,
-    path: '/entry/room',
+    element: <Layout />,
+    children: [
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: "/schedules",
+        element: <Schedules />,
+      },
+      {
+        path: "/students",
+        element: <Students />,
+      },
+      {
+        path: "/entry/course",
+        element: <Course />,
+      },
+      {
+        path: "/entry/room",
+        element: <Room />,
+      },
+      {
+        path: "/entry/section",
+        element: <Section />,
+      },
+      {
+        path: "/entry/student",
+        element: <Student />,
+      },
+      {
+        path: "/entry/rate",
+        element: <Rate />,
+      },
+      {
+        path: "/entry/subject-prerequisite",
+        element: <Subject />,
+      },
+      {
+        path: "/entry/ratecourse",
+        element: <RateCourse />,
+      },
+      {
+        path: "/entry/AY",
+        element: <AcademicYearPage />,
+      },
+      {
+        path: "/entry/professors",
+        element: <Professor />,
+      },
+      {
+        path: "/entry/highschool",
+        element: <HighSchool />,
+      },
+      {
+        path: "/entry/elementary",
+        element: <Elementary />,
+      },
+      {
+        path: "/entry/town",
+        element: <Town />,
+      },
+      {
+        path: "/entry/rate1",
+        element: <Rate1 />,
+      },
+      {
+        path: "/entry/rate2",
+        element: <Rate2 />,
+      },
+      {
+        path: "/entry/ratedesc",
+        element: <RateDesc />,
+      },
+      {
+        path: "/entry/enroll-description",
+        element: <EnrollDescription />,
+      },
+      {
+        path: "/enrollment/enrollment1",
+        element: <Enrollment1 />,
+      },
+      {
+        path: "/enrollment/enrollment2",
+        element: <Enrollment2 />,
+      },
+      {
+        path: "/enrollment/enrollment3",
+        element: <Enrollment3 />,
+      },
+      {
+        path: "/student/application",
+        element: <Application />,
+      },
+      {
+        path: "/student/grades",
+        element: <Grades />,
+      },
+      {
+        path: "/student/profile",
+        element: <StudentProfile />,
+      },
+      {
+        path: "/student/statement-of-account",
+        element: <StatementOfAccount />,
+      },
+      {
+        path: "/permissions/users",
+        element: <Users />,
+      },
+      {
+        path: "/permissions/grant-permission",
+        element: <GrantPermission />,
+      },
+      {
+        path: "/permissions/routes",
+        element: <RoutePage />,
+      },
+    ],
   },
-  {
-    element: <Section />,
-    path: '/entry/section',
-  },
-  {
-    element: <Student />,
-    path: '/entry/student',
-  },
-  {
-    element: <Rate />,
-    path: '/entry/rate',
-  },
-  {
-    element: <Subject />,
-    path: '/entry/subject-prerequisite',
-  },
-  {
-    element: <RateCourse />,
-    path: '/entry/ratecourse',
-  },
-  {
-    element: <AcademicYearPage />,
-    path: '/entry/AY',
-  },
-  {
-    element: <Professor />,
-    path: '/entry/professors',
-  },
-  {
-    element: <HighSchool />,
-    path: '/entry/highschool',
-  },
-  {
-    element: <Elementary />,
-    path: '/entry/elementary',
-  },
-  {
-    element: <Town />,
-    path: '/entry/town',
-  },
-  {
-    element: <Rate1 />,
-    path: '/entry/rate1',
-  },
-  {
-    element: <Rate2 />,
-    path: '/entry/rate2',
-  },
-  {
-    element: <RateDesc />,
-    path: '/entry/ratedesc',
-  },
-  {
-    element: <EnrollDescription />,
-    path: '/entry/enroll-description',
-  },
-  {
-    element: <Enrollment1 />,
-    path: '/enrollment/enrollment1',
-  },
-  {
-    element: <Enrollment2 />,
-    path: '/enrollment/enrollment2',
-  },
-  {
-    element: <Enrollment3 />,
-    path: '/enrollment/enrollment3',
-  },
-  {
-    element: <Application />,
-    path: '/student/application',
-  },
-  {
-    element: <Grades />,
-    path: '/student/grades',
-  },
-  {
-    element: <StudentProfile />,
-    path: '/student/profile',
-  },
-  {
-    element: <StatementOfAccount />,
-    path: '/student/statement-of-account',
-  },
-  {
-    element: <Users />,
-    path: '/permissions/users',
-  },
-  {
-    element: <GrantPermission />,
-    path: '/permissions/grant-permission',
-  },
-  {
-    element: <RoutePage />,
-    path: '/permissions/routes',
-  },
-]
-
-// const useTabVisibility = () => {
-//   useEffect(() => {
-//     const handleVisibilityChange = () => {
-//       if (document.hidden) {
-//         document.title = "B4l1K n@ b@bY! 😢";
-//       } else {
-//         document.title = "Enrollment System";
-//       }
-//     };
-
-//     document.addEventListener("visibilitychange", handleVisibilityChange);
-//     return () => {
-//       document.removeEventListener("visibilitychange", handleVisibilityChange);
-//     };
-//   }, []);
-// };
-
+]);
 
 function App() {
-
   return (
     <div className="font-inter">
-      <Router>
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-
-          <Route element={<Layout />}>
-            {routes.map((route, index) => (
-              <Route key={index} path={route.path} element={route.element} />
-            ))}
-          </Route>
-          <Route path="/unauthorize" element={<Unauthorized />} />
-        </Routes>
-      </Router>
+      <RouterProvider router={router} />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
