@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { Edit, ArrowUpDown, Eye } from "lucide-react"
+import { Edit, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { user2 } from "@/FldrTypes/user"
@@ -7,9 +7,10 @@ import {
     Dialog,
     DialogContent,
     DialogTrigger,
-    DialogTitle,
-    DialogHeader
+    DialogTitle
 } from "@/components/ui/dialog"
+import { useState } from "react"
+import { EditUserGroup } from "../FldrForm/editusergroup"
 
 export const columns: ColumnDef<user2>[] = [
     {
@@ -72,37 +73,44 @@ export const columns: ColumnDef<user2>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) => {
-            return (
-                <>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <Edit className="h-4 w-4" />
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-                            <DialogHeader>
-                                <DialogTitle className="mb-4">View Course</DialogTitle>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <Eye className="h-5 w-5" />
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-                            <DialogHeader>
-                                <DialogTitle className="mb-4">View Course</DialogTitle>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-                </>
-            )
+        cell: ({ row, table }) => {
+          const [isDialogOpen, setIsDialogOpen] = useState(false);
+          const [code, setCode] = useState("");
+    
+          const handleDialogOpen = (code: string) => {
+            setCode(code);
+            setIsDialogOpen(true);
+          };
+    
+          const handleUpdate = () => {
+            setIsDialogOpen(false);
+            const onRefresh = table.options.meta?.refreshData;
+            if (typeof onRefresh === 'function') {
+              console.log("Refreshing...");
+              onRefresh();
+            }
+          };
+    
+          return (
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0"
+                onClick={() => handleDialogOpen(row.original.userCode)}>
+                    <span className="sr-only">User Group</span>
+                    <Edit className="h-4 w-4" />
+                </Button>
+                </DialogTrigger>
+                <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[45dvw] scrollbar-hidden" aria-labelledby="dialog-title">
+                <DialogTitle>
+                  <h2 className="text-lg font-semibold">Edit User Group</h2>
+                </DialogTitle>
+                <EditUserGroup
+                      toEdit={code} 
+                      onCancel={handleUpdate}
+                    />
+                </DialogContent>
+            </Dialog>
+          );
         },
     },
 ]

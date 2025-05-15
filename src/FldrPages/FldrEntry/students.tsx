@@ -97,7 +97,7 @@ export default function Students() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleBatchReset}>
+                <AlertDialogAction onClick={handleBatchReset} className="bg-red-500 text-white hover:bg-red-600" >
                     Reset
                 </AlertDialogAction>
                 </AlertDialogFooter>

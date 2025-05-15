@@ -5,11 +5,9 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
     Form,
-    FormControl,
     FormField,
     FormItem,
     FormLabel,
-    //   FormMessage,
 } from "@/components/ui/form";
 import {
     Select,
@@ -19,32 +17,29 @@ import {
     SelectValue,
     } from "@/components/ui/select"
 import { useEffect, useState } from "react";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Check, ChevronsUpDown, Save } from "lucide-react";
-import { EnrollStatusCol } from "@/FldrTypes/kim-types";
-import { cn } from "@/lib/utils";
+import { GroupCol } from "@/FldrTypes/kim-types";
+import { Save } from "lucide-react";
 
-type EnrollStatusData = {
-    studentCode: string;
-    enrollStatusCode: string;
+type UserGroupData = {
+    userCode: string;
+    groupCode: string;
 };
 
-interface Rate1FormProps {
+interface UserGroupProps {
     toEdit?: string;
     onCancel?: () => void;
     onSuccess?: () => void;
 }
 
-export function EditEnrollStatus({ toEdit = "", onCancel, onSuccess }: Rate1FormProps) {
+export function EditUserGroup({ toEdit = "", onCancel, onSuccess }: UserGroupProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState<EnrollStatusCol[]>([])
-  const [studentCode] = useState(toEdit);
+  const [group, setGroup] = useState<GroupCol[]>([])
+  const [userCode] = useState(toEdit);
 
-  const form = useForm<EnrollStatusData>({
+  const form = useForm<UserGroupData>({
     defaultValues: {
-        studentCode: "",
-        enrollStatusCode: "",
+        userCode: "",
+        groupCode: "",
     },
   });
 
@@ -52,17 +47,17 @@ export function EditEnrollStatus({ toEdit = "", onCancel, onSuccess }: Rate1Form
     async function fetchData() {
       setIsLoading(true);
       try {
-        const yearRes = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListEnrollStatus`)
-        setStatus(yearRes.data)
+        const groupRes = await axios.get(`${plsConnect()}/api/Group/ListGroups`)
+        setGroup(groupRes.data)
 
-        if (studentCode) {
-            const entryRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`);
-            const entryData = entryRes.data.find((entry: EnrollStatusData) => entry.studentCode === studentCode);
+        if (userCode) {
+            const entryRes = await axios.get(`${plsConnect()}/API/WebAPI/UserController/ListUser`);
+            const entryData = entryRes.data.find((entry: UserGroupData) => entry.userCode === userCode);
             
             console.log(entryData)
             form.reset({
-                studentCode: entryData.studentCode,
-                enrollStatusCode: entryData.enrollStatusCode,
+                userCode: entryData.userCode,
+                groupCode: entryData.groupCode,
             });
           }
       } catch (error) {
@@ -73,15 +68,15 @@ export function EditEnrollStatus({ toEdit = "", onCancel, onSuccess }: Rate1Form
       }
     }
     fetchData()
-  }, [studentCode]);
+  }, [userCode]);
 
-  const onSubmit = async (values: EnrollStatusData) => {
+  const onSubmit = async (values: UserGroupData) => {
     try {
       setIsLoading(true);
-        const response = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateStudentEnrollmentStatus`, values);
-        toast("Enrollment status updated successfully.");
-      
-      console.log("API response:", response.data);
+        const response = await axios.put(`${plsConnect()}/API/WebAPI/UserController/UpdateUserGroup`, values);
+        toast("User group updated successfully");
+        console.log("sent:", values);
+        console.log("API response:", response.data);
       if (onSuccess) {
         onSuccess();
       }
@@ -114,13 +109,13 @@ export function EditEnrollStatus({ toEdit = "", onCancel, onSuccess }: Rate1Form
 
         <FormField
         control={form.control}
-        name="enrollStatusCode"
+        name="groupCode"
         render={({ field }) => (
         <FormItem>
-            <FormLabel>Enroll Status</FormLabel>
+            <FormLabel>Group</FormLabel>
             <Select
                 onValueChange={(value) => {
-                form.setValue("enrollStatusCode", value);
+                form.setValue("groupCode", value);
                 field.onChange(value);
                 }}
                 value={field.value}
@@ -129,9 +124,9 @@ export function EditEnrollStatus({ toEdit = "", onCancel, onSuccess }: Rate1Form
                 <SelectValue placeholder="Select year" />
             </SelectTrigger>
             <SelectContent>
-                {status.map((item) => (
-                <SelectItem key={item.enrollStatusCode} value={item.enrollStatusCode}>
-                    {item.enrollStatusDesc}
+                {group.map((item) => (
+                <SelectItem key={item.groupCode} value={item.groupCode}>
+                    {item.groupName}
                 </SelectItem>
                 ))}
             </SelectContent>

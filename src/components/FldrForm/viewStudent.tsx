@@ -22,6 +22,7 @@ import { enrollment1Schema } from "@/FldrSchema/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "../ui/input";
+import { CardContent } from "@/components/ui/card";
 
 type StudentData = {
     studentCode: string;
@@ -44,286 +45,95 @@ type StudentData = {
 interface StudentProps {
     toEdit?: string;
     onCancel?: () => void;
-    onSuccess?: () => void;
 }
 
-export function ViewStudent({ toEdit = "", onCancel, onSuccess }: StudentProps) {
-  const form = useForm<StudentData>({
-          resolver: zodResolver(enrollment1Schema),
-        //   defaultValues: {
-        //     regularStudent: true,
-        //   },
-        });
+export function ViewStudent({ toEdit = "", onCancel }: StudentProps) {
 
   const [isLoading, setIsLoading] = useState(false);
-  const [students, setStudents] = useState<StudentCol[]>([])
-  const [enrollDesc, setEnrollDesc] = useState<EnrollDescCol[]>([])
-  const [studentCode] = useState(toEdit);
+  const [student, setStudent] = useState<StudentCol | null>(null);
+  const [enrollDesc, setEnrollDesc] = useState<EnrollDescCol | null>(null);
+  const [enrollmentData, setEnrollmentData] = useState<Enrollment1Col | null>(null);
 
   useEffect(() => {
-        async function fetchData() {
-          setIsLoading(true);
-          try {
-            const studentsRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`)
-            const mappedStudentsRes = studentsRes.data.map((item: StudentCol) => ({
-              label: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName} ${item.suffix}`,
-              value: item.studentCode,
-            }))
-            setStudents(mappedStudentsRes)
+    async function fetchData() {
+      setIsLoading(true);
+      try {
+        const studentRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`)
 
-
-            if (studentCode) {
-              const entryRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`);
-              const entryData = entryRes.data.find((entry: StudentCol) => entry.studentCode === studentCode);
-                form.reset({
-                  studentCode: entryData.studentCode,
-                  address: entryData.address,
-                  birthDate: entryData.birthDate,
-                  emailAddress: entryData.emailAddress,
-                  contactNo: entryData.contactNo,
-                  enrollStatusDesc: entryData.enrollStatusDesc,
-                });
-            }
-          } catch (error) {
-            console.error("Error fetching data:", error)
-            toast("Error fetching data.")
-          } finally {
-            setIsLoading(false)
-          }
+        const studentData = studentRes.data.find((e: StudentCol) => e.studentCode === toEdit);
+        if (!studentData) {
+          toast.error("Student data not found.");
+          return;
         }
-        fetchData()
-      }, [studentCode])
 
-  const onSubmit = async (values: StudentData) => {
-    console.log("placeholder")
-  };
+        setStudent(studentData);
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to load enrollment details.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    if (toEdit) fetchData();
+  }, [toEdit]);
+  
+    const displayValue = (value?: string | boolean) =>
+      value === undefined || value === null ? "-" : value.toString();
 
   return (
     <>
-      <div className="max-h-[90vh] overflow-y-auto">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-
-        {/* start row */}
-        <div className="flex flex-wrap gap-4">
-        <div className="flex-1 min-w-[200px]">
-        <FormField
-          control={form.control}
-          name="studentCode"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Full Name</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                    disabled
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                            "flex w-auto justify-between items-start text-left gap-2 min-h-[2.5rem] h-auto",
-                            !field.value && "text-muted-foreground",
-                            "whitespace-normal break-words p-2",
-                            "not-muted-disabled"
-                        )}
-                    >
-                      {field.value
-                        ? students.find(
-                            (students) => students.value === field.value
-                          )?.label
-                        : "Select student"}
-                      {/* <ChevronsUpDown className="opacity-50" /> */}
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-full min-w-[var(--radix-popover-trigger-width)]">
-                  <Command>
-                    <CommandInput
-                      placeholder="Search..."
-                      className="h-9"
-                    />
-                    <CommandList>
-                      <CommandEmpty>None found.</CommandEmpty>
-                      <CommandGroup>
-                        {students.map((students) => (
-                          <CommandItem
-                            value={students.label}
-                            key={students.value}
-                            onSelect={() => {
-                                form.setValue("studentCode", students.value);
-                                field.onChange(students.value);
-                            }}
-                          >
-                            {students.label}
-                            <Check
-                              className={cn(
-                                "ml-auto",
-                                students.value === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </FormItem>
-          )}
-        />
-        </div>
-
-        <div className="flex-1 min-w-[200px]">
-        <FormField
-            disabled
-            control={form.control}
-            name="studentCode"
-            render={({ field }) => (
-            <FormItem>
-                <FormLabel>Student Code</FormLabel>
-                <FormControl>
-                <Input className="not-muted-disabled" {...field} />
-                </FormControl>
-            </FormItem>
-            )}
-        />
-        </div>
-    </div>
-
-    <div className="flex flex-wrap gap-4">
-        <div className="flex-1 min-w-[200px]">
-        <FormField
-            disabled
-            control={form.control}
-            name="emailAddress"
-            render={({ field }) => (
-            <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                <Input className="not-muted-disabled" {...field} />
-                </FormControl>
-            </FormItem>
-            )}
-        />
-        </div>
-
-        <div className="flex-1 min-w-[200px]">
-        <FormField
-            disabled
-            control={form.control}
-            name="contactNo"
-            render={({ field }) => (
-            <FormItem>
-                <FormLabel>Contact Number</FormLabel>
-                <FormControl>
-                <Input className="not-muted-disabled" {...field} />
-                </FormControl>
-            </FormItem>
-            )}
-        />
-        </div>
-    </div>
-
-        <div className="flex flex-wrap gap-4">
-        <div className="flex-1 min-w-[200px]">
-        <FormField
-            disabled
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-            <FormItem>
-                <FormLabel>Address</FormLabel>
-                <FormControl>
-                <Input className="not-muted-disabled" {...field} />
-                </FormControl>
-            </FormItem>
-            )}
-        />
-        </div>
-
-        <div className="flex-1 min-w-[200px]">
-        <FormField
-            disabled
-                control={form.control}
-                name="birthDate"
-                render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Birthdate</FormLabel>
-                    <FormControl>
-                    <Input className="not-muted-disabled" {...field} />
-                    </FormControl>
-                </FormItem>
-                )}
-            />
-        </div>
-    </div>
-
-    <div className="flex-1 min-w-[200px] mb-2">
-        <FormField
-            disabled
-            control={form.control}
-            name="enrollStatusDesc"
-            render={({ field }) => (
-            <FormItem>
-                <FormLabel>Enrollment status</FormLabel>
-                <FormControl>
-                <Input className="not-muted-disabled" {...field} />
-                </FormControl>
-            </FormItem>
-            )}
-        />
-        </div>
-
-        {/* <div className="flex space-x-4 mt-2 mb-2">
-
-        <div className="flex-1">
-            <FormField
-              control={form.control}
-              name="regularStudent"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
-                  <FormControl>
-                    <Checkbox
-                    disabled
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Regular</FormLabel>
+      <div className="w-full mx-auto">
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Student</h3>
+                    <p className="text-lg font-medium">
+                      {student ? `${student.firstName} ${student.middleName || ""} ${student.lastName} ${student.suffix || ""}`.trim() : "-"}
+                    </p>
                   </div>
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="flex-1">
-            <FormField
-              control={form.control}
-              name="approveStudent"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
-                  <FormControl>
-                    <Checkbox
-                        disabled
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Approved</FormLabel>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Student Code</h3>
+                    <p className="text-lg font-medium">{displayValue(student?.studentCode)}</p>
                   </div>
-                </FormItem>
-              )}
-            />
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Transaction Date</h3>
+                    <p className="text-lg font-medium">{displayValue(student?.birthDate)}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Course</h3>
+                    <p className="text-lg font-medium">{displayValue(student?.address)}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Year</h3>
+                    <p className="text-lg font-medium">{displayValue(student?.contactNo)}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Semester</h3>
+                    <p className="text-lg font-medium">{displayValue(student?.emailAddress)}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Gender</h3>
+                    <p className="text-lg font-medium">
+                      {student?.genderCode === "1"
+                        ? "Male"
+                        : student?.genderCode === "2"
+                        ? "Female"
+                        : "Other"}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Enrollment Status</h3>
+                    <p className="text-lg font-medium">
+                      {student?.enrollStatusCode === "1"
+                        ? "Pending"
+                        : student?.enrollStatusCode === "2"
+                        ? "Approve"
+                        : "Disapprove"}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
           </div>
-
-        </div> */}
-        </form>
-      </Form>
-      </div>
     </>
   );
 }

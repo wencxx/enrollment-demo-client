@@ -1,70 +1,143 @@
-import { Enrollment2Form } from "@/components/FldrForm/entryenrollment2"
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
-import { Plus } from 'lucide-react'
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { useState, useEffect } from "react"
-import { Enrollment2Details } from "@/FldrTypes/enrollment2"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { columnsEnrolled } from "@/components/FldrDatatable/enrollment2-columns";
-import { DataTable } from "@/components/FldrDatatable/data-table";
-import { DialogTitle } from "@radix-ui/react-dialog"
+import { columnsEnrolled } from "@/components/FldrDatatable/enrollment2-columns"
+import { DataTable } from "@/components/FldrDatatable/data-table"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
+import { toast } from "sonner"
 
 export default function Enrollment2() {
-  const [isDialogOpen, setDialogOpen] = useState(false)
-  // enrolled students
-  const [list, setList] = useState<Enrollment2Details[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [allStudents, setAllStudents] = useState<any[]>([]);
+  const [studentsWithSubjects, setStudentsWithSubjects] = useState<any[]>([]);
+  const [studentsWithoutSubjects, setStudentsWithoutSubjects] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const fetchEnrollment2 = async () => {
+  const fetchStudents = async () => {
+    setIsLoading(true);
     try {
-      setLoading(true)
-      const response = await axios.get<Enrollment2Details[]>(`${plsConnect()}/api/Enrollment2/AllData`);
-      console.log("FULL API RESPONSE SAMPLE:", response.data[0]); // Log first item
-      const updatedData = response.data.map((item) => ({
+      // Get all enrolled students
+      const studentsResponse = await axios.get(
+        `${plsConnect()}/api/Enrollment2/ListEnrollment2Student`
+      );
+      
+      // Format student names
+      const students = studentsResponse.data.map((item: any) => ({
         ...item,
-        fullName: `${item.FirstName} ${item.MiddleName ? item.MiddleName + ' ' : ''}${item.LastName}`,
+        fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}`,
       }));
-      setList(updatedData);
+      
+      setAllStudents(students);
+      
+      // Get all enrollment details to filter students with subjects
+      const enrollmentsResponse = await axios.get(
+        `${plsConnect()}/api/Enrollment2/AllData`
+      );
+      
+      const enrollments = enrollmentsResponse.data;
+      
+      // Get unique PKCodes that have enrollments
+      const studentsWithEnrollments = new Set();
+      enrollments.forEach((enrollment: any) => {
+        studentsWithEnrollments.add(enrollment.pkCode);
+      });
+      
+      // Filter students with and without subjects
+      const withSubjects = students.filter((student: any) => 
+        studentsWithEnrollments.has(student.pkCode)
+      );
+      
+      const withoutSubjects = students.filter((student: any) => 
+        !studentsWithEnrollments.has(student.pkCode)
+      );
+      
+      setStudentsWithSubjects(withSubjects);
+      setStudentsWithoutSubjects(withoutSubjects);
     } catch (error) {
       console.error("Error fetching data:", error);
+      toast.error("Failed to load students");
     } finally {
-      setLoading(false)
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchEnrollment2();
+    fetchStudents();
   }, []);
 
   return (
     <>
-      <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
-        <DialogTrigger asChild>
-          <Button variant="outline">
-            <Plus />
-            Enrollment 2
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[70dvw] lg:!max-w-[60dvw]" aria-labelledby="dialog-title">
-          <DialogTitle id="dialog-title" className="text-lg font-medium">Enrollment 2</DialogTitle>
-          <Enrollment2Form closeModal={() => setDialogOpen(false)}/>
-        </DialogContent>
-      </Dialog>
+      <div className="container py-6">
+        <div className="space-y-4">
+          <Tabs defaultValue="all" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="all">
+                All Students
+                {allStudents.length > 0 && (
+                  <Badge className="ml-2 bg-gray-200 text-gray-700">
+                    {allStudents.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="no-subjects">
+                No Subjects
+                {studentsWithoutSubjects.length > 0 && (
+                  <Badge className="ml-2 bg-blue-100 text-blue-700">
+                    {studentsWithoutSubjects.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="with-subjects">
+                With Subjects
+                {studentsWithSubjects.length > 0 && (
+                  <Badge className="ml-2 bg-green-100 text-green-700">
+                    {studentsWithSubjects.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+            </TabsList>
 
-      <ScrollArea className="overflow-x-auto min-w-full max-w-screen-lg mx-auto whitespace-nowrap rounded-md">
-        <DataTable columns={columnsEnrolled} data={list} loading={loading} title="Schedules" />
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+            <TabsContent value="all" className="mt-4">
+              <DataTable
+                columns={columnsEnrolled}
+                data={allStudents}
+                title="Students"
+                loading={isLoading}
+                onRefresh={fetchStudents}
+              />
+            </TabsContent>
+            
+            <TabsContent value="no-subjects" className="mt-4">
+              <DataTable
+                columns={columnsEnrolled}
+                data={studentsWithoutSubjects}
+                title="Students Without Subjects"
+                loading={isLoading}
+                onRefresh={fetchStudents}
+              />
+            </TabsContent>
+            
+            <TabsContent value="with-subjects" className="mt-4">
+              <DataTable
+                columns={columnsEnrolled}
+                data={studentsWithSubjects}
+                title="Students With Subjects"
+                loading={isLoading}
+                onRefresh={fetchStudents}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
 
         <Toaster />
-
+      </div>
     </>
   )
 }

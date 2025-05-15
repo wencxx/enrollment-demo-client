@@ -1,65 +1,73 @@
 import { UserCheck, UserPen, User } from "lucide-react";
-import { Card } from "@/components/ui/card"
-import { ChartMain } from "@/components/Fldrcharts/chart-main";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { useEffect, useState } from "react";
+import { AYCol } from "@/FldrTypes/kim-types";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
+import RegularChart from "@/components/Fldrcharts/regular-chart";
+import GenderChart from "@/components/Fldrcharts/gender-chart";
 
 function Dashboard() {
+    // to populate kay wala ta "current year"
+    const defaultYear = "001";
+
+    const [academicYears, setAcademicYears] = useState<AYCol[]>([]);
+    const [selectedYear, setSelectedYear] = useState(defaultYear);
     const [studentCount, setStudentCount] = useState({
         applicant: 0,
+        enrolled: 0
+    });
+    const [enrolledCount, setEnrolledCount] = useState({
         irregular: 0,
         regular: 0,
     });
-    const [studentsCount, setStudentsCount] = useState([]);
-    const [yearComparison, setYearComparison] = useState({
-        regularChange: 0,
-        irregularChange: 0
-    })
 
-    // const fetchCount = async () => {
-    //     try {
-    //         const applicant = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StudentCount/1`);
-    //         const irregular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/0`, {
-    //             params: { validated: 1 }
-    //         });
-    //         const regular = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCount/1`, {
-    //             params: { validated: 1 }
-    //         });
-    //         setStudentCount({
-    //             applicant: applicant.data,
-    //             irregular: irregular.data,
-    //             regular: regular.data,
-    //         })
-    //     } catch (error) {
-    //         console.error("Error fetching student count:", error);
-    //     }
-    // };
+    // charts
+    const [regChartData, setRegChartData] = useState<
+        { year: string; yearDesc: string; regular: number; irregular: number }[]
+    >([]);
+    const [genderChartData, setGenderChartData] = useState<
+        { year: string; yearDesc: string; male: number; female: number; other: number; }[]
+    >([]);
 
-    // const fetchStudentStats = async () => {
-    //     try {
-    //         const response = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/StatusCountChart`);
+    const [startYear, setStartYear] = useState(defaultYear);
+    const [endYear, setEndYear] = useState(defaultYear);
 
-    //         const formattedData = response.data.map((item: any) => ({
-    //             year: item?.year ?? 0,
-    //             regular: item?.regular ?? 0,
-    //             irregular: item?.irregular ?? 0,
-    //         }));
-    //         setStudentsCount(formattedData);
-    //     } catch (error) {
-    //         console.error("Error fetching student stats:", error);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     fetchCount();
-    //     fetchStudentStats();
-    // }, []);
-
-
-    // useEffect(() => {
-    //     console.log("Data passed to ChartMain:", studentsCount);
-    // }, [studentsCount]);
+    useEffect(() => {
+        const fetchCount = async () => {
+          try {
+            const response = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/GetCounts`, {
+              params: { academicYear: selectedYear },
+            });
+      
+            const { applicants, enrolled, regular, irregular } = response.data;
+      
+            setStudentCount({
+              applicant: applicants,
+              enrolled: enrolled,
+            });
+      
+            setEnrolledCount({
+              regular: regular,
+              irregular: irregular,
+            });
+          } catch (error) {
+            console.error("Error fetching filtered data:", error);
+          }
+        };
+      
+        if (selectedYear) {
+          fetchCount();
+        }
+      }, [selectedYear]);
 
     const cardData = [
         {
@@ -70,44 +78,138 @@ function Dashboard() {
         {
             title: 'Enrolled students',
             icon: UserCheck,
-            data: studentCount.regular + studentCount.irregular
+            data: studentCount.enrolled
         },
         {
             title: 'Regular students',
             icon: User,
-            data: studentCount.regular
+            data: enrolledCount.regular
         },
         {
             title: 'Irregular students',
             icon: User,
-            data: studentCount.irregular
+            data: enrolledCount.irregular
         }
     ]
+
+    useEffect(() => {
+        const fetchAcademicYears = async () => {
+            try {
+                const yearRes = await axios.get<AYCol[]>(`${plsConnect()}/API/WebAPI/ListController/ListAcademicYear`)
+                const years = yearRes.data;
+                
+                setAcademicYears(years);
+            } catch (error) {
+                console.error("Error:", error)
+            }
+        }
+
+        fetchAcademicYears();
+    }, []);
+
+    const fetchChartData = async (startYear: string, endYear: string) => {
+        try {
+          const responseReg = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/GetRegularData`, {
+            params: { startYear, endYear },
+          });
+          const regData = responseReg.data;
+          setRegChartData(regData);
+
+          const responseGender = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/GetGenderData`, {
+            params: { startYear, endYear },
+          });
+          const genderData = responseGender.data;
+          setGenderChartData(genderData);
+        } catch (error) {
+          console.error("Error fetching chart data:", error);
+        }
+      };
+    
+      useEffect(() => {
+        if (startYear && endYear) {
+          fetchChartData(startYear, endYear);
+        }
+      }, [startYear, endYear]);
 
     return (
         <>
             <div className="flex flex-col gap-4">
+                <div className="flex">
+                <Select 
+                    value={selectedYear}
+                    onValueChange={(value) => setSelectedYear(value)}
+                    >
+                    <SelectTrigger className="w-[180px] border rounded px-4 py-2">
+                        <SelectValue placeholder="Select AY" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                        {academicYears.map((year) => (
+                            <SelectItem key={year.aYearCode} value={year.aYearCode}>
+                            {year.aYearDesc}
+                            </SelectItem>
+                        ))}
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                </div>
+                
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    {cardData.map((card, index) => (
-                        <Card key={index} className="h-fit rounded-xl p-5">
+                    {cardData.map((card) => (
+                        <Card key={card.title} className="h-fit rounded-xl p-5">
                             <div className="flex items-center justify-between">
                                 <span className="font-semibold capitalize">{card.title}</span>
                                 <card.icon />
                             </div>
                             <div>
-                                <h4 className="text-4xl font-bold">+{card.data}</h4>
-                                <p className="text-sm font-semibold text-neutral-700">+20% from last year</p>
+                                <h4 className="text-4xl font-bold">{card.data}</h4>
+                                {/* <p className="text-sm font-semibold text-neutral-700">+20% from last year</p> */}
                             </div>
                         </Card>
                     ))}
                 </div>
+                <div className="flex items-center gap-4">
+                        <h3 className="text-sm font-medium text-gray-500">From</h3>
+                        <Select
+                            value={startYear}
+                            onValueChange={(value) => setStartYear(value)}
+                        >
+                            <SelectTrigger className="w-[30] border rounded px-4 py-2">
+                            <SelectValue placeholder="Start AY" />
+                            </SelectTrigger>
+                            <SelectContent>
+                            <SelectGroup>
+                                {academicYears.map((year) => (
+                                <SelectItem key={year.aYearCode} value={year.aYearCode}>
+                                    {year.aYearDesc}
+                                </SelectItem>
+                                ))}
+                            </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                        <h3 className="text-sm font-medium text-gray-500">To</h3>
+                        <Select
+                            value={endYear}
+                            onValueChange={(value) => setEndYear(value)}
+                        >
+                            <SelectTrigger className="w-[30] border rounded px-4 py-2">
+                            <SelectValue placeholder="End AY" />
+                            </SelectTrigger>
+                            <SelectContent>
+                            <SelectGroup>
+                                {academicYears.map((year) => (
+                                <SelectItem key={year.aYearCode} value={year.aYearCode}>
+                                    {year.aYearDesc}
+                                </SelectItem>
+                                ))}
+                            </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                </div>
+                
                 <div className="grid auto-rows-min gap-4 lg:grid-cols-2">
-                    <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
-                        <ChartMain chartData={studentsCount} title="Number of students categorized by status" />
-                    </Card>
-                    <Card className="min-h-[60dvh] rounded-xl md:min-h-min">
-                        <ChartMain chartData={studentsCount} defaultChart={'bar'} title="Number of students categorized by gender" />
-                    </Card>
+                    <RegularChart data={regChartData} />
+                    <GenderChart data={genderChartData} />
                 </div>
             </div>
         </>

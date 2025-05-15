@@ -41,7 +41,7 @@ function RoutePage() {
 
     return (
         <>
-            <Dialog>
+            {/* <Dialog>
                 <DialogTrigger asChild>
                     <Button variant="outline">
                         <Plus />
@@ -56,7 +56,7 @@ function RoutePage() {
                     </DialogHeader>
                     <RoutesForm getAllRoutes={getAllRoutes} />
                 </DialogContent>
-            </Dialog>
+            </Dialog> */}
             <div className="mt-4">
                 <DataTable columns={columns} data={routes} title="routes" loading={loading} />
             </div>

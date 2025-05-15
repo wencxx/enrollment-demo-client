@@ -98,6 +98,7 @@ export const enrollment1Schema = z.object({
 
 export const enrollment2Schema = z.object({
   pkCode: z.string().min(1, { message: "Select a student." }),
+  pkRate:z.string(),
   rowNum: z.number(),
   subjectCode: z.string().min(1, { message: "Select a subject." }),
   professorCode: z.string().min(1, { message: "Select a professor." }),

@@ -23,7 +23,7 @@ export default function Town() {
   const getTown = async () => {
     try {
       setLoading(true)
-      const res = await axios.get(`${plsConnect()}/api/TownCity`)
+      const res = await axios.get(`${plsConnect()}/api/TownCity/ListTown`)
       setData(res.data)
     } catch (error) {
       console.log(error)
