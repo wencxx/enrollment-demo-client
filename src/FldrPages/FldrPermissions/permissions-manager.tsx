@@ -17,6 +17,16 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
   } from "@/components/ui/collapsible"
+  import {
+      Dialog,
+      DialogContent,
+      DialogTrigger,
+      DialogHeader,
+      DialogDescription,
+      DialogTitle
+  } from "@/components/ui/dialog"
+  import { Plus } from 'lucide-react'
+  import { EntryUserGroup } from "@/components/FldrForm/entryusergroup";
   
   
 
@@ -112,6 +122,23 @@ function GrantPermission() {
         <div className="text-center p-4">Loading groups...</div>
       ) : (
         <>
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant="outline" className="mb-4">
+                    <Plus />
+                    New user group
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle className="text-lg font-medium">Add new user group</DialogTitle>
+                    <DialogDescription>
+                    </DialogDescription>
+                </DialogHeader>
+                {/* <Userform groups={groups} /> */}
+                <EntryUserGroup />
+            </DialogContent>
+        </Dialog>
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <div className="flex items-center justify-between mb-2">
             <h2 className="text-2xl font-bold mb-4">User Groups</h2>
