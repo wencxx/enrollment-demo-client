@@ -65,7 +65,7 @@ export function MenuEnrollment({
                     // <SidebarMenuSubItem className={`${user && !subItem.authorizeUsers?.includes(user.groupCode) && 'hidden'}`} key={subItem.title}>
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <NavLink to={subItem.url} className={`${subItem.url === location.pathname.slice(1) && 'bg-gray-100'}`}>
+                        <NavLink to={subItem.url} className={`${subItem.url === location.pathname.slice(1)&& 'bg-sidebar-accent text-sidebar-accent-foreground'}`}>
                           <span>{subItem.title}</span>
                         </NavLink>
                       </SidebarMenuSubButton>
