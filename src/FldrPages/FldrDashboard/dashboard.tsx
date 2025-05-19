@@ -17,7 +17,6 @@ import GenderChart from "@/components/Fldrcharts/gender-chart";
 
 function Dashboard() {
     // to populate kay wala ta "current year"
-    
     const defaultYear = "001";
 
     const [academicYears, setAcademicYears] = useState<AYCol[]>([]);
@@ -31,7 +30,6 @@ function Dashboard() {
         regular: 0,
     });
 
-    // charts
     const [regChartData, setRegChartData] = useState<
         { year: string; yearDesc: string; regular: number; irregular: number }[]
     >([]);
