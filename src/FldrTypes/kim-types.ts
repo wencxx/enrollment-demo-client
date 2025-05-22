@@ -23,6 +23,8 @@ export type Rate1Col = {
     courseDesc: string
     semCode: string
     semDesc: string
+    label: string
+    value: string
 }
 
 export type RateTypeCol = {
@@ -30,10 +32,17 @@ export type RateTypeCol = {
     rateTypeDesc: string
 }
 
+export type RateSubTypeCol = {
+    rateSubTypeCode: string
+    rateSubTypeDesc: string
+}
+
 export type RateDescCol = {
     rdCode: string
     rdID: string
     rdDesc: string
+    label: string
+    value: string
 }
 
 export type Rate2Col = {

@@ -54,7 +54,7 @@ export default function Rate2() {
                 Add new Rate 2
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden" aria-labelledby="dialog-title">
                 <EntryRate2Form
                 onCancel={getRate2}
                 onSuccess={() => {
