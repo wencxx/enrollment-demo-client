@@ -55,8 +55,12 @@ export const studentSchema = z.object({
 })
 
 export const courseSchema = z.object({
+  courseCode: z.string().optional(),
   courseDesc: z.string().min(2, {
     message: "Course description must be at least 2 characters.",
+  }),
+  collegeCode: z.string().min(1, {
+    message: "Select college.",
   }),
 })
 
@@ -283,5 +287,12 @@ export const userGroupDataSchema = z.object({
   groupCode: z.string().optional(),
   groupName: z.string().min(2, {
     message: "Group name must be at least 2 characters.",
+  }),
+})
+
+export const collegeSchema = z.object({
+  collegeCode: z.string().optional(),
+  collegeDesc: z.string().min(2, {
+    message: "College must be at least 2 characters.",
   }),
 })

@@ -1,9 +1,9 @@
-import { columns } from "@/components/FldrDatatable/course-columns";
+import { columns } from "@/components/FldrDatatable/college-columns";
 import { DataTable } from "@/components/FldrDatatable/data-table";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { CourseForm } from "@/components/FldrForm/entrycourse"
-import { CourseCol } from "@/FldrTypes/course.col";
+import { CollegeForm } from "@/components/FldrForm/entrycollege.tsx";
+import { CollegeCol } from "@/FldrTypes/kim-types";
 import {
   Dialog,
   DialogContent,
@@ -14,20 +14,20 @@ import { Toaster } from "@/components/ui/sonner"
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { Plus } from 'lucide-react'
 
-export default function Course() {
-  const [data, setData] = useState<CourseCol[]>([]);
+export default function College() {
+  const [data, setData] = useState<CollegeCol[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const getCourse = async () => {
+  const getData = async () => {
     try {
       setLoading(true)
-      const res = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
+      const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListCollege`)
       
-      const formattedData = res.data.map((item: any) => ({
-        courseCode: item.courseCode,
-        courseDesc: item.courseDesc,  
-        collegeCode: item.collegeCode,
-        collegeDesc: item.collegeDesc
+      const formattedData = res.data.map((item: any, index: number) => ({
+        fieldNumber: index + 1,
+        collegeCode: item.collegeCode || "",
+        collegeDesc: item.collegeDesc || "",
       }));
       
       setData(formattedData)
@@ -37,23 +37,29 @@ export default function Course() {
       setLoading(false)
     }
   }
-
   useEffect(() => {
-    getCourse()
+    getData()
   }, []);
 
   return (
     <div className="container py-6">
         <div className="space-x-2">
-          <Dialog>
+          {/* <h2 className="text-xl font-semibold">Courses</h2> */}
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add new course
+                Add new college
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <CourseForm onCancel={getCourse} />
+                <CollegeForm
+                onCancel={getData}
+                onSuccess={() => {
+                    getData();
+                    setIsDialogOpen(false);
+                }}
+                />
             </DialogContent>
           </Dialog>
         </div>
@@ -62,8 +68,8 @@ export default function Course() {
             columns={columns} 
             data={data} 
             loading={loading} 
-            title="courses" 
-            onRefresh={getCourse}
+            title="colleges" 
+            onRefresh={getData}
           />
         </div>
       <Toaster />
