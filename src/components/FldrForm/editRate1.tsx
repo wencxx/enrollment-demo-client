@@ -22,13 +22,14 @@ import { useEffect, useState } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Check, ChevronsUpDown, Save } from "lucide-react";
-import { CourseCol, YearCol } from "@/FldrTypes/kim-types";
+import { CourseCol, SemCol, YearCol } from "@/FldrTypes/kim-types";
 import { cn } from "@/lib/utils";
 
 type Rate1FormData = {
     pkRate1: string;
     yearCode: string;
     courseCode: string;
+    semCode: string;
 };
 
 interface Rate1FormProps {
@@ -41,6 +42,7 @@ export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormPro
   const [isLoading, setIsLoading] = useState(false);
   const [year, setYear] = useState<YearCol[]>([])
   const [course, setCourse] = useState<CourseCol[]>([])
+  const [sem, setSem] = useState<SemCol[]>([])
   const [pkRate1] = useState(toEdit);
 
   const form = useForm<Rate1FormData>({
@@ -48,6 +50,7 @@ export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormPro
         pkRate1: "",
         yearCode: "",
         courseCode: "",
+        semCode: ""
     },
   });
 
@@ -57,6 +60,9 @@ export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormPro
           try {
             const yearRes = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListYear`)
             setYear(yearRes.data)
+
+            const semRes = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListSemester`)
+            setSem(semRes.data)
   
             const courseRes = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
             const mappedCourseCode = courseRes.data.map((item: CourseCol) => ({
@@ -66,13 +72,14 @@ export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormPro
             setCourse(mappedCourseCode)
             
             if (pkRate1) {
-                const entryRes = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListRate1`);
+                const entryRes = await axios.get(`${plsConnect()}/API/WebAPI/RateController/ListRate1`);
                 const entryData = entryRes.data.find((entry: Rate1FormData) => entry.pkRate1 === pkRate1);
-      
+                console.log(entryData.semCode);
                 form.reset({
                   pkRate1: entryData.pkRate1,
                   yearCode: entryData.yearCode,
                   courseCode: entryData.courseCode,
+                  semCode: entryData.semCode,
                 });
               }
           } catch (error) {
@@ -124,34 +131,6 @@ export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormPro
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-
-        <FormField
-          control={form.control}
-          name="yearCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Year</FormLabel>
-              <Select
-                  onValueChange={(value) => {
-                    form.setValue("yearCode", value);
-                    field.onChange(value);
-                  }}
-                  value={field.value}
-                >
-                <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select year" />
-                </SelectTrigger>
-                <SelectContent>
-                    {year.map((item) => (
-                    <SelectItem key={item.yearCode} value={item.yearCode}>
-                        {item.yearDesc}
-                    </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-            </FormItem>
-          )}
-        />
 
         <FormField
           control={form.control}
@@ -211,6 +190,62 @@ export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormPro
                   </Command>
                 </PopoverContent>
               </Popover>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="yearCode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Year</FormLabel>
+              <Select
+                  onValueChange={(value) => {
+                    form.setValue("yearCode", value);
+                    field.onChange(value);
+                  }}
+                  value={field.value}
+                >
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select year" />
+                </SelectTrigger>
+                <SelectContent>
+                    {year.map((item) => (
+                    <SelectItem key={item.yearCode} value={item.yearCode}>
+                        {item.yearDesc}
+                    </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="semCode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Semester</FormLabel>
+              <Select
+                  onValueChange={(value) => {
+                    form.setValue("semCode", value);
+                    field.onChange(value);
+                  }}
+                  value={field.value}
+                >
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select semester" />
+                </SelectTrigger>
+                <SelectContent>
+                    {sem.map((item) => (
+                    <SelectItem key={item.semCode} value={item.semCode}>
+                        {item.semDesc}
+                    </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
             </FormItem>
           )}
         />

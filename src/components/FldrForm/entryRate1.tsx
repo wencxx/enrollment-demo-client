@@ -22,13 +22,14 @@ import { useEffect, useState } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
-import { CourseCol, YearCol } from "@/FldrTypes/kim-types";
+import { CourseCol, YearCol, SemCol } from "@/FldrTypes/kim-types";
 import { cn } from "@/lib/utils";
 
 type Rate1FormData = {
     pkRate1: string;
     yearCode: string;
     courseCode: string;
+    semCode: string;
 };
 
 interface Rate1FormProps {
@@ -41,12 +42,16 @@ export function EntryRate1Form({ onCancel, onSuccess }: Rate1FormProps) {
 
   const [year, setYear] = useState<YearCol[]>([])
   const [course, setCourse] = useState<CourseCol[]>([])
+  const [sem, setSem] = useState<SemCol[]>([])
 
   useEffect(() => {
         async function fetchData() {
           try {
             const yearRes = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListYear`)
             setYear(yearRes.data)
+
+            const semRes = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListSemester`)
+            setSem(semRes.data)
   
             const courseRes = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
             const mappedCourseCode = courseRes.data.map((item: CourseCol) => ({
@@ -68,6 +73,7 @@ export function EntryRate1Form({ onCancel, onSuccess }: Rate1FormProps) {
         pkRate1: "",
         yearCode: "",
         courseCode: "",
+        semCode: ""
     },
   });
 
@@ -115,28 +121,6 @@ export function EntryRate1Form({ onCancel, onSuccess }: Rate1FormProps) {
 
         <FormField
           control={form.control}
-          name="yearCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Year</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select year" />
-                </SelectTrigger>
-                <SelectContent>
-                    {year.map((item) => (
-                    <SelectItem key={item.yearCode} value={item.yearCode}>
-                        {item.yearDesc}
-                    </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
           name="courseCode"
           render={({ field }) => (
             <FormItem className="flex flex-col">
@@ -150,6 +134,7 @@ export function EntryRate1Form({ onCancel, onSuccess }: Rate1FormProps) {
                       className={cn(
                         "w-full justify-between",
                         !field.value && "text-muted-foreground"
+                        
                       )}
                     >
                       {field.value
@@ -161,7 +146,8 @@ export function EntryRate1Form({ onCancel, onSuccess }: Rate1FormProps) {
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-full min-w-[var(--radix-popover-trigger-width)]">
+                <PopoverContent className="w-full min-w-[var(--radix-popover-trigger-width)]"
+                style={{ pointerEvents: "auto" }}>
                   <Command>
                     <CommandInput
                       placeholder="Search..."
@@ -195,6 +181,50 @@ export function EntryRate1Form({ onCancel, onSuccess }: Rate1FormProps) {
                   </Command>
                 </PopoverContent>
               </Popover>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="yearCode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Year</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select year" />
+                </SelectTrigger>
+                <SelectContent>
+                    {year.map((item) => (
+                    <SelectItem key={item.yearCode} value={item.yearCode}>
+                        {item.yearDesc}
+                    </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="semCode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Semester</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select semester" />
+                </SelectTrigger>
+                <SelectContent>
+                    {sem.map((item) => (
+                    <SelectItem key={item.semCode} value={item.semCode}>
+                        {item.semDesc}
+                    </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
             </FormItem>
           )}
         />
