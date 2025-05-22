@@ -6,6 +6,13 @@ export type YearCol = {
 export type CourseCol = {
     courseCode: string
     courseDesc: string
+    value: string
+    label: string
+}
+
+export type SemCol = {
+    semCode: string
+    semDesc: string
 }
 
 export type Rate1Col = {
@@ -14,6 +21,8 @@ export type Rate1Col = {
     courseCode: string
     yearDesc: string
     courseDesc: string
+    semCode: string
+    semDesc: string
 }
 
 export type RateTypeCol = {

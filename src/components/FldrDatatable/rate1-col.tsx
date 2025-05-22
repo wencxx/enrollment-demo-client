@@ -61,6 +61,18 @@ export const columns: ColumnDef<Rate1Col>[] = [
         ),
     },
     {
+        accessorKey: "semDesc",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Semester
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+    },
+    {
         id: "actions",
         cell: ({ row, table }) => {
           const [isDialogOpen, setIsDialogOpen] = useState(false);

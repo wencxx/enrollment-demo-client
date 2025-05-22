@@ -31,6 +31,8 @@ export default function Rate1() {
         courseCode: item.courseCode || "",
         yearDesc: item.yearDesc || "",
         courseDesc: item.courseDesc || "",
+        semCode: item.semCode || "",
+        semDesc: item.semDesc || "",
       }));
       console.log("List received:", res.data);  
       setData(formattedData)
