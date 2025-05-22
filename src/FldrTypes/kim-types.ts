@@ -98,3 +98,25 @@ export type AYCol = {
     aYearCode: string
     aYearDesc: string
 }
+
+export type CollegeCol = {
+    collegeCode: string;
+    collegeDesc: string;
+    label: string;
+    value: string;
+}
+
+export type AcademicYear = {
+    aYearCode: number;
+    ayStart: number;
+    ayEnd: number;
+}
+
+// export type AcademicYearData = {
+//     cumulativeGWA: number
+//     year: number
+//     section: string
+//     semesters: {
+//         [key: string]: SemesterGradeData
+//     }
+// }

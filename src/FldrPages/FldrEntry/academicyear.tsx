@@ -15,7 +15,7 @@ export default function AcademicYearPage() {
   const fetchAcadYears = async () => {
     try {
       setLoading(true)
-      const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListAcademicYear`)
+      const response = await axios.get(`${plsConnect()}/api/AcademicYear`)
       setAcadYear(response.data)
     } catch (error) {
       console.log(error)
@@ -32,7 +32,7 @@ export default function AcademicYearPage() {
     <div className="container py-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-4">
-            <AcadYearForm onSuccess={fetchAcadYears} />
+             <AcadYearForm onSuccess={fetchAcadYears} acadYear={acadYear} />
         </Card>
 
         <Card className="p-4">

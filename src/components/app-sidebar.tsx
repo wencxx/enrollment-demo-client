@@ -27,7 +27,7 @@ import {
   SidebarRail,
   SidebarMenuButton
 } from "@/components/ui/sidebar"
-import useAuthStore from "@/FldrStore/auth"
+// import useAuthStore from "@/FldrStore/auth"
 import { MenuEnrollment } from "./FldrMenu/menu-enrollment"
 
 // menu lists
@@ -93,63 +93,58 @@ const data = {
       title: "Entry",
       url: "#",
       icon: FileInput,
-      // authorizeUsers: ['01'],
       items: [
         {
+          title: "College",
+          url: "entry/college",
+        },
+        { 
           title: "Course",
           url: "entry/course",
-          // authorizeUsers: ['01']
         },
         {
           title: "Professors",
           url: "entry/professors",
-          // authorizeUsers: ['01']
         },
         {
           title: "High School",
           url: "entry/highschool",
-          // authorizeUsers: ['01']
         },
         {
           title: "Elementary",
           url: "entry/elementary",
-          // authorizeUsers: ['01']
         },
-
         {
           title: "Town/City",
           url: "entry/town",
-          // authorizeUsers: ['01']
         },
         {
           title: "Room",
           url: "entry/room",
-          // authorizeUsers: ['01']
         },
         {
           title: "Section",
           url: "entry/section",
-          // authorizeUsers: ['01']
         },
         {
           title: "Rate 1",
           url: "entry/rate1",
-          // authorizeUsers: ['01']
         },
         {
           title: "Rate 2",
           url: "entry/rate2",
-          // authorizeUsers: ['01']
         },
         {
           title: "Rate Description",
           url: "entry/ratedesc",
-          // authorizeUsers: ['01']
         },
         {
           title: "Enroll Description",
           url: "entry/enroll-description",
-          // authorizeUsers: ['01']
+        },
+        {
+          title: "Academic Year",
+          url: "entry/AY",
         },
       ],
     },
@@ -159,22 +154,18 @@ const data = {
       title: "Enrollment",
       url: "#",
       icon: ChartColumn,
-      // authorizeUsers: ['01'],
       items: [
         {
           title: "Enrollment 1",
           url: "enrollment/enrollment1",
-          // authorizeUsers: ['01']
         },
         {
           title: "Enrollment 2",
           url: "enrollment/enrollment2",
-          authorizeUsers: ['01']
         },
         {
           title: "Enrollment 3",
           url: "enrollment/enrollment3",
-          authorizeUsers: ['01']
         },
       ],
     },
@@ -182,8 +173,8 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const store = useAuthStore()
-  const user = store.currentUser
+  // const store = useAuthStore()
+  // const user = store.currentUser
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -206,15 +197,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </div>
         </SidebarMenuButton>
       </SidebarHeader>
-      {/* IGNORE THIS COMMENTED OUT PART */}
-      {/* <SidebarContent className="scrollbar-hidden">
-        {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuDashboard} />}
-        {(user && (user.groupName === 'Admin' || user.groupName === 'Student')) && <SingleMenu data={data.menuStudent} title="Student" />}
-        {(user && (user.groupName === 'Student')) && <SingleMenu data={data.menuStudent} title="Student" />}
-        {(user && (user.groupName === 'Admin')) && <MenuMain items={data.menuMain} />}
-        {(user && (user.groupName === 'Admin')) && <MenuEnrollment items={data.menuEnrollment} /> } 
-        {(user && (user.groupName === 'Admin')) && <SingleMenu data={data.menuPersmissions} title="Permissions" />}
-      </SidebarContent> */}
       <SidebarContent className="scrollbar-hidden">
         <SingleMenu data={data.menuDashboard} />
         <SingleMenu data={data.menuStudent} title="Student" />
