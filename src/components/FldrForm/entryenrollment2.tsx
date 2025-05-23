@@ -44,8 +44,7 @@ type Subject = {
   pkRate: string;
   rdCode: string;
   rdDesc: string;
-  academicUnits: number;
-  labUnits: number;
+  noUnits: number;
   rateAmount: number;
   rateTypeCode: string;
 };
@@ -57,8 +56,7 @@ type Enrollment = {
   PKRate?: string;
   amount: number;
   professorCode: string;
-  academicUnits: number;
-  labUnits: number;
+  noUnits: number;
   rdDesc?: string;
 };
 
@@ -264,9 +262,6 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
 
   const toggleEditMode = () => setEditMode(prev => !prev);
 
-  const getTotalUnits = (subject: { academicUnits?: number; labUnits?: number }) =>
-  (subject.academicUnits || 0) + (subject.labUnits || 0);
-
   const onSubmit = async () => {
     if (courseSubjects.length === 0) {
       toast.error("No subjects selected for enrollment");
@@ -282,8 +277,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
       scheduleDayCode: "00",
       classStart: "00:00",
       classEnd: "00:00",
-      academicUnits: subject.academicUnits,
-      labUnits: subject.labUnits,
+      noUnits: subject.noUnits,
       rateAmount: subject.rateAmount,
       amount: subject.rateAmount,
       rateTypeCode: subject.rateTypeCode,
@@ -440,7 +434,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
                           </td>
                           <td className="py-2 px-4 text-right">
                             {/* {enrollment.noUnits || 0} */}
-                            {getTotalUnits(enrollment)}
+                            {enrollment.noUnits}
                           </td>
                           <td className="py-2 px-4 text-center">
                             <Button
@@ -460,7 +454,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
                       <tr className="font-semibold">
                         <td className="py-2 px-4">Total</td>
                         <td className="py-2 px-4 text-right">
-                          {regularCurrentEnrollments.reduce((sum, e) => sum + getTotalUnits(e), 0)}
+                          {regularCurrentEnrollments.reduce((sum, e) => sum + (e.noUnits || 0), 0)}
                         </td>
                         <td></td>
                       </tr>
@@ -510,7 +504,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
                       {availableCourseSubjects.map((subject, idx) => (
                         <tr key={idx} className="border-b hover:bg-gray-50">
                           <td className="py-2 px-4">{subject.rdDesc}</td>
-                          <td className="py-2 px-4 text-right">{getTotalUnits(subject)}</td>
+                          <td className="py-2 px-4 text-right">{subject.noUnits}</td>
                           {editMode && (
                             <td className="py-2 px-4 text-center">
                               <Button
@@ -531,7 +525,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
                       <tr className="font-semibold">
                         <td className="py-2 px-4">Total</td>
                         <td className="py-2 px-4 text-right">
-                          {availableCourseSubjects.reduce((sum, s) => sum + getTotalUnits(s), 0)}
+                          {availableCourseSubjects.reduce((sum, s) => sum + (s.noUnits || 0), 0)}
                         </td>
                         {editMode && <td className="py-2 px-4"></td>}
                       </tr>
@@ -674,7 +668,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
                         {availableFilteredSubjects.map((subject, idx) => (
                           <tr key={idx} className="border-b hover:bg-gray-50 text-sm">
                             <td className="py-2 px-4">{subject.rdDesc}</td>
-                            <td className="py-2 px-4 text-right">{getTotalUnits(subject)}</td>
+                            <td className="py-2 px-4 text-right">{subject.noUnits}</td>
                             <td className="py-2 px-4 text-center">
                               <Button
                                 type="button"

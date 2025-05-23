@@ -115,18 +115,18 @@ export default function StudentApplication() {
 
       console.log("Submitting to API:", applicationData);
 
-      const response = await axios.post(
-        `${plsConnect()}/API/WebAPI/StudentController/SubmitStudentApplication`,
-        applicationData
-      );
+      // const response = await axios.post(
+      //   `${plsConnect()}/API/WebAPI/StudentController/SubmitStudentApplication`,
+      //   applicationData
+      // );
 
-      if (response.data && response.data.success === true) {
-        toast.success(response.data.message || "Application submitted successfully!");
-      } else if (response.status >= 200 && response.status < 300) {
-        toast.success("Application submitted successfully!");
-      } else {
-        toast.error(response.data?.message || "Failed to submit application");
-      }
+      // if (response.data && response.data.success === true) {
+      //   toast.success(response.data.message || "Application submitted successfully!");
+      // } else if (response.status >= 200 && response.status < 300) {
+      //   toast.success("Application submitted successfully!");
+      // } else {
+      //   toast.error(response.data?.message || "Failed to submit application");
+      // }
     } catch (error: any) {
       console.error("Error submitting application:", error);
     
