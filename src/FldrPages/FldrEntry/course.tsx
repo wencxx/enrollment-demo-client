@@ -23,11 +23,11 @@ export default function Course() {
       setLoading(true)
       const res = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
       
-      // Format data with fieldNumber for consistent structure
-      const formattedData = res.data.map((item: any, index: number) => ({
-        fieldNumber: index + 1,
-        courseCode: item.CourseCode || item.courseCode,
-        courseDesc: item.CourseDesc || item.courseDesc,
+      const formattedData = res.data.map((item: any) => ({
+        courseCode: item.courseCode,
+        courseDesc: item.courseDesc,  
+        collegeCode: item.collegeCode,
+        collegeDesc: item.collegeDesc
       }));
       
       setData(formattedData)
@@ -45,7 +45,6 @@ export default function Course() {
   return (
     <div className="container py-6">
         <div className="space-x-2">
-          {/* <h2 className="text-xl font-semibold">Courses</h2> */}
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline">

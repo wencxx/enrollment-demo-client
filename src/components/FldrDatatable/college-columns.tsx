@@ -2,16 +2,18 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Edit, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { CourseCol } from "@/FldrTypes/course.col"
+import { CollegeCol } from "@/FldrTypes/types"
 import {
     Dialog,
     DialogContent,
     DialogTrigger,
+    // DialogTitle,
+    // DialogHeader
   } from "@/components/ui/dialog"
 import { useState } from "react"
-import { CourseForm } from "../FldrForm/entrycourse"
+import { CollegeForm } from "../FldrForm/entrycollege"
 
-export const columns: ColumnDef<CourseCol>[] = [
+export const columns: ColumnDef<CollegeCol>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -34,29 +36,14 @@ export const columns: ColumnDef<CourseCol>[] = [
         enableSorting: false,
         enableHiding: false,
     },
-    // {
-    //     accessorKey: "fieldNumber",
-    //     header: ({ column }) => (
-    //         <Button
-    //             variant="ghost"
-    //             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //         >
-    //             #
-    //             <ArrowUpDown className="ml-2 h-4 w-4" />
-    //         </Button>
-    //     ),
-    //     cell: ({ row }) => row.index + 1, 
-    //     enableSorting: false,
-    //     enableHiding: false,
-    // },
     {
-        accessorKey: "courseDesc",
+        accessorKey: "collegeCode",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Course Description
+                Code
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
@@ -68,7 +55,7 @@ export const columns: ColumnDef<CourseCol>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                College
+                Description
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
@@ -76,37 +63,36 @@ export const columns: ColumnDef<CourseCol>[] = [
     {
         id: "actions",
         cell: ({ row, table }) => {
-          const [isCourseDialogOpen, setIsCourseDialogOpen] = useState(false);
-          const [courseCode, setCourseCode] = useState("");
+          const [isDialogOpen, setIsDialogOpen] = useState(false);
+          const [collegeCode, setCollegeCode] = useState("");
 
           const handleDialogOpen = (code: string) => {
-            setCourseCode(code);
-            setIsCourseDialogOpen(true);
+            setCollegeCode(code);
+            setIsDialogOpen(true);
           };
 
-          const handleCourseUpdate = () => {
-            setIsCourseDialogOpen(false);
-            // Call refresh function from table meta if available
+          const handleUpdate = () => {
+            setIsDialogOpen(false);
             const onRefresh = table.options.meta?.refreshData;
             if (typeof onRefresh === 'function') {
-              console.log("Refreshing course data after update");
+              console.log("Refreshing...");
               onRefresh();
             }
           };
 
           return (
-            <Dialog open={isCourseDialogOpen} onOpenChange={setIsCourseDialogOpen}>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.courseCode)}>
-                    <span className="sr-only">Edit course</span>
+                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.collegeCode)}>
+                    <span className="sr-only">Edit room</span>
                     <Edit className="h-4 w-4" />
                 </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-md" aria-labelledby="dialog-title">
-                    <CourseForm 
+                    <CollegeForm 
                       editMode={true}
-                      courseToEdit={courseCode} 
-                      onCancel={handleCourseUpdate}
+                      toEdit={collegeCode} 
+                      onCancel={handleUpdate}
                     />
                 </DialogContent>
             </Dialog>

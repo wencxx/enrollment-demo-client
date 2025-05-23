@@ -279,7 +279,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
       classEnd: "00:00",
       noUnits: subject.noUnits,
       rateAmount: subject.rateAmount,
-      amount: subject.noUnits === 0 ? subject.rateAmount : subject.noUnits * subject.rateAmount,
+      amount: subject.rateAmount,
       rateTypeCode: subject.rateTypeCode,
     }));
 
@@ -433,7 +433,8 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
                             {enrollment.rdDesc || "Subject"}
                           </td>
                           <td className="py-2 px-4 text-right">
-                            {enrollment.noUnits || 0}
+                            {/* {enrollment.noUnits || 0} */}
+                            {enrollment.noUnits}
                           </td>
                           <td className="py-2 px-4 text-center">
                             <Button

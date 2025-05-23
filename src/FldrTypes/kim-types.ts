@@ -6,6 +6,13 @@ export type YearCol = {
 export type CourseCol = {
     courseCode: string
     courseDesc: string
+    value: string
+    label: string
+}
+
+export type SemCol = {
+    semCode: string
+    semDesc: string
 }
 
 export type Rate1Col = {
@@ -14,6 +21,10 @@ export type Rate1Col = {
     courseCode: string
     yearDesc: string
     courseDesc: string
+    semCode: string
+    semDesc: string
+    label: string
+    value: string
 }
 
 export type RateTypeCol = {
@@ -21,10 +32,17 @@ export type RateTypeCol = {
     rateTypeDesc: string
 }
 
+export type RateSubTypeCol = {
+    rateSubTypeCode: string
+    rateSubTypeDesc: string
+}
+
 export type RateDescCol = {
     rdCode: string
     rdID: string
     rdDesc: string
+    label: string
+    value: string
 }
 
 export type Rate2Col = {
@@ -98,3 +116,25 @@ export type AYCol = {
     aYearCode: string
     aYearDesc: string
 }
+
+export type CollegeCol = {
+    collegeCode: string;
+    collegeDesc: string;
+    label: string;
+    value: string;
+}
+
+export type AcademicYear = {
+    aYearCode: number;
+    ayStart: number;
+    ayEnd: number;
+}
+
+// export type AcademicYearData = {
+//     cumulativeGWA: number
+//     year: number
+//     section: string
+//     semesters: {
+//         [key: string]: SemesterGradeData
+//     }
+// }
