@@ -60,7 +60,7 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
             academicUnits: "0",
             labUnits: "0",
             rateSubTypeCode: "",
-            rateRowNum: 1,
+            // rowNum: 0
             },
         ],
         },
@@ -136,7 +136,7 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
         }, [])
 
     const handleAddRow = () => {
-    const nextRowNum = fields.length > 0 ? fields[fields.length - 1].rateRowNum + 1 : 1;
+    // const nextRowNum = fields.length > 0 ? fields[fields.length - 1].rowNum + 1 : 1;
         append({
         rdCode: "",
         rateTypeCode: "",
@@ -145,24 +145,23 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
         academicUnits: "",
         labUnits: "",
         perSem: "",
-        rateRowNum: nextRowNum,
+        // rowNum: nextRowNum,
         });
     };
 
     const handleRemoveRow = (index: number) => {
         remove(index);
-        fields.forEach((_, i) => {
-        if (i !== index) {
-            setValue(`rows.${i}.rateRowNum`, i + 1);
-        }
-        });
+        // fields.forEach((_, i) => {
+        // if (i !== index) {
+        //     setValue(`rows.${i}.rowNum`, i + 1);
+        // }
+        // });
   };
 
     const onSubmit = async (values: Rate2FormData) => {
-        //tani gin buno nyo nlng ko
             const rate2Data = values.rows.map((row) => ({
             pkRate1: values.pkRate1,
-            pkRate: "", //the actual primary key char(5)
+            pkRate: "", //pk
             rdCode: row.rdCode,
             rateTypeCode: row.rateTypeCode,
             rateSubTypeCode: row.rateSubTypeCode,
@@ -170,7 +169,7 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
             labUnits: parseInt(row.labUnits, 10),
             perSem: parseFloat(row.perSem),
             rateAmount: parseFloat(row.rateAmount),
-            rateRowNum: row.rateRowNum,
+            // rowNum: row.rowNum,
             }));
 
         try {
@@ -283,7 +282,7 @@ return (
             />
         </div>
     
-            <Table>
+            <Table className="min-w-[800px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Type</TableHead>
