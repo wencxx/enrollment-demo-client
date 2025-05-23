@@ -6,6 +6,7 @@ import { Rate2Col } from "@/FldrTypes/kim-types";
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -61,8 +62,8 @@ export default function Rate2() {
                 Add new Rate 2
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden"
-  aria-labelledby="dialog-title">
+            <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden" aria-labelledby="dialog-title">
+                <DialogTitle>Insert Rates</DialogTitle>
                 <div className="w-full overflow-x-auto">
                 <EntryRate2Form
                 onCancel={getRate2}
