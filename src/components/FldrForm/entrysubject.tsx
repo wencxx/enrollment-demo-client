@@ -29,13 +29,14 @@ export function SubjectForm({ editMode = false, subjectToEdit = "", onCancel }: 
   const [isEditing] = useState(editMode)
   const [selectedSubject] = useState(subjectToEdit)
   const [isLoading, setIsLoading] = useState(false)
-  const [originalSubjectCode, setOriginalSubjectCode] = useState("")
+  const [originalSubjectId, setOriginalSubjectId] = useState("")
 
   const form = useForm<SubjectFormData>({
     resolver: zodResolver(subjectSchema),
     defaultValues: {
-      subjectCode: "",
-      subjectDesc: "",
+      RDID: "",
+      RDDesc: "",
+      // RDCode: ""
     },
   })
 
@@ -46,15 +47,15 @@ export function SubjectForm({ editMode = false, subjectToEdit = "", onCancel }: 
         try {
           console.log(`Fetching subject details for ${selectedSubject}`)
           setIsLoading(true)
-          const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/GetSubject/${selectedSubject}`)
+          const response = await axios.get(`${plsConnect()}/API/WEBAPI/Subject/${selectedSubject}`)
           
           console.log("Subject details received:", response.data)
           
-          const subjectCode = response.data.SubjectCode || response.data.subjectCode;
-          setOriginalSubjectCode(subjectCode);
+          const subjectId = response.data.RDID || response.data.rdid;
+          setOriginalSubjectId(subjectId);
           
-          form.setValue("subjectCode", subjectCode)
-          form.setValue("subjectDesc", response.data.SubjectDesc || response.data.subjectDesc)
+          form.setValue("RDID", subjectId)
+          form.setValue("RDDesc", response.data.RDDesc || response.data.rdDesc)
         } catch (error) {
           console.error("Error fetching subject details:", error)
           toast.error("Error fetching subject details.")
@@ -79,18 +80,18 @@ export function SubjectForm({ editMode = false, subjectToEdit = "", onCancel }: 
         
         // Create an object with the original subject code and the new values
         const updateData = {
-          OldSubjectCode: originalSubjectCode,
-          SubjectCode: values.subjectCode,
-          SubjectDesc: values.subjectDesc 
+          OldSubjectId: originalSubjectId,
+          SubjectId: values.RDID,
+          SubjectDesc: values.RDDesc 
         };
         
         response = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateSubject`, updateData)
         toast("Subject updated successfully.")
       } else {
         console.log("Adding new subject:", values)
-        response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertSubject`, {
-          SubjectCode: values.subjectCode,
-          SubjectDesc: values.subjectDesc
+        response = await axios.post(`${plsConnect()}/API/WEBAPI/Subject`, {
+          RDID: values.RDID,
+          RDDesc: values.RDDesc
         })
         toast("Subject added successfully.")
       }
@@ -125,7 +126,7 @@ export function SubjectForm({ editMode = false, subjectToEdit = "", onCancel }: 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name="subjectCode"
+            name="RDID"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Subject Code</FormLabel>
@@ -139,7 +140,7 @@ export function SubjectForm({ editMode = false, subjectToEdit = "", onCancel }: 
 
           <FormField
             control={form.control}
-            name="subjectDesc"
+            name="RDDesc"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Subject Description</FormLabel>

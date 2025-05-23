@@ -1,12 +1,12 @@
 export type SubjectCol = {
-    oldSubjectCode: string
-    subjectCode: string
-    subjectDesc: string
+    RDCode: string
+    RDID: string
+    RDDesc: string
 }
 
 export type PrerequisiteCol = {
-    subjectCode: string
-subjectDesc: string
+    RDID: string
+    RDDesc: string
     prerequisiteCode: string
-prerequisiteDesc: string
+    prerequisiteDesc: string
 }

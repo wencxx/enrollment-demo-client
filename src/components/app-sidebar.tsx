@@ -101,6 +101,11 @@ const data = {
           // authorizeUsers: ['01']
         },
         {
+          title: "Subject",
+          url: "entry/subject-prerequisite",
+          authorizeUsers: ['Admin']
+        },
+        {
           title: "Professors",
           url: "entry/professors",
           // authorizeUsers: ['01']

@@ -216,8 +216,9 @@ export const editRateSchema = z.object({
 });
 
 export const subjectSchema = z.object({
-  subjectCode: z.string().min(1, 'Subject code is required'),
-  subjectDesc: z.string().min(1, 'Subject description is required'),
+  // RDCode: z.string().min(1, 'Subject code is required'),
+  RDID: z.string().min(1, 'Subject ID is required'),
+  RDDesc: z.string().min(1, 'Subject description is required'),
 });
 
 export const prerequisiteSchema = z.object({

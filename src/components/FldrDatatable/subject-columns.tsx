@@ -37,7 +37,7 @@ export const subjectColumns: ColumnDef<SubjectCol>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "fieldNumber",
+        accessorKey: "RDCode",
         header: ({ column }) => (
             <Button
                 variant="ghost"
@@ -47,26 +47,23 @@ export const subjectColumns: ColumnDef<SubjectCol>[] = [
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        cell: ({ row }) => row.index + 1, 
-        enableSorting: false,
-        enableHiding: false,
     },
 
     {
-        accessorKey: "subjectCode",
+        accessorKey: "RDID",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Subject Code
+                Subject ID
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
     },
     
     {
-        accessorKey: "subjectDesc",
+        accessorKey: "RDDesc",
         header: ({ column }) => (
             <Button
                 variant="ghost"
@@ -102,7 +99,7 @@ export const subjectColumns: ColumnDef<SubjectCol>[] = [
           return (
             <Dialog open={isSubjectDialogOpen} onOpenChange={setIsSubjectDialogOpen}>
                 <DialogTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.subjectCode)}>
+                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.RDCode)}>
                     <Edit className="h-4 w-4" />
                 </Button>
                 </DialogTrigger>

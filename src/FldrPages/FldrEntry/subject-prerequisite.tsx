@@ -28,13 +28,13 @@ export default function Subject() {
   const getSubject = async () => {
     try {
       setLoading(true)
-      const res = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListSubject`)
+      const res = await axios.get(`${plsConnect()}/API/WebAPI/RateController/ListRateDesc`)
       
       // Format data with fieldNumber for consistent structure
       const formattedData = res.data.map((item: any, index: number) => ({
-        fieldNumber: index + 1,
-        subjectCode: item.SubjectCode || item.subjectCode,
-        subjectDesc: item.SubjectDesc || item.subjectDesc,
+        RDCode: item.RDCode || item.rdCode,
+        RDID: item.RDID || item.rdid,
+        RDDesc: item.RDDesc || item.rdDesc
       }));
       
       setSubjectData(formattedData)
@@ -88,7 +88,7 @@ export default function Subject() {
 
   return (
     <div className="container py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {/* Subjects Card */}
         <Card className="p-4">
           <div className="flex justify-between items-center mb-4">
