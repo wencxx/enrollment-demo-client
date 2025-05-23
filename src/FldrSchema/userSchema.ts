@@ -148,7 +148,7 @@ export const rateSchema = z.object({
   pkRate1: z.string().min(1),
   rows: z.array(
     z.object({
-      rateRowNum: z.number(),
+      // rateRowNum: z.number(),
       academicUnits: z.string().min(1),
       labUnits: z.string().min(1),
       rdCode: z.string().min(1),
