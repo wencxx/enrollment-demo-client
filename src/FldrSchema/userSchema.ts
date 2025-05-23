@@ -149,8 +149,7 @@ export const rateSchema = z.object({
   rows: z.array(
     z.object({
       // rateRowNum: z.number(),
-      academicUnits: z.string().min(1),
-      labUnits: z.string().min(1),
+      noUnits: z.string().min(1),
       rdCode: z.string().min(1),
       rateTypeCode: z.string().min(1),
       perSem: z.string().min(1),

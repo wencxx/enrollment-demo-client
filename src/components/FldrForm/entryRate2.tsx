@@ -57,8 +57,7 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
             rateTypeCode: "",
             perSem: "",
             rateAmount: "",
-            academicUnits: "0",
-            labUnits: "0",
+            noUnits: "",
             rateSubTypeCode: "",
             // rowNum: 0
             },
@@ -82,11 +81,9 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
 
     useEffect(() => {
         watchedRows?.forEach((row, index) => {
-            const academicUnits = parseInt(row.academicUnits || "0", 10) || 0;
-            const labUnits = parseInt(row.labUnits || "0", 10) || 0;
+            const noUnits = parseInt(row.noUnits || "0", 10) || 0;
             const perSem = parseInt(row.perSem || "0", 10) || 0;
-            const totalUnits = academicUnits + labUnits;
-            const rateAmount = perSem * totalUnits;
+            const rateAmount = perSem * noUnits;
             if (row.rateAmount !== rateAmount.toString()) {
                 setValue(`rows.${index}.rateAmount`, rateAmount.toString());
             }
@@ -141,8 +138,7 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
         rateTypeCode: "",
         rateSubTypeCode: "",
         rateAmount: "",
-        academicUnits: "",
-        labUnits: "",
+        noUnits: "",
         perSem: "",
         // rowNum: nextRowNum,
         });
@@ -164,8 +160,7 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
             rdCode: row.rdCode,
             rateTypeCode: row.rateTypeCode,
             rateSubTypeCode: row.rateSubTypeCode,
-            academicUnits: parseInt(row.academicUnits, 10),
-            labUnits: parseInt(row.labUnits, 10),
+            noUnits: parseInt(row.noUnits, 10),
             perSem: parseFloat(row.perSem),
             rateAmount: parseFloat(row.rateAmount),
             // rowNum: row.rowNum,
@@ -281,9 +276,7 @@ return (
                   <TableHead>Type</TableHead>
                   <TableHead>Subtype</TableHead>
                   <TableHead>Subject</TableHead>
-                  <TableHead>Academic</TableHead>
-                  <TableHead>Laboratory</TableHead>
-                  <TableHead>Total Units</TableHead>
+                  <TableHead>Units</TableHead>
                   <TableHead>Per Semester</TableHead>
                   <TableHead className="text-right">Rate Amount</TableHead>
                   <TableHead className="text-center"></TableHead>
@@ -291,15 +284,10 @@ return (
               </TableHeader>
               <TableBody>
               {fields.map((item, index) => {
-                  const academicUnits = watchedRows?.[index]?.academicUnits ?? "0";
-                  const labUnits = watchedRows?.[index]?.labUnits ?? "0";
-                  const totalUnits =
-                  (parseInt(academicUnits || "0", 10) || 0) +
-                  (parseInt(labUnits || "0", 10) || 0);
-
+                  const noUnits = watchedRows?.[index]?.noUnits ?? "0";
                   const perSem = watchedRows?.[index]?.perSem ?? "0";
                   const rateAmount =
-                  (parseFloat(perSem || "0") || 0) * totalUnits;
+                  (parseFloat(perSem || "0") || 0) * (parseInt(noUnits || "0"));
 
                   // const selectedRateType = watch(`rows.${index}.rateTypeCode`);
                   return (
@@ -443,7 +431,7 @@ return (
                       <TableCell className="text-right w-[15%]">
                         <FormField
                           control={control}
-                          name={`rows.${index}.academicUnits`}
+                          name={`rows.${index}.noUnits`}
                           render={({ field }) => (
                             <FormItem>
                               <FormControl>
@@ -457,27 +445,6 @@ return (
                             </FormItem>
                           )}
                         />
-                      </TableCell>
-                      <TableCell className="text-right w-[15%]">
-                        <FormField
-                          control={control}
-                          name={`rows.${index}.labUnits`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                  <Input
-                                      {...field}
-                                      type="number"
-                                      placeholder="Units"
-                                      min={0}
-                                  />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input placeholder="Total" value={totalUnits} readOnly />
                       </TableCell>
                       <TableCell className="text-right w-[20%]">
                         <FormField
