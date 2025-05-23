@@ -159,6 +159,16 @@ export const rateSchema = z.object({
   ),
 });
 
+export const editRate2Schema = z.object({
+  pkRate1: z.string().min(1, "pkRate1 is required"),
+  rdCode: z.string().min(1, "rdCode is required"),
+  rateTypeCode: z.string().min(1, "rateTypeCode is required"),
+  rateSubTypeCode: z.string().min(1, "rateSubTypeCode is required"),
+  perSem: z.coerce.number().nonnegative("perSem must be a number"),
+  noUnits: z.coerce.number().nonnegative("noUnits must be a number"),
+  rateAmount: z.coerce.number().nonnegative("rateAmount must be a number"),
+});
+
 
 // DIAZ: this is for entryRateCourse
 export const entryRateSchema = z.object({
