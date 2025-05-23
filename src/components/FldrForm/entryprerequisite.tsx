@@ -34,8 +34,8 @@ import {
 type PrerequisiteFormData = z.infer<typeof prerequisiteSchema>
 
 type Subject = {
-  SubjectCode: string;
-  SubjectDesc: string;
+  RDID: string;
+  RDDesc: string;
   PrerequisiteCode?: string | null;
 }
 
@@ -54,42 +54,54 @@ export function PrerequisiteForm({ editMode = false, subjectToEdit = "", onCance
   const form = useForm<PrerequisiteFormData>({
     resolver: zodResolver(prerequisiteSchema),
     defaultValues: {
-      subjectCode: "",
-      prerequisiteCode: "",
+      RDID: "",
+      PrerequisiteCode: "",
     },
   })
 
   // Fetch all subjects
   useEffect(() => {
-    const fetchSubjects = async () => {
+    fetchSubjects();
+  }, [isEditing, selectedSubject]);
+
+  const fetchSubjects = async () => {
       try {
-        const response = await axios.get(`${plsConnect()}/API/WEBAPI/InsertEntry/GetSubjects`)
-        
-        // Ensure subjects have the expected structure
-        const subjectsData = Array.isArray(response.data) 
-          ? response.data.map((subject: any) => ({
-              SubjectCode: subject.SubjectCode || subject.subjectCode,
-              SubjectDesc: subject.SubjectDesc || subject.subjectDesc
+        const [subjectsResponse, prerequisitesResponse] = await Promise.all([
+          axios.get(`${plsConnect()}/API/WEBAPI/Subject/all`),
+          axios.get(`${plsConnect()}/API/WEBAPI/Prerequisite/all`) // Assumed endpoint
+        ]);
+
+        // Normalize subject data
+        const subjectsData = Array.isArray(subjectsResponse.data)
+          ? subjectsResponse.data.map((subject: any) => ({
+              RDID: subject.RDID || subject.rdid,
+              RDDesc: subject.RDDesc || subject.rdDesc
             }))
           : [];
-        
+
         setSubjects(subjectsData);
-        
-        // Map subjects for dropdown format
-        const mapped = subjectsData.map((subject: Subject) => ({
-          label: `${subject.SubjectCode} - ${subject.SubjectDesc}`,
-          value: subject.SubjectCode
+
+        // Get RDIDs already used in prerequisites
+        const usedRDIDs = Array.isArray(prerequisitesResponse.data)
+          ? prerequisitesResponse.data.map((pr: any) => pr.RDID || pr.rdid)
+          : [];
+
+        // Filter out used RDIDs unless in edit mode (so current RDID is allowed)
+        const filteredSubjects = subjectsData.filter(subject => {
+          return !usedRDIDs.includes(subject.RDID) || (isEditing && subject.RDID === selectedSubject);
+        });
+
+        const mapped = filteredSubjects.map(subject => ({
+          label: `${subject.RDID} - ${subject.RDDesc}`,
+          value: subject.RDID
         }));
-        
+
         setMappedSubjects(mapped);
       } catch (error) {
-        console.error("Error fetching data:", error)
-        toast("Error fetching data.")
+        console.error("Error fetching data:", error);
+        toast("Error fetching data.");
       }
-    }
-
-    fetchSubjects()
-  }, [])
+    };
 
   // If in edit mode and there's a subject to edit, fetch its details
   useEffect(() => {
@@ -97,8 +109,8 @@ export function PrerequisiteForm({ editMode = false, subjectToEdit = "", onCance
       if (isEditing && selectedSubject) {
         try {
           const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/GetPrerequisite/${selectedSubject}`)
-          form.setValue("subjectCode", response.data.SubjectCode || response.data.subjectCode)
-          form.setValue("prerequisiteCode", response.data.PrerequisiteCode || response.data.prerequisiteCode)
+          form.setValue("RDID", response.data.RDID || response.data.rdid)
+          form.setValue("PrerequisiteCode", response.data.PrerequisiteCode || response.data.prerequisiteCode)
         } catch (error) {
           console.error("Error fetching prerequisite details:", error)
           toast("Error fetching prerequisite details.")
@@ -113,7 +125,7 @@ export function PrerequisiteForm({ editMode = false, subjectToEdit = "", onCance
 
   const onSubmit = async (values: PrerequisiteFormData) => {
     // Validate that subject and prerequisite are not the same
-    if (values.subjectCode === values.prerequisiteCode) {
+    if (values.RDID === values.PrerequisiteCode) {
       toast.error("Subject and prerequisite cannot be the same.");
       return;
     }
@@ -124,13 +136,13 @@ export function PrerequisiteForm({ editMode = false, subjectToEdit = "", onCance
         response = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdatePrerequisite`, values)
         toast("Prerequisite updated successfully.")
       } else {
-        response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertPrerequisite`, values)
+        response = await axios.post(`${plsConnect()}/API/WEBAPI/Prerequisite`, values)
         toast("Prerequisite added successfully.")
       }
       
       console.log("Data submitted successfully:", response.data)
       form.reset()
-      
+      fetchSubjects()
       if (onCancel) {
         onCancel()
       }
@@ -156,7 +168,7 @@ export function PrerequisiteForm({ editMode = false, subjectToEdit = "", onCance
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
-            name="subjectCode"
+            name="RDID"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Subject Code</FormLabel>
@@ -192,7 +204,7 @@ export function PrerequisiteForm({ editMode = false, subjectToEdit = "", onCance
                               key={subject.value}
                               value={subject.label}
                               onSelect={() => {
-                                form.setValue("subjectCode", subject.value);
+                                form.setValue("RDID", subject.value);
                                 field.onChange(subject.value);
                               }}
                             >
@@ -217,63 +229,79 @@ export function PrerequisiteForm({ editMode = false, subjectToEdit = "", onCance
 
           <FormField
             control={form.control}
-            name="prerequisiteCode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Prerequisite Code</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          "w-full justify-between",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value && mappedSubjects.length > 0
-                          ? mappedSubjects.find(
-                              (subject) => subject.value === field.value
-                            )?.label || "Select a prerequisite"
-                          : "Select a prerequisite"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[300px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search prerequisite..." />
-                      <CommandList>
-                        <CommandEmpty>No prerequisite found.</CommandEmpty>
-                        <CommandGroup>
-                          {mappedSubjects.map((subject) => (
-                            <CommandItem
-                              key={subject.value}
-                              value={subject.label}
-                              onSelect={() => {
-                                form.setValue("prerequisiteCode", subject.value);
-                                field.onChange(subject.value);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  subject.value === field.value ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                              {subject.label}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
+            name="PrerequisiteCode"
+            render={({ field }) => {
+              const selectedSubjectCode = form.watch("RDID");
+
+              // Filter out selected subject from the prerequisite dropdown
+              const filteredSubjects = mappedSubjects.filter(
+                (subject) => subject.value !== selectedSubjectCode
+              );
+
+              // Optional: clear prerequisiteCode if subjectCode changes
+              useEffect(() => {
+                form.setValue("PrerequisiteCode", "");
+              }, [selectedSubjectCode]);
+
+              return (
+                <FormItem>
+                  <FormLabel>Prerequisite Code</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          disabled={!selectedSubjectCode}
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value && filteredSubjects.length > 0
+                            ? filteredSubjects.find(
+                                (subject) => subject.value === field.value
+                              )?.label || "Select a prerequisite"
+                            : "Select a prerequisite"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[300px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search prerequisite..." />
+                        <CommandList>
+                          <CommandEmpty>No prerequisite found.</CommandEmpty>
+                          <CommandGroup>
+                            {filteredSubjects.map((subject) => (
+                              <CommandItem
+                                key={subject.value}
+                                value={subject.label}
+                                onSelect={() => {
+                                  form.setValue("PrerequisiteCode", subject.value);
+                                  field.onChange(subject.value);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    subject.value === field.value ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {subject.label}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
+
 
           <div className="flex justify-end gap-2">
             {isEditing && onCancel && (

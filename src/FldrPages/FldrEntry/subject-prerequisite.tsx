@@ -48,18 +48,15 @@ export default function Subject() {
   const getPrerequisite = async () => {
     try {
       setLoading(true)
-      const res = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListPrerequisite`)
+      const res = await axios.get(`${plsConnect()}/API/WEBAPI/Prerequisite/all`)
       
       console.log("API response for prerequisites:", res.data) // Debug output
       
       // Format data with fieldNumber for consistent structure
       const formattedData = Array.isArray(res.data) && res.data.length > 0 
         ? res.data.map((item: any, index: number) => ({
-            fieldNumber: index + 1,
-            subjectCode: item.SubjectCode || item.subjectCode,
-            subjectDesc: item.SubjectDesc || item.subjectDesc,
+            RDID: item.RDID || item.rdid,
             prerequisiteCode: item.PrerequisiteCode || item.prerequisiteCode,
-            prerequisiteDesc: item.PrerequisiteDesc || item.prerequisiteDesc,
           }))
         : [];
       
@@ -127,7 +124,7 @@ export default function Subject() {
             <h2 className="text-xl font-semibold">Prerequisites</h2>
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" disabled={subjectData.length <= 1}>
                   <Plus className="mr-2 h-4 w-4" />
                   Add new prerequisite
                 </Button>

@@ -222,8 +222,8 @@ export const subjectSchema = z.object({
 });
 
 export const prerequisiteSchema = z.object({
-  subjectCode: z.string().min(1, 'Subject code is required'),
-  prerequisiteCode: z.string().min(1, 'Subject prerequisite is required'),
+  RDID: z.string().min(1, 'Subject code is required'),
+  PrerequisiteCode: z.string().min(1, 'Subject prerequisite is required'),
 });
 
 export const acadYearSchema = z.object({

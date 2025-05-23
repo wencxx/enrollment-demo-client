@@ -6,7 +6,5 @@ export type SubjectCol = {
 
 export type PrerequisiteCol = {
     RDID: string
-    RDDesc: string
     prerequisiteCode: string
-    prerequisiteDesc: string
 }
