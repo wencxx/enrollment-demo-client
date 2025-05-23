@@ -159,6 +159,12 @@
   background-color: inherit !important;
 }
 
+.btn-disabled-black {
+  color: #000 !important;
+  /* opacity: 1 !important;  */
+  /* pointer-events: none; */
+}
+
 /* print styles */
 @media print {
   @page {

@@ -30,11 +30,16 @@ export type Rate1Col = {
 export type RateTypeCol = {
     rateTypeCode: string
     rateTypeDesc: string
+    label: string
+    value: string
 }
 
 export type RateSubTypeCol = {
     rateSubTypeCode: string
     rateSubTypeDesc: string
+    label: string
+    value: string
+}
 }
 
 export type RateDescCol = {
@@ -138,3 +143,12 @@ export type AcademicYear = {
 //         [key: string]: SemesterGradeData
 //     }
 // }
+
+export interface DialogState {
+  isDialogOpen: boolean;
+  setIsDialogOpen: (open: boolean) => void;
+  pkRate: string;
+  setPKRate: (pk: string) => void;
+  handleDialogOpen: (pk: string) => void;
+  handleUpdate: () => void;
+}
