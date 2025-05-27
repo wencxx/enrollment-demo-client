@@ -222,15 +222,7 @@ function GrantPermission() {
                     </div>
                     ))
                 ) : (
-                    allObjects.map((permission) => (
-                        <div
-                            key={permission}
-                            className="px-3 py-2 bg-red-100 rounded-md hover:bg-red-200 cursor-pointer"
-                            onClick={() => handleAddPermission(permission)}
-                        >
-                            {permission}
-                        </div>
-                    ))
+                    <div className="text-center text-gray-400">All permissions granted</div>
                 )}
                 </div>
             </div>
