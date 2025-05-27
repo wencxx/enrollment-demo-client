@@ -1,5 +1,4 @@
-import { columns } from "@/components/FldrDatatable/college-columns";
-import { DataTable } from "@/components/FldrDatatable/data-table";
+import { CollegeTable } from "@/components/FldrDatatable/college-columns";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { CollegeForm } from "@/components/FldrForm/entrycollege.tsx";
@@ -24,8 +23,7 @@ export default function College() {
       setLoading(true)
       const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListCollege`)
       
-      const formattedData = res.data.map((item: any, index: number) => ({
-        fieldNumber: index + 1,
+      const formattedData = res.data.map((item: CollegeCol) => ({
         collegeCode: item.collegeCode || "",
         collegeDesc: item.collegeDesc || "",
       }));
@@ -64,13 +62,7 @@ export default function College() {
           </Dialog>
         </div>
         <div className="mt-4">
-          <DataTable 
-            columns={columns} 
-            data={data} 
-            loading={loading} 
-            title="colleges" 
-            onRefresh={getData}
-          />
+          <CollegeTable data={data} loading={loading} onRefresh={getData} />
         </div>
       <Toaster />
     </div>

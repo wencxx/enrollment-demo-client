@@ -4,10 +4,12 @@ export type YearCol = {
 }
 
 export type CourseCol = {
-    courseCode: string
     courseDesc: string
-    value: string
-    label: string
+    courseCode: string
+    collegeCode: string
+    collegeDesc: string
+    value?: string
+    label?: string
 }
 
 export type SemCol = {
@@ -39,7 +41,6 @@ export type RateSubTypeCol = {
     rateSubTypeDesc: string
     label: string
     value: string
-}
 }
 
 export type RateDescCol = {
@@ -151,4 +152,8 @@ export interface DialogState {
   setPKRate: (pk: string) => void;
   handleDialogOpen: (pk: string) => void;
   handleUpdate: () => void;
+}
+
+export type Semester = {
+    semDesc: string;
 }
