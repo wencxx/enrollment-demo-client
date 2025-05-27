@@ -40,7 +40,6 @@ export type RateSubTypeCol = {
     label: string
     value: string
 }
-}
 
 export type RateDescCol = {
     rdCode: string
@@ -151,4 +150,8 @@ export interface DialogState {
   setPKRate: (pk: string) => void;
   handleDialogOpen: (pk: string) => void;
   handleUpdate: () => void;
+}
+
+export type Semester = {
+    semDesc: string;
 }

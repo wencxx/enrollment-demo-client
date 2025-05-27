@@ -1,4 +1,3 @@
-import { toDate } from "date-fns"
 import { z } from "zod"
 
 export const loginSchema = z.object({
@@ -309,3 +308,7 @@ export const collegeSchema = z.object({
     message: "College must be at least 2 characters.",
   }),
 })
+
+export const semesterSchema = z.object({
+  semDesc: z.string().min(5),
+});

@@ -37,6 +37,7 @@ import RateDesc from "./FldrPages/FldrEntry/ratedesc"
 import Rate2 from "./FldrPages/FldrEntry/rate2"
 import Students from "./FldrPages/FldrEntry/students"
 import College from "./FldrPages/FldrEntry/college"
+import Semester from "./FldrPages/FldrEntry/semester"
 
 const router = createBrowserRouter([
   {
@@ -105,6 +106,10 @@ const router = createBrowserRouter([
       {
         path: "/entry/AY",
         element: <AcademicYearPage />,
+      },
+      {
+        path: "/entry/semester",
+        element: <Semester />,
       },
       {
         path: "/entry/professors",

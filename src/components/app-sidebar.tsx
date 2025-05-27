@@ -105,7 +105,6 @@ const data = {
         {
           title: "Subject",
           url: "entry/subject-prerequisite",
-          authorizeUsers: ['Admin']
         },
         {
           title: "Professors",
@@ -151,6 +150,10 @@ const data = {
           title: "Academic Year",
           url: "entry/AY",
         },
+        {
+          title: "Semester",
+          url: "entry/semester",
+        },
       ],
     },
   ],
@@ -178,8 +181,6 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  // const store = useAuthStore()
-  // const user = store.currentUser
 
   return (
     <Sidebar collapsible="icon" {...props}>
