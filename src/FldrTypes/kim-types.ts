@@ -4,10 +4,12 @@ export type YearCol = {
 }
 
 export type CourseCol = {
-    courseCode: string
     courseDesc: string
-    value: string
-    label: string
+    courseCode: string
+    collegeCode: string
+    collegeDesc: string
+    value?: string
+    label?: string
 }
 
 export type SemCol = {

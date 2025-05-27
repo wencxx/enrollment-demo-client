@@ -35,7 +35,6 @@ function GrantPermission() {
     const [loading, setLoading] = useState<boolean>(true);
     const [isOpen, setIsOpen] = useState<boolean>(true);
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
-    const [allObjects, setAllObjects] = useState<string[]>([]);
 
     const [allowedPermissions, setAllowedPermissions] = useState<string[]>([]);
     const [notAllowedPermissions, setNotAllowedPermissions] = useState<string[]>([]);
@@ -75,7 +74,6 @@ function GrantPermission() {
             const notAllowed = all.filter(objectName => !allowed.includes(objectName));
     
             setAllowedPermissions(allowed);
-            setAllObjects(all);
             setNotAllowedPermissions(notAllowed);
         } catch (error) {
             console.error("Failed to fetch permissions", error);

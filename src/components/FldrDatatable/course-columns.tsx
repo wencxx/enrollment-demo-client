@@ -1,17 +1,24 @@
-import { ColumnDef } from "@tanstack/react-table"
 import { Edit, ArrowUpDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { CourseCol } from "@/FldrTypes/course.col"
-import {
-    Dialog,
-    DialogContent,
-    DialogTrigger,
-  } from "@/components/ui/dialog"
-import { useState } from "react"
+import React, { useState } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { CourseCol } from "@/FldrTypes/kim-types";
 import { CourseForm } from "../FldrForm/entrycourse"
+import { DataTable } from "./data-table";
 
-export const columns: ColumnDef<CourseCol>[] = [
+interface CourseTableProps {
+  data: CourseCol[];
+  loading?: boolean;
+  onRefresh: () => void;
+}
+
+export const CourseTable: React.FC<CourseTableProps> = ({ data, loading, onRefresh }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [courseCode, setCourseCode] = useState("");
+
+  const columns: ColumnDef<CourseCol>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -34,29 +41,26 @@ export const columns: ColumnDef<CourseCol>[] = [
         enableSorting: false,
         enableHiding: false,
     },
-    // {
-    //     accessorKey: "fieldNumber",
-    //     header: ({ column }) => (
-    //         <Button
-    //             variant="ghost"
-    //             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    //         >
-    //             #
-    //             <ArrowUpDown className="ml-2 h-4 w-4" />
-    //         </Button>
-    //     ),
-    //     cell: ({ row }) => row.index + 1, 
-    //     enableSorting: false,
-    //     enableHiding: false,
-    // },
     {
+        accessorKey: "courseCode",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Code
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+    },
+     {
         accessorKey: "courseDesc",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Course Description
+                Description
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
@@ -74,43 +78,47 @@ export const columns: ColumnDef<CourseCol>[] = [
         ),
     },
     {
-        id: "actions",
-        cell: ({ row, table }) => {
-          const [isCourseDialogOpen, setIsCourseDialogOpen] = useState(false);
-          const [courseCode, setCourseCode] = useState("");
-
-          const handleDialogOpen = (code: string) => {
-            setCourseCode(code);
-            setIsCourseDialogOpen(true);
-          };
-
-          const handleCourseUpdate = () => {
-            setIsCourseDialogOpen(false);
-            // Call refresh function from table meta if available
-            const onRefresh = table.options.meta?.refreshData;
-            if (typeof onRefresh === 'function') {
-              console.log("Refreshing course data after update");
-              onRefresh();
-            }
-          };
-
-          return (
-            <Dialog open={isCourseDialogOpen} onOpenChange={setIsCourseDialogOpen}>
-                <DialogTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.courseCode)}>
-                    <span className="sr-only">Edit course</span>
-                    <Edit className="h-4 w-4" />
-                </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md" aria-labelledby="dialog-title">
-                    <CourseForm 
-                      editMode={true}
-                      courseToEdit={courseCode} 
-                      onCancel={handleCourseUpdate}
-                    />
-                </DialogContent>
-            </Dialog>
-          );
-        },
+      id: "actions",
+      cell: ({ row }) => (
+        <Dialog open={isDialogOpen && courseCode === row.original.courseCode} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+              onClick={() => {
+                setCourseCode(row.original.courseCode);
+                setIsDialogOpen(true);
+              }}
+            >
+              <span className="sr-only">Edit course</span>
+              <Edit className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden"
+            aria-labelledby="dialog-title"
+          >
+            <CourseForm 
+                editMode={true}
+                toEdit={courseCode} 
+                onCancel={() => {
+                setIsDialogOpen(false);
+                onRefresh();
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      ),
     },
-]
+  ];
+
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      loading={loading}
+      title="courses"
+      onRefresh={onRefresh}
+    />
+  );
+};

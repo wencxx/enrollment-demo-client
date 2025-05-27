@@ -64,16 +64,6 @@ export default function Rate1() {
                 />
             </DialogContent>
           </Dialog>
-        {/* </div>
-        <div className="mt-4">
-          <DataTable 
-            columns={columns} 
-            data={data} 
-            loading={loading} 
-            title="rate 1" 
-            onRefresh={getRate1}
-          />
-        </div> */}
         <div className="mt-4">
           <Rate1Table data={data} loading={loading} onRefresh={getRate1} />
         </div>

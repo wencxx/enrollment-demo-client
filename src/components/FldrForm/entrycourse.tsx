@@ -37,13 +37,13 @@ type CourseFormData = z.infer<typeof courseSchema>;
 
 interface CourseFormProps {
   editMode?: boolean;
-  courseToEdit?: string;
+  toEdit?: string;
   onCancel?: () => void;
 }
 
-export function CourseForm({ editMode = false, courseToEdit = "", onCancel }: CourseFormProps) {
+export function CourseForm({ editMode = false, toEdit = "", onCancel }: CourseFormProps) {
   const [isEditing] = useState(editMode);
-  const [selectedCourse] = useState(courseToEdit);
+  const [selectedCourse] = useState(toEdit);
   const [isLoading, setIsLoading] = useState(false);
   const [colleges, setColleges] = useState<CollegeCol[]>([]);
   const [collegesLoaded, setCollegesLoaded] = useState(false);
