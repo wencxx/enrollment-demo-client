@@ -209,7 +209,8 @@ export function CourseForm({ editMode = false, courseToEdit = "", onCancel }: Co
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-full p-0" style={{ width: 'var(--radix-popover-trigger-width)' }}>
+                    <PopoverContent className="w-full p-0 min-w-[var(--radix-popover-trigger-width)]"
+                    style={{ pointerEvents: "auto" }}>
                       <Command>
                         <CommandInput
                           placeholder="Search..."
