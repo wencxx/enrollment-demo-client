@@ -102,10 +102,10 @@ const data = {
           title: "Course",
           url: "entry/course",
         },
-        {
-          title: "Subject",
-          url: "entry/subject-prerequisite",
-        },
+        // {
+        //   title: "Subject",
+        //   url: "entry/subject-prerequisite",
+        // },
         {
           title: "Professors",
           url: "entry/professors",
@@ -126,10 +126,10 @@ const data = {
           title: "Room",
           url: "entry/room",
         },
-        // {
-        //   title: "Section",
-        //   url: "entry/section",
-        // },
+        {
+          title: "Section",
+          url: "entry/section",
+        },
         {
           title: "Rate 1",
           url: "entry/rate1",

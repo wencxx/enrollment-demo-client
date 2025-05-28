@@ -38,6 +38,7 @@ import Rate2 from "./FldrPages/FldrEntry/rate2"
 import Students from "./FldrPages/FldrEntry/students"
 import College from "./FldrPages/FldrEntry/college"
 import Semester from "./FldrPages/FldrEntry/semester"
+import Section from "./FldrPages/FldrEntry/section"
 
 const router = createBrowserRouter([
   {
@@ -83,11 +84,10 @@ const router = createBrowserRouter([
         path: "/entry/room",
         element: <Room />,
       },
-      // REMOVED FROM tblObjects:
-      // {
-      //   path: "/entry/section",
-      //   element: <Section />,
-      // },
+      {
+        path: "/entry/section",
+        element: <Section />,
+      },
       {
         path: "/entry/student",
         element: <Student />,
@@ -96,10 +96,11 @@ const router = createBrowserRouter([
         path: "/entry/rate",
         element: <Rate />,
       },
-      {
-        path: "/entry/subject-prerequisite",
-        element: <Subject />,
-      },
+      // REMOVED FROM tblObjects:
+      // {
+      //   path: "/entry/subject-prerequisite",
+      //   element: <Subject />,
+      // },
       {
         path: "/entry/ratecourse",
         element: <RateCourse />,
