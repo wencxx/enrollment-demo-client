@@ -31,13 +31,14 @@ import Elementary from "./FldrPages/FldrEntry/elementary"
 import Town from "./FldrPages/FldrEntry/town"
 import EnrollDescription from "./FldrPages/FldrEntry/enrolldescription"
 import Room from "./FldrPages/FldrEntry/room"
-import Section from "./FldrPages/FldrEntry/section"
+// import Section from "./FldrPages/FldrEntry/section"
 import Rate1 from "./FldrPages/FldrEntry/rate1"
 import RateDesc from "./FldrPages/FldrEntry/ratedesc"
 import Rate2 from "./FldrPages/FldrEntry/rate2"
 import Students from "./FldrPages/FldrEntry/students"
 import College from "./FldrPages/FldrEntry/college"
 import Semester from "./FldrPages/FldrEntry/semester"
+import Section from "./FldrPages/FldrEntry/section"
 
 const router = createBrowserRouter([
   {
@@ -95,10 +96,11 @@ const router = createBrowserRouter([
         path: "/entry/rate",
         element: <Rate />,
       },
-      {
-        path: "/entry/subject-prerequisite",
-        element: <Subject />,
-      },
+      // REMOVED FROM tblObjects:
+      // {
+      //   path: "/entry/subject-prerequisite",
+      //   element: <Subject />,
+      // },
       {
         path: "/entry/ratecourse",
         element: <RateCourse />,

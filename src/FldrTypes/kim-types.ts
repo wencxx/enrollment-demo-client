@@ -157,3 +157,14 @@ export interface DialogState {
 export type Semester = {
     semDesc: string;
 }
+
+export type SubjectCol = {
+    rdCode: string
+    rdid: string
+    rdDesc: string
+}
+
+export type PrerequisiteCol = {
+    rdID: string
+    prerequisiteCode: string
+}
