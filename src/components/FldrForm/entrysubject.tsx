@@ -21,13 +21,13 @@ type SubjectFormData = z.infer<typeof subjectSchema>
 
 interface SubjectFormProps {
   editMode?: boolean;
-  subjectToEdit?: string;
+  toEdit?: string;
   onCancel?: () => void;
 }
 
-export function SubjectForm({ editMode = false, subjectToEdit = "", onCancel }: SubjectFormProps) {
+export function SubjectForm({ editMode = false, toEdit = "", onCancel }: SubjectFormProps) {
   const [isEditing] = useState(editMode)
-  const [selectedSubject] = useState(subjectToEdit)
+  const [selectedSubject] = useState(toEdit)
   const [isLoading, setIsLoading] = useState(false)
   const [originalSubjectId, setOriginalSubjectId] = useState("")
 
@@ -36,11 +36,10 @@ export function SubjectForm({ editMode = false, subjectToEdit = "", onCancel }: 
     defaultValues: {
       RDID: "",
       RDDesc: "",
-      // RDCode: ""
     },
   })
 
-  // If in edit mode and there's a subject to edit, fetch its details
+  // this get api does not exist?
   useEffect(() => {
     const fetchSubjectDetails = async () => {
       if (isEditing && selectedSubject) {

@@ -1,19 +1,24 @@
-import { ColumnDef } from "@tanstack/react-table"
 import { Edit, ArrowUpDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-    Dialog,
-    DialogContent,
-    DialogTrigger,
-    DialogTitle,
-    DialogHeader
-  } from "@/components/ui/dialog"
-import { useState } from "react"
-import { SubjectCol } from "@/FldrTypes/subject-prerequisite"
-import { SubjectForm } from "@/components/FldrForm/entrysubject"
+import React, { useState } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { DataTable } from "./data-table";
+import { SubjectCol } from "@/FldrTypes/kim-types";
+import { SubjectForm } from "../FldrForm/entrysubject";
 
-export const subjectColumns: ColumnDef<SubjectCol>[] = [
+interface SubjectTableProps {
+  data: SubjectCol[];
+  loading?: boolean;
+  onRefresh: () => void;
+}
+
+export const SubjectTable: React.FC<SubjectTableProps> = ({ data, loading, onRefresh }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [rdCode, setrdCode] = useState("");
+
+  const columns: ColumnDef<SubjectCol>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -37,84 +42,83 @@ export const subjectColumns: ColumnDef<SubjectCol>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "RDCode",
+        accessorKey: "rdCode",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                #
+                Code
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
     },
-
-    {
-        accessorKey: "RDID",
+     {
+        accessorKey: "rdid",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Subject ID
+                ID
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
     },
-    
     {
-        accessorKey: "RDDesc",
+        accessorKey: "rdDesc",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Subject Description
+                Description
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
     },
     {
-        id: "actions",
-        cell: ({ row, table }) => {
-          const [isSubjectDialogOpen, setIsSubjectDialogOpen] = useState(false);
-          const [subjectCode, setSubjectCode] = useState("");
-
-          const handleDialogOpen = (code: string) => {
-            console.log("Opening edit dialog for subject:", code);
-            setSubjectCode(code);
-            setIsSubjectDialogOpen(true);
-          };
-
-          const handleSubjectUpdate = () => {
-            setIsSubjectDialogOpen(false);
-            // Call refresh function from table meta if available
-            const onRefresh = table.options.meta?.refreshData;
-            if (typeof onRefresh === 'function') {
-              console.log("Refreshing subject data after update");
-              onRefresh();
-            }
-          };
-
-          return (
-            <Dialog open={isSubjectDialogOpen} onOpenChange={setIsSubjectDialogOpen}>
-                <DialogTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.RDCode)}>
-                    <Edit className="h-4 w-4" />
-                </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md" aria-labelledby="dialog-title">
-{/*                     {/* <DialogHeader>
-                        <DialogTitle id="dialog-title">Edit Subject Description</DialogTitle>
-                    </DialogHeader> */}
-                    <SubjectForm 
-                        editMode={true}
-                        subjectToEdit={subjectCode} 
-                        onCancel={handleSubjectUpdate} //Works as both onSubmit and onCancel???
-                    />
-                </DialogContent>
-            </Dialog>
-          );
-        },
+      id: "actions",
+      cell: ({ row }) => (
+        <Dialog open={isDialogOpen && rdCode === row.original.rdCode} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+              onClick={() => {
+                setrdCode(row.original.rdCode);
+                setIsDialogOpen(true);
+              }}
+            >
+              <span className="sr-only">Edit subject</span>
+              <Edit className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden"
+            aria-labelledby="dialog-title"
+          >
+            <SubjectForm 
+                editMode={true}
+                toEdit={rdCode} 
+                onCancel={() => {
+                setIsDialogOpen(false);
+                onRefresh();
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      ),
     },
-]
+  ];
+
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      loading={loading}
+      title="subjects"
+      onRefresh={onRefresh}
+    />
+  );
+};
