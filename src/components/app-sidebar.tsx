@@ -126,10 +126,10 @@ const data = {
           title: "Room",
           url: "entry/room",
         },
-        {
-          title: "Section",
-          url: "entry/section",
-        },
+        // {
+        //   title: "Section",
+        //   url: "entry/section",
+        // },
         {
           title: "Rate 1",
           url: "entry/rate1",

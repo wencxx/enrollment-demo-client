@@ -1,10 +1,10 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { plsConnect } from "@/FldrClass/ClsGetConnection"
-import axios from "axios"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { plsConnect } from "@/FldrClass/ClsGetConnection";
+import axios from "axios";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -12,137 +12,157 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { subjectSchema } from "@/FldrSchema/userSchema.ts"
-import { useEffect, useState } from "react"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { subjectSchema } from "@/FldrSchema/userSchema.ts";
+import { useEffect, useState } from "react";
+import { Save } from "lucide-react";
 
-type SubjectFormData = z.infer<typeof subjectSchema>
+type SubjectFormData = z.infer<typeof subjectSchema>;
 
 interface SubjectFormProps {
   editMode?: boolean;
   toEdit?: string;
   onCancel?: () => void;
+  onSuccess?: () => void;
 }
 
-export function SubjectForm({ editMode = false, toEdit = "", onCancel }: SubjectFormProps) {
-  const [isEditing] = useState(editMode)
-  const [selectedSubject] = useState(toEdit)
-  const [isLoading, setIsLoading] = useState(false)
-  const [originalSubjectId, setOriginalSubjectId] = useState("")
+export function SubjectForm({ editMode = false, toEdit = "", onCancel, onSuccess }: SubjectFormProps) {
+  const [isEditing] = useState(editMode);
+  const [rdCode] = useState(toEdit);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<SubjectFormData>({
     resolver: zodResolver(subjectSchema),
     defaultValues: {
-      RDID: "",
-      RDDesc: "",
+      rdCode: "",
+      rdid: "",
+      rdDesc: "",
     },
-  })
+  });
 
-  // this get api does not exist?
   useEffect(() => {
-    const fetchSubjectDetails = async () => {
-      if (isEditing && selectedSubject) {
+    const fetchData = async () => {
+      if (isEditing && rdCode) {
         try {
-          console.log(`Fetching subject details for ${selectedSubject}`)
-          setIsLoading(true)
-          const response = await axios.get(`${plsConnect()}/API/WEBAPI/Subject/${selectedSubject}`)
+          setIsLoading(true);
+          const response = await axios.get(`${plsConnect()}/API/WebAPI/ListController/GetSubject/${rdCode}`)
           
-          console.log("Subject details received:", response.data)
+          console.log("Details received:", response.data)
           
-          const subjectId = response.data.RDID || response.data.rdid;
-          setOriginalSubjectId(subjectId);
-          
-          form.setValue("RDID", subjectId)
-          form.setValue("RDDesc", response.data.RDDesc || response.data.rdDesc)
+          form.setValue("rdCode", rdCode)
+          form.setValue("rdid", response.data.rdid)
+          form.setValue("rdDesc", response.data.rdDesc)
         } catch (error) {
-          console.error("Error fetching subject details:", error)
-          toast.error("Error fetching subject details.")
+          console.error("Error fetching details:", error);
+          toast.error("Error fetching details.");
         } finally {
-          setIsLoading(false)
+          setIsLoading(false);
         }
       }
+    };
+  
+    if (isEditing && rdCode) {
+      fetchData();
     }
-
-    if (isEditing && selectedSubject) {
-      fetchSubjectDetails()
-    }
-  }, [isEditing, selectedSubject, form])
+  }, [isEditing, rdCode, form]);
 
   const onSubmit = async (values: SubjectFormData) => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       let response;
       
       if (isEditing) {
-        console.log("Updating subject:", values)
-        
-        // Create an object with the original subject code and the new values
-        const updateData = {
-          OldSubjectId: originalSubjectId,
-          SubjectId: values.RDID,
-          SubjectDesc: values.RDDesc 
-        };
-        
-        response = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateSubject`, updateData)
-        toast("Subject updated successfully.")
+        console.log("Updating:", values);
+        response = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateSubject`, {
+          RDCode: values.rdCode,
+          RDID: values.rdid,
+          RDDesc: values.rdDesc
+        });
+        toast("Updated successfully.");
       } else {
-        console.log("Adding new subject:", values)
-        response = await axios.post(`${plsConnect()}/API/WEBAPI/Subject`, {
-          RDID: values.RDID,
-          RDDesc: values.RDDesc
-        })
-        toast("Subject added successfully.")
+        console.log("Adding:", values);
+        response = await axios.post(
+          `${plsConnect()}/API/WEBAPI/InsertEntry/InsertSubject`,
+          {
+            RDID: values.rdid,
+            RDDesc: values.rdDesc
+          });
+        toast("Added successfully.");
       }
       
-      console.log("API response:", response.data)
-      form.reset()
-      
+      console.log("API response:", response.data);
+      form.reset();
+      if (onSuccess) {
+        onSuccess();
+      }
       if (onCancel) {
-        onCancel()
+        onCancel();
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.message || "Error submitting form."
-        toast.error(errorMessage)
+        const errorMessage = error.response?.data || "An error occurred.";
+        if (error.response?.status === 409) {
+          toast.error(errorMessage);
+        } else if (error.response?.status === 400) {
+          toast.error(errorMessage);
+        } else {
+          toast.error("An unexpected error occurred.");
+        }
         console.error("API error:", error.response?.data);
       } else {
-        console.error("Network error:", error)
-        toast.error("Network error.")
+        console.error("Network error:", error);
+        toast.error("Network error.");
       }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">{isEditing ? "Edit Subject" : "Add New Subject"}</h2>
+        <h2 className="text-lg font-semibold">{isEditing ? "Edit College" : "Add New College"}</h2>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          {isEditing && (
+            <FormField
+              control={form.control}
+              name="rdCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>College Code</FormLabel>
+                  <FormControl>
+                    <Input {...field} disabled={true} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
           <FormField
             control={form.control}
-            name="RDID"
+            name="rdid"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Subject Code</FormLabel>
+                <FormLabel>Subject ID</FormLabel>
                 <FormControl>
                   <Input {...field} />
-                </FormControl>   
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
+          
           <FormField
             control={form.control}
-            name="RDDesc"
+            name="rdDesc"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Subject Description</FormLabel>
+                <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -166,11 +186,16 @@ export function SubjectForm({ editMode = false, toEdit = "", onCancel }: Subject
                   </svg>
                   Processing...
                 </span>
-              ) : isEditing ? "Update" : "Submit"}
+              ) : isEditing ? (
+                <span className="flex items-center gap-2">
+                  <Save />
+                  Update
+                </span>
+              ) : ("Submit")}
             </Button>
           </div>
         </form>
       </Form>
     </>
-  )
+  );
 }

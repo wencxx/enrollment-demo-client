@@ -31,7 +31,7 @@ import Elementary from "./FldrPages/FldrEntry/elementary"
 import Town from "./FldrPages/FldrEntry/town"
 import EnrollDescription from "./FldrPages/FldrEntry/enrolldescription"
 import Room from "./FldrPages/FldrEntry/room"
-import Section from "./FldrPages/FldrEntry/section"
+// import Section from "./FldrPages/FldrEntry/section"
 import Rate1 from "./FldrPages/FldrEntry/rate1"
 import RateDesc from "./FldrPages/FldrEntry/ratedesc"
 import Rate2 from "./FldrPages/FldrEntry/rate2"
@@ -83,10 +83,11 @@ const router = createBrowserRouter([
         path: "/entry/room",
         element: <Room />,
       },
-      {
-        path: "/entry/section",
-        element: <Section />,
-      },
+      // REMOVED FROM tblObjects:
+      // {
+      //   path: "/entry/section",
+      //   element: <Section />,
+      // },
       {
         path: "/entry/student",
         element: <Student />,

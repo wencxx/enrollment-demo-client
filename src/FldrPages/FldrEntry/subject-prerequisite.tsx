@@ -12,6 +12,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { Plus } from 'lucide-react'
 import { SubjectTable } from "@/components/FldrDatatable/subject-columns";
+import { SubjectForm } from "@/components/FldrForm/entrysubject";
 
 export default function Subject() {
   const [data, setData] = useState<SubjectCol[]>([]);
@@ -52,7 +53,7 @@ export default function Subject() {
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <CourseForm onCancel={getData} />
+              <SubjectForm onCancel={getData} />
             </DialogContent>
           </Dialog>
         </div>

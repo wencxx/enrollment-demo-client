@@ -231,9 +231,9 @@ export const editRateSchema = z.object({
 });
 
 export const subjectSchema = z.object({
-  // RDCode: z.string().min(1, 'Subject code is required'),
-  RDID: z.string().min(1, 'Subject ID is required'),
-  RDDesc: z.string().min(1, 'Subject description is required'),
+  rdCode: z.string().optional(),
+  rdid: z.string().min(1, 'Subject ID is required'),
+  rdDesc: z.string().min(1, 'Subject description is required'),
 });
 
 export const prerequisiteSchema = z.object({
@@ -277,12 +277,12 @@ export const sectionSchema = z.object({
 })
 
 export const rateDescSchema = z.object({
-  OldRDID: z.string().optional(),
-  RDID: z.string().min(2, {
-    message: "Rate Id cannot be empty.",
+  rdCode: z.string().optional(),
+  rdid: z.string().min(2, {
+    message: "ID cannot be empty.",
   }),
-  RDDesc: z.string().min(2, {
-    message: "Rate description cannot be empty",
+  rdDesc: z.string().min(2, {
+    message: "Description cannot be empty",
   })
 })
 
