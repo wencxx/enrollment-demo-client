@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
-import { CourseCol, YearCol, SemCol } from "@/FldrTypes/kim-types";
+import { CourseCol, YearCol, SemCol } from "@/FldrTypes/types";
 import { cn } from "@/lib/utils";
 
 type Rate1FormData = {

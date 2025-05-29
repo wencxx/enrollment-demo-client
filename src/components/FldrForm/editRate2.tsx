@@ -31,7 +31,7 @@ import { useEffect, useState } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Check, ChevronsUpDown, Save } from "lucide-react";
-import { Rate1Col, RateDescCol, RateSubTypeCol, RateTypeCol, } from "@/FldrTypes/kim-types";
+import { Rate1Col, RateDescCol, RateSubTypeCol, RateTypeCol, } from "@/FldrTypes/types";
 import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { z } from "zod";

@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/popover"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { CollegeCol } from "@/FldrTypes/kim-types";
+import { CollegeCol } from "@/FldrTypes/types";
 
 type CourseFormData = z.infer<typeof courseSchema>;
 

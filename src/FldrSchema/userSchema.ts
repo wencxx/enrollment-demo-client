@@ -72,6 +72,7 @@ export const highschoolSchema = z.object({
 })
 
 export const elementarySchema = z.object({
+  elementaryCode: z.string().optional(),
   elementaryDesc: z.string().nonempty('Elementary description is required'),
 })
 

@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Check, ChevronsUpDown, Save } from "lucide-react";
-import { EnrollStatusCol } from "@/FldrTypes/kim-types";
+import { EnrollStatusCol } from "@/FldrTypes/types";
 import { cn } from "@/lib/utils";
 
 type EnrollStatusData = {

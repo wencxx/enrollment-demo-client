@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { CourseCol } from "@/FldrTypes/kim-types";
+import { CourseCol } from "@/FldrTypes/types";
 import { CourseForm } from "../FldrForm/entrycourse"
 import { DataTable } from "./data-table";
 

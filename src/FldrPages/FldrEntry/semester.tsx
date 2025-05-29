@@ -4,7 +4,7 @@ import axios from "axios";
 import { Card } from "@/components/ui/card";
 import { Toaster } from "@/components/ui/sonner"
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
-import { Semester } from "@/FldrTypes/kim-types";
+import { Semester } from "@/FldrTypes/types";
 import { SemesterForm } from "@/components/FldrForm/entrysemester";
 import { semestersColumns } from "@/components/FldrDatatable/semester";
 

@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { DataTable } from "./data-table";
-import { SubjectCol } from "@/FldrTypes/kim-types";
+import { SubjectCol } from "@/FldrTypes/types";
 import { SubjectForm } from "../FldrForm/entrysubject";
 
 interface SubjectTableProps {

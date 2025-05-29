@@ -4,7 +4,7 @@ import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
 import { allStudentsCol } from "@/components/FldrDatatable/allStudents-col"
 import { DataTable } from "@/components/FldrDatatable/data-table";
-import { Enrollment1Col, StudentCol } from "@/FldrTypes/kim-types"
+import { Enrollment1Col, StudentCol } from "@/FldrTypes/types"
 import { Button } from "@/components/ui/button"
 import {
     AlertDialog,

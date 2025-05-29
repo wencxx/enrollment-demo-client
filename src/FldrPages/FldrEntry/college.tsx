@@ -2,7 +2,7 @@ import { CollegeTable } from "@/components/FldrDatatable/college-columns";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { CollegeForm } from "@/components/FldrForm/entrycollege.tsx";
-import { CollegeCol } from "@/FldrTypes/kim-types";
+import { CollegeCol } from "@/FldrTypes/types";
 import {
   Dialog,
   DialogContent,
@@ -42,7 +42,6 @@ export default function College() {
   return (
     <div className="container py-6">
         <div className="space-x-2">
-          {/* <h2 className="text-xl font-semibold">Courses</h2> */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
