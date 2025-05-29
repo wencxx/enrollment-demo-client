@@ -1,18 +1,24 @@
-import { ColumnDef } from "@tanstack/react-table"
 import { Edit, ArrowUpDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { ElementaryCol } from "@/FldrTypes/highschool.col"
-import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    DialogHeader
-} from "@/components/ui/dialog"
-import { EditElementary } from "../FldrForm/editelementary"
-import { useState } from "react"
+import React, { useState } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { ElementaryCol } from "@/FldrTypes/types";
+import { DataTable } from "./data-table";
+import { ElementaryForm } from "../FldrForm/entryelementary";
 
-export const columns = ({ getElementary }: { getElementary: () => Promise<void> }): ColumnDef<ElementaryCol>[] => [
+interface ElemTableProps {
+  data: ElementaryCol[];
+  loading?: boolean;
+  onRefresh: () => void;
+}
+
+export const ElementaryTable: React.FC<ElemTableProps> = ({ data, loading, onRefresh }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [elementaryCode, setCode] = useState("");
+
+  const columns: ColumnDef<ElementaryCol>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -42,12 +48,10 @@ export const columns = ({ getElementary }: { getElementary: () => Promise<void> 
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Elementary Code
+                Code
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        enableSorting: false,
-        enableHiding: false,
     },
     {
         accessorKey: "elementaryDesc",
@@ -56,39 +60,53 @@ export const columns = ({ getElementary }: { getElementary: () => Promise<void> 
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Elementary Description
+                Description
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
     },
     {
-        id: "actions",
-        cell: ({ row }) => {
-            const [openEdit, setOpenEdit] = useState<boolean>(false)
-
-            const rowData = {
-                elementaryCode: row.original.elementaryCode,
-                elementaryDesc: row.original.elementaryDesc,
-            };
-
-
-            return (
-                <>
-                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => setOpenEdit(true)}>
-                        <Edit className="h-4 w-4" />
-                    </Button>
-                    <Dialog open={openEdit} onOpenChange={setOpenEdit} >
-                        
-                        <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden" aria-labelledby="dialog-title">
-                            <DialogHeader>
-                                <DialogTitle className="mb-4"></DialogTitle>
-                            </DialogHeader>
-                            <EditElementary data={rowData} getElementary={getElementary} setOpenEdit={setOpenEdit} />
-                            {/* <PendingApplicantEnrollment1Form studentCode={studentCode} /> */}
-                        </DialogContent>
-                    </Dialog>
-                </>
-            )
-        },
+      id: "actions",
+      cell: ({ row }) => (
+        <Dialog open={isDialogOpen && elementaryCode === row.original.elementaryCode} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+              onClick={() => {
+                setCode(row.original.elementaryCode);
+                setIsDialogOpen(true);
+              }}
+            >
+              <span className="sr-only">Edit elementary</span>
+              <Edit className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden"
+            aria-labelledby="dialog-title"
+          >
+            <ElementaryForm 
+                editMode={true}
+                toEdit={elementaryCode} 
+                onCancel={() => {
+                setIsDialogOpen(false);
+                onRefresh();
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      ),
     },
-]
+  ];
+
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      loading={loading}
+      title="elementary schools"
+      onRefresh={onRefresh}
+    />
+  );
+};
