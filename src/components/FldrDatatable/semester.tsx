@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Semester } from "@/FldrTypes/kim-types"
+import { Semester } from "@/FldrTypes/types"
 
 export const semestersColumns: ColumnDef<Semester>[] = [
     {

@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Enrollment1Col } from "@/FldrTypes/kim-types"
+import { Enrollment1Col } from "@/FldrTypes/types"
 import { useState } from "react"
 import {
   Dialog,

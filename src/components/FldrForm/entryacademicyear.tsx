@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { acadYearSchema } from "@/FldrSchema/userSchema.ts"
-import { AcademicYear } from "@/FldrTypes/kim-types";
+import { AcademicYear } from "@/FldrTypes/types";
 
 type AcadYearFormData = z.infer<typeof acadYearSchema>
 

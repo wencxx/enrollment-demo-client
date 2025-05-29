@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
-import { Enrollment1Col, EnrollDescCol, StudentCol } from "@/FldrTypes/kim-types";
+import { Enrollment1Col, EnrollDescCol, StudentCol } from "@/FldrTypes/types";
 
 interface Props {
   toEdit: string;

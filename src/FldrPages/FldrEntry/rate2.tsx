@@ -1,7 +1,7 @@
 import { Rate2Table } from "@/components/FldrDatatable/rate2-col.tsx";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Rate2Col } from "@/FldrTypes/kim-types";
+import { Rate2Col } from "@/FldrTypes/types";
 import {
   Dialog,
   DialogContent,

@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card"
 import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { useEffect, useState } from "react";
-import { AYCol } from "@/FldrTypes/kim-types";
+import { AYCol } from "@/FldrTypes/types";
 import {
     Select,
     SelectContent,

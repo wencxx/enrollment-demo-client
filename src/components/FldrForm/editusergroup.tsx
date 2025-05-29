@@ -17,7 +17,7 @@ import {
     SelectValue,
     } from "@/components/ui/select"
 import { useEffect, useState } from "react";
-import { GroupCol } from "@/FldrTypes/kim-types";
+import { GroupCol } from "@/FldrTypes/types";
 import { Save } from "lucide-react";
 
 type UserGroupData = {

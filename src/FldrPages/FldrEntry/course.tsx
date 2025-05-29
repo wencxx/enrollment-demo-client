@@ -2,7 +2,7 @@ import { CourseTable } from "@/components/FldrDatatable/course-columns";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { CourseForm } from "@/components/FldrForm/entrycourse"
-import { CourseCol } from "@/FldrTypes/kim-types";
+import { CourseCol } from "@/FldrTypes/types";
 import {
   Dialog,
   DialogContent,

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { RateDescCol } from "@/FldrTypes/kim-types";
+import { RateDescCol } from "@/FldrTypes/types";
 import { DataTable } from "./data-table";
 import { RateDescForm } from "../FldrForm/entryratedesc";
 

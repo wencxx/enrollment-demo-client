@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { RateDescCol } from "@/FldrTypes/kim-types";
+import { RateDescCol } from "@/FldrTypes/types";
 import {
   Dialog,
   DialogContent,
