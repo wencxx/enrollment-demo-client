@@ -62,12 +62,11 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
             setEnrollDesc(mappedEDRes)
 
             if (studentCode) {
-                const entryRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`);
-                const entryData = entryRes.data.find((entry: StudentCol) => entry.studentCode === studentCode);
-      
-                form.reset({
-                  studentCode: entryData.studentCode,
-                });
+                const entryRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/GetStudent/${studentCode}`);
+                const entryData = entryRes.data;
+                console.log("fetched:", entryData)
+
+                form.setValue("studentCode", entryData.studentCode)
               }
           } catch (error) {
             console.error("Error fetching data:", error)
