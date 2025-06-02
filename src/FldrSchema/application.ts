@@ -13,7 +13,6 @@ export const formSchema = z.object({
   birthDate: z.date({
     required_error: "Date of birth is required",
   }),
-  address: z.string().min(1, "Address is required"),
   enrollRemarks: z.string().optional(),
   hsCode: z.string().min(1, "Highschool is required"),
   hsYearGraduated: z.string().min(1, "Year graduated is required"),
@@ -24,5 +23,6 @@ export const formSchema = z.object({
   genderCode: z.string({
     required_error: "Gender is required"
   }).min(1, "Gender is required"),
-  tcCode: z.string().min(1, "Town/City is required"),
+  city: z.string().min(1, "City is required"),
+  barangay: z.string().min(1, "Barangay is required"),
 })
