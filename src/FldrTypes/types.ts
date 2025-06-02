@@ -119,8 +119,9 @@ export type GroupCol = {
 }
 
 export type AYCol = {
-    aYearCode: string
-    aYearDesc: string
+    ayCode: string;
+    ayStart: number;
+    ayEnd: number;
 }
 
 export type CollegeCol = {

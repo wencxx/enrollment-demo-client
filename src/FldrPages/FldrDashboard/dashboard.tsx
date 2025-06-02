@@ -30,15 +30,13 @@ function Dashboard() {
         regular: 0,
     });
 
-    const [regChartData, setRegChartData] = useState<
-        { year: string; yearDesc: string; regular: number; irregular: number }[]
-    >([]);
-    const [genderChartData, setGenderChartData] = useState<
-        { year: string; yearDesc: string; male: number; female: number; other: number; }[]
-    >([]);
+    // const [regChartData, setRegChartData] = useState<
+    //     { year: string; yearDesc: string; regular: number; irregular: number }[]
+    // >([]);
+    // const [genderChartData, setGenderChartData] = useState<
+    //     { year: string; yearDesc: string; male: number; female: number; other: number; }[]
+    // >([]);
 
-    const [startYear, setStartYear] = useState(defaultYear);
-    const [endYear, setEndYear] = useState(defaultYear);
 
     useEffect(() => {
         const fetchCount = async () => {
@@ -106,29 +104,23 @@ function Dashboard() {
         fetchAcademicYears();
     }, []);
 
-    const fetchChartData = async (startYear: string, endYear: string) => {
-        try {
-          const responseReg = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/GetRegularData`, {
-            params: { startYear, endYear },
-          });
-          const regData = responseReg.data;
-          setRegChartData(regData);
+    // const fetchChartData = async (startYear: string, endYear: string) => {
+    //     try {
+    //       const responseReg = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/GetRegularData`, {
+    //         params: { startYear, endYear },
+    //       });
+    //       const regData = responseReg.data;
+    //       setRegChartData(regData);
 
-          const responseGender = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/GetGenderData`, {
-            params: { startYear, endYear },
-          });
-          const genderData = responseGender.data;
-          setGenderChartData(genderData);
-        } catch (error) {
-          console.error("Error fetching chart data:", error);
-        }
-      };
-    
-      useEffect(() => {
-        if (startYear && endYear) {
-          fetchChartData(startYear, endYear);
-        }
-      }, [startYear, endYear]);
+    //       const responseGender = await axios.get(`${plsConnect()}/API/WebAPI/VariousController/GetGenderData`, {
+    //         params: { startYear, endYear },
+    //       });
+    //       const genderData = responseGender.data;
+    //       setGenderChartData(genderData);
+    //     } catch (error) {
+    //       console.error("Error fetching chart data:", error);
+    //     }
+    //   };
 
     return (
         <>
@@ -144,8 +136,8 @@ function Dashboard() {
                     <SelectContent>
                         <SelectGroup>
                         {academicYears.map((year) => (
-                            <SelectItem key={year.aYearCode} value={year.aYearCode}>
-                            {year.aYearDesc}
+                            <SelectItem key={year.ayCode} value={year.ayCode}>
+                            {year.ayStart}-{year.ayEnd}
                             </SelectItem>
                         ))}
                         </SelectGroup>
@@ -162,12 +154,11 @@ function Dashboard() {
                             </div>
                             <div>
                                 <h4 className="text-4xl font-bold">{card.data}</h4>
-                                {/* <p className="text-sm font-semibold text-neutral-700">+20% from last year</p> */}
                             </div>
                         </Card>
                     ))}
                 </div>
-                <div className="flex items-center gap-4">
+                {/* <div className="flex items-center gap-4">
                         <h3 className="text-sm font-medium text-gray-500">From</h3>
                         <Select
                             value={startYear}
@@ -204,13 +195,13 @@ function Dashboard() {
                             </SelectGroup>
                             </SelectContent>
                         </Select>
-                </div>
+                </div> */}
                 
-                <div className="grid auto-rows-min gap-4 lg:grid-cols-2">
+                {/* <div className="grid auto-rows-min gap-4 lg:grid-cols-2">
                     <RegularChart data={regChartData} />
                     <GenderChart data={genderChartData} />
-                </div>
-            </div>
+                </div> */}
+            </div> 
         </>
     );
 }
