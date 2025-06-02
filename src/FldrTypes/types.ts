@@ -80,6 +80,9 @@ export type StudentCol = {
     contactNo: string
     emailAddress: string
     userCode: string
+
+    value: string
+    label: string
 }
 
 export type EnrollDescCol = {
@@ -89,6 +92,8 @@ export type EnrollDescCol = {
     semDesc: string
     sectionDesc: string
     aYearDesc: string
+    value: string
+    label: string
 }
 
 export type Enrollment1Col = {
@@ -119,8 +124,9 @@ export type GroupCol = {
 }
 
 export type AYCol = {
-    aYearCode: string
-    aYearDesc: string
+    ayCode: string;
+    ayStart: number;
+    ayEnd: number;
 }
 
 export type CollegeCol = {
@@ -182,4 +188,9 @@ export type ElementaryCol = {
 export type TownCol = {
     tcCode: string
     tcDesc: string
+}
+
+export type RoomCol = {
+    roomCode: string,
+    roomDesc: string,
 }

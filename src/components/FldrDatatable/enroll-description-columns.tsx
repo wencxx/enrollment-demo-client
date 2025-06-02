@@ -6,7 +6,6 @@ import { EnrollDescCol } from "@/FldrTypes/enrolldesc.col"
 import {
     Dialog,
     DialogContent,
-    DialogTrigger,
 } from "@/components/ui/dialog"
 import { useState } from "react"
 import { EnrollDesciprtionForm } from "../FldrForm/editenrolldescription"
@@ -98,16 +97,20 @@ export const columns = ({ getEnrollDescription }: { getEnrollDescription: () => 
         ),
     },
     {
-        accessorKey: "aYearDesc",
-        header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                Academic Year
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-        ),
+    id: "academicYearRange",
+    header: ({ column }) => (
+        <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+            Academic Year
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+    ),
+    cell: ({ row }) => {
+        const { ayStart, ayEnd } = row.original;
+        return `${ayStart}-${ayEnd}`;
+    },
     },
     {
         id: "actions",

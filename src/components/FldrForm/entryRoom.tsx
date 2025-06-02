@@ -18,21 +18,21 @@ import { roomSchema } from "@/FldrSchema/userSchema.ts";
 import { useEffect, useState } from "react";
 import { Save } from "lucide-react";
 
-type RoomFormData = z.infer<typeof roomSchema>;
+type FormData = z.infer<typeof roomSchema>;
 
-interface RoomFormProps {
+interface FormProps {
   editMode?: boolean;
   toEdit?: string;
   onCancel?: () => void;
   onSuccess?: () => void;
 }
 
-export function RoomForm({ editMode = false, toEdit = "", onCancel, onSuccess }: RoomFormProps) {
+export function RoomForm({ editMode = false, toEdit = "", onCancel, onSuccess }: FormProps) {
   const [isEditing] = useState(editMode);
   const [roomCode] = useState(toEdit);
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<RoomFormData>({
+  const form = useForm<FormData>({
     resolver: zodResolver(roomSchema),
     defaultValues: {
       roomCode: "",
@@ -41,25 +41,19 @@ export function RoomForm({ editMode = false, toEdit = "", onCancel, onSuccess }:
   });
 
   useEffect(() => {
-    const fetchRooms = async () => {
+    const fetchData = async () => {
       if (isEditing && roomCode) {
         try {
           setIsLoading(true);
-          const response = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListRoom`);
+          const response = await axios.get(`${plsConnect()}/API/WebAPI/ListController/GetRoom/${roomCode}`)
           
-          console.log("List received:", response.data);
-  
-          const list = response.data.find((list: { roomCode: string }) => list.roomCode === roomCode);
-  
-          if (list) {
-            form.setValue("roomCode", list.roomCode || "");
-            form.setValue("roomDesc", list.roomDesc || "");
-          } else {
-            toast.error("Room not found.");
-          }
+          console.log("Details received:", response.data)
+          
+          form.setValue("roomCode", roomCode)
+          form.setValue("roomDesc", response.data.roomDesc)
         } catch (error) {
-          console.error("Error fetching room details:", error);
-          toast.error("Error fetching room details.");
+          console.error("Error fetching details:", error);
+          toast.error("Error fetching details.");
         } finally {
           setIsLoading(false);
         }
@@ -67,30 +61,27 @@ export function RoomForm({ editMode = false, toEdit = "", onCancel, onSuccess }:
     };
   
     if (isEditing && roomCode) {
-      fetchRooms();
+      fetchData();
     }
   }, [isEditing, roomCode, form]);
 
-  const onSubmit = async (values: RoomFormData) => {
+  const onSubmit = async (values: FormData) => {
     try {
       setIsLoading(true);
       let response;
       
       if (isEditing) {
-        console.log("Updating room:", values);
+        console.log("Updating:", values);
         response = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateRoom`, {
           RoomCode: values.roomCode,
           RoomDesc: values.roomDesc
         });
-        toast("Room updated successfully.");
+        toast("Updated successfully.");
       } else {
-        console.log("Adding new room:", values);
-        response = await axios.post(
-          `${plsConnect()}/API/WEBAPI/InsertEntry/InsertRoom`,
-          {
-            roomDesc: values.roomDesc,
-          });
-        toast("Room added successfully.");
+        console.log("Adding:", values);
+        response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertRoom`,
+          { roomDesc: values.roomDesc });
+        toast("Added successfully.");
       }
       
       console.log("API response:", response.data);
