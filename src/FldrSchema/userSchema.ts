@@ -68,6 +68,7 @@ export const professorSchema = z.object({
 })
 
 export const highschoolSchema = z.object({
+  hsCode: z.string().optional(),
   hsDesc: z.string().nonempty('High school description is required'),
 })
 

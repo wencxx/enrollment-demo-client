@@ -183,3 +183,8 @@ export type TownCol = {
     tcCode: string
     tcDesc: string
 }
+
+export type RoomCol = {
+    roomCode: string,
+    roomDesc: string,
+}
