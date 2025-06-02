@@ -38,6 +38,7 @@ import Rate2 from "./FldrPages/FldrEntry/rate2"
 import Students from "./FldrPages/FldrEntry/students"
 import College from "./FldrPages/FldrEntry/college"
 import Semester from "./FldrPages/FldrEntry/semester"
+import ManageGradesPage from './FldrPages/FldrTeacher/manage-grades'
 
 const router = createBrowserRouter([
   {
@@ -145,15 +146,15 @@ const router = createBrowserRouter([
         element: <EnrollDescription />,
       },
       {
-        path: "/enrollment/enrollment1",
+        path: "/enrollment/admission",
         element: <Enrollment1 />,
       },
       {
-        path: "/enrollment/enrollment2",
+        path: "/enrollment/load-subjects",
         element: <Enrollment2 />,
       },
       {
-        path: "/enrollment/enrollment3",
+        path: "/enrollment/payments",
         element: <Enrollment3 />,
       },
       {
@@ -167,6 +168,10 @@ const router = createBrowserRouter([
       {
         path: "/student/profile",
         element: <StudentProfile />,
+      },
+      {
+        path: "/teacher/manage-grades",
+        element: <ManageGradesPage />,
       },
       {
         path: "/student/statement-of-account",

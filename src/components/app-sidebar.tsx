@@ -9,7 +9,8 @@ import {
   Route,
   ClipboardList,
   ReceiptText,
-  Calendar1
+  Calendar1,
+  FileDigit
 } from "lucide-react"
 import {
   Avatar,
@@ -70,6 +71,13 @@ const data = {
       url: 'student/statement-of-account',
       icon: ReceiptText,
     }
+  ],
+  menuTeacher: [
+    {
+      name: 'Manage Grades',
+      url: 'teacher/manage-grades',
+      icon: FileDigit,
+    },
   ],
   menuPersmissions: [
     {
@@ -164,16 +172,16 @@ const data = {
       icon: ChartColumn,
       items: [
         {
-          title: "Enrollment 1",
-          url: "enrollment/enrollment1",
+          title: "Admissions",
+          url: "enrollment/admission",
         },
         {
-          title: "Enrollment 2",
-          url: "enrollment/enrollment2",
+          title: "Load Subjects",
+          url: "enrollment/load-subjects",
         },
         {
-          title: "Enrollment 3",
-          url: "enrollment/enrollment3",
+          title: "Payments",
+          url: "enrollment/payments",
         },
       ],
     },
@@ -206,6 +214,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent className="scrollbar-hidden">
         <SingleMenu data={data.menuDashboard} />
         <SingleMenu data={data.menuStudent} title="Student" />
+        <SingleMenu data={data.menuTeacher} title="Teacher" />
         <MenuMain items={data.menuMain} />
         <MenuEnrollment items={data.menuEnrollment} />
         <SingleMenu data={data.menuPersmissions} title="Permissions" />
