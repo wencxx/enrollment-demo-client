@@ -32,23 +32,33 @@ import { Check, ChevronsUpDown } from "lucide-react"
 export type FormValues = z.infer<typeof formSchema>;
 
 interface TownCity {
-  tcCode: string;
-  tcDesc: string;
+  value: string;
+  label: string;
+}
+
+interface Barangay {
+  value: string;
+  label: string;
 }
 
 interface Elementary {
-  elementaryCode: string;
-  elementaryDesc: string;
+  value: string;
+  label: string;
 }
 
 interface HighSchool {
-  hsCode: string;
-  hsDesc: string;
+  label: string;
+  value: string;
 }
 
 export default function StudentApplication() {
-  const [submitting, setSubmitting] = useState(false);
+  const [selectedCity, setSelectedCity] = useState('064501000')
+
   const [townCities, setTownCities] = useState<TownCity[]>([]);
+  const [barangay, setBarangay] = useState<Barangay[]>([]);
+
+
+  const [submitting, setSubmitting] = useState(false);
   const [elementarySchools, setElementarySchools] = useState<Elementary[]>([]);
   const [highSchools, setHighSchools] = useState<HighSchool[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,22 +76,22 @@ export default function StudentApplication() {
       try {
         setLoading(true);
 
-        const townCityResponse = await axios.get(`${plsConnect()}/api/TownCity/ListTown`);
-        const mappedTownCityResponse = townCityResponse.data.map((item: TownCity) => ({
-          label: item.tcDesc,
-          value: item.tcCode,
+        const townCityResponse = await axios.get(`https://psgc.gitlab.io/api/provinces/064500000/cities-municipalities/`);
+        const mappedTownCityResponse = townCityResponse.data.map((item: { name: string, code: string }) => ({
+          label: item.name,
+          value: item.code,
         }));
         setTownCities(mappedTownCityResponse);
 
         const elementaryResponse = await axios.get(`${plsConnect()}/api/Elementary`);
-        const mappedElementaryResponse = elementaryResponse.data.map((item: Elementary) => ({
+        const mappedElementaryResponse = elementaryResponse.data.map((item: { elementaryDesc: string, elementaryCode: string }) => ({
           label: item.elementaryDesc,
           value: item.elementaryCode,
         }));
         setElementarySchools(mappedElementaryResponse);
 
         const highSchoolResponse = await axios.get(`${plsConnect()}/api/Highschool`);
-        const mappedHighSchoolResponse = highSchoolResponse.data.map((item: HighSchool) => ({
+        const mappedHighSchoolResponse = highSchoolResponse.data.map((item: { hsDesc: string, hsCode: string }) => ({
           label: item.hsDesc,
           value: item.hsCode,
         }));
@@ -96,6 +106,24 @@ export default function StudentApplication() {
 
     fetchData();
   }, []);
+
+  const fetchBarangay = async () => {
+    try {
+      const barangayResponse = await axios.get(`https://psgc.gitlab.io/api/cities-municipalities/${selectedCity}/barangays/`);
+      const mappedBarangay = barangayResponse.data.map((item: { name: string, code: string }) => ({
+        label: item.name,
+        value: item.code,
+      }));
+      setBarangay(mappedBarangay);
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+
+  useEffect(() => {
+    fetchBarangay()
+  }, [selectedCity])
 
   const { currentUser } = useAuthStore.getState();
   if (!currentUser) {
@@ -129,9 +157,9 @@ export default function StudentApplication() {
       }
     } catch (error: any) {
       console.error("Error submitting application:", error);
-    
+
       const backendMessage = error?.response?.data?.message;
-    
+
       if (backendMessage) {
         toast.error(backendMessage);
       } else {
@@ -194,31 +222,31 @@ export default function StudentApplication() {
                         </FormItem>
                       )}
                     />
-        <FormField
-          control={form.control}
-          name="suffix"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Suffix</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a suffix" />
-          </SelectTrigger>
-        </FormControl>
-        <SelectContent>
-          <SelectItem value=" ">None</SelectItem>
-          <SelectItem value="Jr.">Jr.</SelectItem>
-          <SelectItem value="Sr.">Sr.</SelectItem>
-          <SelectItem value="II">II</SelectItem>
-          <SelectItem value="III">III</SelectItem>
-          <SelectItem value="IV">IV</SelectItem>
-          <SelectItem value="V">V</SelectItem>
-        </SelectContent>
-      </Select>
-            </FormItem>
-          )}
-        />
+                    <FormField
+                      control={form.control}
+                      name="suffix"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Suffix</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a suffix" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value=" ">None</SelectItem>
+                              <SelectItem value="Jr.">Jr.</SelectItem>
+                              <SelectItem value="Sr.">Sr.</SelectItem>
+                              <SelectItem value="II">II</SelectItem>
+                              <SelectItem value="III">III</SelectItem>
+                              <SelectItem value="IV">IV</SelectItem>
+                              <SelectItem value="V">V</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
                     <FormField
@@ -232,9 +260,8 @@ export default function StudentApplication() {
                               <FormControl>
                                 <Button
                                   variant="outline"
-                                  className={`w-full pl-3 text-left font-normal ${
-                                    !field.value ? "text-muted-foreground" : ""
-                                  }`}
+                                  className={`w-full pl-3 text-left font-normal ${!field.value ? "text-muted-foreground" : ""
+                                    }`}
                                 >
                                   {field.value ? format(field.value, "PPP") : "Select date"}
                                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
@@ -257,19 +284,6 @@ export default function StudentApplication() {
                     />
                     <FormField
                       control={form.control}
-                      name="address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Address</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
                       name="genderCode"
                       render={({ field }) => (
                         <FormItem>
@@ -285,7 +299,7 @@ export default function StudentApplication() {
                           >
                             <FormControl>
                               <SelectTrigger
-                                className={form.formState.errors.genderCode ? "border-red-500" : ""}
+                                className={`${form.formState.errors.genderCode ? "border-red-500" : ""} w-full`}
                               >
                                 <SelectValue placeholder="Select gender" />
                               </SelectTrigger>
@@ -304,7 +318,7 @@ export default function StudentApplication() {
                     {/* Town City */}
                     <FormField
                       control={form.control}
-                      name="tcCode"
+                      name="city"
                       render={({ field }) => (
                         <FormItem className="flex flex-col">
                           <FormLabel>Town/City</FormLabel>
@@ -321,8 +335,8 @@ export default function StudentApplication() {
                                 >
                                   {field.value
                                     ? townCities.find(
-                                        (city) => city.value === field.value
-                                      )?.label
+                                      (city) => city.value === field.value
+                                    )?.label
                                     : "Select Town/City"}
                                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
@@ -339,11 +353,12 @@ export default function StudentApplication() {
                                   <CommandGroup>
                                     {townCities.map((city) => (
                                       <CommandItem
-                                        value={city.label}
+                                        value={city.value}
                                         key={city.value}
                                         onSelect={() => {
-                                          form.setValue("tcCode", city.value);
+                                          form.setValue("city", city.label);
                                           field.onChange(city.value);
+                                          setSelectedCity(city.value)
                                         }}
                                       >
                                         {city.label}
@@ -351,6 +366,71 @@ export default function StudentApplication() {
                                           className={cn(
                                             "ml-auto h-4 w-4",
                                             city.value === field.value
+                                              ? "opacity-100"
+                                              : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    {/* Barangay City */}
+                    <FormField
+                      control={form.control}
+                      name="barangay"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Barangay</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  className={cn(
+                                    "w-full justify-between",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value
+                                    ? barangay.find(
+                                      (brgy) => brgy.value === field.value
+                                    )?.label
+                                    : "Select Barangay"}
+                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0">
+                              <Command>
+                                <CommandInput
+                                  placeholder="Search town/city..."
+                                  className="h-9"
+                                />
+                                <CommandList>
+                                  <CommandEmpty>No barangay found.</CommandEmpty>
+                                  <CommandGroup>
+                                    {barangay.map((brgy) => (
+                                      <CommandItem
+                                        value={brgy.value}
+                                        key={brgy.value}
+                                        onSelect={() => {
+                                          form.setValue("barangay", brgy.label);
+                                          field.onChange(brgy.value);
+                                        }}
+                                      >
+                                        {brgy.label}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto h-4 w-4",
+                                            brgy.value === field.value
                                               ? "opacity-100"
                                               : "opacity-0"
                                           )}
@@ -405,7 +485,7 @@ export default function StudentApplication() {
                   <h2 className="text-xl font-semibold mb-4">Education Information</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                  <FormField
+                    <FormField
                       control={form.control}
                       name="hsCode"
                       render={({ field }) => (
@@ -424,11 +504,11 @@ export default function StudentApplication() {
                                 >
                                   {field.value
                                     ? highSchools.find(
-                                        (school) => school.value === field.value
-                                      )?.label
+                                      (school) => school.value === field.value
+                                    )?.label
                                     : "Select High School"}
                                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button> 
+                                </Button>
                               </FormControl>
                             </PopoverTrigger>
                             <PopoverContent className="w-full p-0">
@@ -463,7 +543,7 @@ export default function StudentApplication() {
                                   </CommandGroup>
                                 </CommandList>
                               </Command>
-                              </PopoverContent>
+                            </PopoverContent>
                           </Popover>
                           <FormMessage />
                         </FormItem>
@@ -484,7 +564,7 @@ export default function StudentApplication() {
                       )}
                     />
 
-<FormField
+                    <FormField
                       control={form.control}
                       name="elementaryCode"
                       render={({ field }) => (
@@ -503,8 +583,8 @@ export default function StudentApplication() {
                                 >
                                   {field.value
                                     ? elementarySchools.find(
-                                        (school) => school.value === field.value
-                                      )?.label
+                                      (school) => school.value === field.value
+                                    )?.label
                                     : "Select Elementary"}
                                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
@@ -513,7 +593,7 @@ export default function StudentApplication() {
                             <PopoverContent className="w-full p-0">
                               <Command>
                                 <CommandInput
-                                  placeholder="Search elementary..." 
+                                  placeholder="Search elementary..."
                                   className="h-9"
                                 />
                                 <CommandList>
@@ -542,7 +622,7 @@ export default function StudentApplication() {
                                   </CommandGroup>
                                 </CommandList>
                               </Command>
-                              </PopoverContent>
+                            </PopoverContent>
                           </Popover>
                           <FormMessage />
                         </FormItem>

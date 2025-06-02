@@ -55,8 +55,12 @@ export const studentSchema = z.object({
 })
 
 export const courseSchema = z.object({
+  courseCode: z.string().optional(),
   courseDesc: z.string().min(2, {
     message: "Course description must be at least 2 characters.",
+  }),
+  collegeCode: z.string().min(1, {
+    message: "Select college.",
   }),
 })
 
@@ -141,14 +145,17 @@ export const enrollmentMergedSchema = z.object({
 })
 
 export const rateSchema = z.object({
-  pkCode: z.string().min(1),
+  pkRate1: z.string().min(1),
   rows: z.array(
     z.object({
-      rowNum: z.number(),
-      subjectCode: z.string().min(1),
+      // rateRowNum: z.number(),
+      academicUnits: z.string().min(1),
+      labUnits: z.string().min(1),
+      rdCode: z.string().min(1),
       rateTypeCode: z.string().min(1),
+      perSem: z.string().min(1),
       rateAmount: z.string().min(1),
-      noUnits: z.string().min(1),
+      rateSubTypeCode: z.string().min(1),
     })
   ),
 });
@@ -283,5 +290,12 @@ export const userGroupDataSchema = z.object({
   groupCode: z.string().optional(),
   groupName: z.string().min(2, {
     message: "Group name must be at least 2 characters.",
+  }),
+})
+
+export const collegeSchema = z.object({
+  collegeCode: z.string().optional(),
+  collegeDesc: z.string().min(2, {
+    message: "College must be at least 2 characters.",
   }),
 })

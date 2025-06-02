@@ -14,6 +14,14 @@ import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { Plus } from 'lucide-react'
 import { EntryRate2Form } from "@/components/FldrForm/entryRate2";
 
+type Rate2ApiResponse = {
+  pkRate?: string;
+  yearDesc?: string;
+  courseDesc?: string;
+  rdDesc?: string;
+  rateTypeDesc?: string;
+};
+
 export default function Rate2() {
   const [data, setData] = useState<Rate2Col[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
@@ -24,8 +32,7 @@ export default function Rate2() {
       setLoading(true)
       const res = await axios.get(`${plsConnect()}/API/WebAPI/RateController/ListRate2`)
       
-      const formattedData = res.data.map((item: any, index: number) => ({
-        fieldNumber: index + 1,
+      const formattedData = res.data.map((item: Rate2ApiResponse) => ({
         pkRate: item.pkRate || "",
         yearDesc: item.yearDesc || "",
         courseDesc: item.courseDesc || "",
@@ -54,7 +61,9 @@ export default function Rate2() {
                 Add new Rate 2
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden"
+  aria-labelledby="dialog-title">
+                <div className="w-full overflow-x-auto">
                 <EntryRate2Form
                 onCancel={getRate2}
                 onSuccess={() => {
@@ -62,6 +71,7 @@ export default function Rate2() {
                     setIsDialogOpen(false);
                 }}
                 />
+                </div>
             </DialogContent>
           </Dialog>
         </div>

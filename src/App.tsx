@@ -36,6 +36,7 @@ import Rate1 from "./FldrPages/FldrEntry/rate1"
 import RateDesc from "./FldrPages/FldrEntry/ratedesc"
 import Rate2 from "./FldrPages/FldrEntry/rate2"
 import Students from "./FldrPages/FldrEntry/students"
+import College from "./FldrPages/FldrEntry/college"
 
 const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
       {
         path: "/students",
         element: <Students />,
+      },
+      {
+        path: "/entry/college",
+        element: <College />,
       },
       {
         path: "/entry/course",
@@ -134,15 +139,15 @@ const router = createBrowserRouter([
         element: <EnrollDescription />,
       },
       {
-        path: "/enrollment/enrollment1",
+        path: "/enrollment/admission",
         element: <Enrollment1 />,
       },
       {
-        path: "/enrollment/enrollment2",
+        path: "/enrollment/load-subjects",
         element: <Enrollment2 />,
       },
       {
-        path: "/enrollment/enrollment3",
+        path: "/enrollment/payments",
         element: <Enrollment3 />,
       },
       {

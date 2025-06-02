@@ -16,6 +16,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { courseSchema } from "@/FldrSchema/userSchema.ts";
 import { useEffect, useState } from "react";
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+  } from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { Check, ChevronsUpDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { CollegeCol } from "@/FldrTypes/kim-types";
 
 type CourseFormData = z.infer<typeof courseSchema>;
 
@@ -29,27 +45,51 @@ export function CourseForm({ editMode = false, courseToEdit = "", onCancel }: Co
   const [isEditing] = useState(editMode);
   const [selectedCourse] = useState(courseToEdit);
   const [isLoading, setIsLoading] = useState(false);
+  const [colleges, setColleges] = useState<CollegeCol[]>([]);
+  const [collegesLoaded, setCollegesLoaded] = useState(false);
 
   const form = useForm<CourseFormData>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
       courseCode: "",
       courseDesc: "",
+      collegeCode: ""
     },
   });
 
-  // If in edit mode and there's a course to edit, fetch its details
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+          const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListCollege`)
+          const mappedRes = res.data.map((item: CollegeCol) => ({
+            label: item.collegeDesc,
+            value: item.collegeCode,
+          }))
+          setColleges(mappedRes);
+          setCollegesLoaded(true);
+        } catch (error) {
+          console.error("Error fetching details:", error);
+          toast.error("Error fetching details.");
+        } finally {
+          setIsLoading(false);
+        }
+    }
+      fetchData();
+  }, []);
+
   useEffect(() => {
     const fetchCourseDetails = async () => {
-      if (isEditing && selectedCourse) {
+      if (isEditing && selectedCourse && collegesLoaded) {
         try {
           setIsLoading(true);
           const response = await axios.get(`${plsConnect()}/API/WebAPI/ListController/GetCourse?courseCode=${selectedCourse}`);
           
           console.log("Course details received:", response.data);
           
-          form.setValue("courseCode", response.data.CourseCode || response.data.courseCode);
-          form.setValue("courseDesc", response.data.CourseDesc || response.data.courseDesc);
+          form.setValue("courseCode", response.data.courseCode);
+          form.setValue("courseDesc", response.data.courseDesc);
+          form.setValue("collegeCode", response.data.collegeCode);
+          
         } catch (error) {
           console.error("Error fetching course details:", error);
           toast.error("Error fetching course details.");
@@ -59,10 +99,10 @@ export function CourseForm({ editMode = false, courseToEdit = "", onCancel }: Co
       }
     };
 
-    if (isEditing && selectedCourse) {
+    if (isEditing && selectedCourse && collegesLoaded) {
       fetchCourseDetails();
     }
-  }, [isEditing, selectedCourse, form]);
+  }, [isEditing, selectedCourse, collegesLoaded, form]);
 
   const onSubmit = async (values: CourseFormData) => {
     try {
@@ -73,13 +113,15 @@ export function CourseForm({ editMode = false, courseToEdit = "", onCancel }: Co
         console.log("Updating course:", values);
         response = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateCourse`, {
           CourseCode: values.courseCode,
-          CourseDesc: values.courseDesc
+          CourseDesc: values.courseDesc,
+          CollegeCode: values.collegeCode
         });
         toast("Course updated successfully.");
       } else {
         console.log("Adding new course:", values);
         response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertCourse`, {
-          CourseDesc: values.courseDesc
+          CourseDesc: values.courseDesc,
+          CollegeCode: values.collegeCode
         });
         toast("Course added successfully.");
       }
@@ -138,6 +180,69 @@ export function CourseForm({ editMode = false, courseToEdit = "", onCancel }: Co
                   <Input {...field} />
                 </FormControl>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="collegeCode"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? colleges.find(
+                                (college) => college.value === field.value
+                              )?.label
+                            : "Select college"}
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0" style={{ width: 'var(--radix-popover-trigger-width)' }}>
+                      <Command>
+                        <CommandInput
+                          placeholder="Search..."
+                          className="h-9"
+                        />
+                        <CommandList>
+                          <CommandEmpty>None found.</CommandEmpty>
+                          <CommandGroup>
+                            {colleges.map((college) => (
+                              <CommandItem
+                                value={college.label}
+                                key={college.value}
+                                onSelect={() => {
+                                  form.setValue("collegeCode", college.value);
+                                  field.onChange(college.value);
+                                }}
+                              >
+                                {college.label}
+                                <Check
+                                  className={cn(
+                                    "ml-auto",
+                                    college.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
               </FormItem>
             )}
           />
