@@ -28,7 +28,7 @@ function Layout() {
   useEffect(() => {
     rehydrate()
     // console.log("REHYDRATED NA SYA")
-  }, [])
+  },[])
 
   // console.log("current path:", currentPath)
 

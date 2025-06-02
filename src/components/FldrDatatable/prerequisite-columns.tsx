@@ -51,7 +51,7 @@ export const prerequisiteColumns: ColumnDef<PrerequisiteCol>[] = [
     },
 
     {
-        accessorKey: "subjectCode",
+        accessorKey: "RDID",
         header: ({ column }) => (
             <Button
                 variant="ghost"
@@ -63,16 +63,16 @@ export const prerequisiteColumns: ColumnDef<PrerequisiteCol>[] = [
         ),
         cell: ({ row }) => (
             <div>
-                <div className="font-medium">{row.original.subjectCode}</div>
-                {row.original.subjectDesc && (
-                    <div className="text-sm text-muted-foreground">{row.original.subjectDesc}</div>
-                )}
+                <div className="font-medium">{row.original.RDID}</div>
+                {/* {row.original.RDDesc && (
+                    <div className="text-sm text-muted-foreground">{row.original.RDDesc}</div>
+                )} */}
             </div>
         ),
     },
     
     {
-        accessorKey: "prerequisiteCode",
+        accessorKey: "PrerequisiteCode",
         header: ({ column }) => (
             <Button
                 variant="ghost"
@@ -85,9 +85,9 @@ export const prerequisiteColumns: ColumnDef<PrerequisiteCol>[] = [
         cell: ({ row }) => (
             <div>
                 <div className="font-medium">{row.original.prerequisiteCode}</div>
-                {row.original.prerequisiteDesc && (
+                {/* {row.original.prerequisiteDesc && (
                     <div className="text-sm text-muted-foreground">{row.original.prerequisiteDesc}</div>
-                )}
+                )} */}
             </div>
         ),
     },
@@ -95,7 +95,7 @@ export const prerequisiteColumns: ColumnDef<PrerequisiteCol>[] = [
         id: "actions",
         cell: ({ row, table }) => {
           const [isPrerequisiteDialogOpen, setIsPrerequisiteDialogOpen] = useState(false);
-          const [subjectCode, setSubjectCode] = useState("");
+          const [RDID, setSubjectCode] = useState("");
 
           const handleDialogOpen = (code: string) => {
             setSubjectCode(code);
@@ -115,7 +115,7 @@ export const prerequisiteColumns: ColumnDef<PrerequisiteCol>[] = [
           return (
             <Dialog open={isPrerequisiteDialogOpen} onOpenChange={setIsPrerequisiteDialogOpen}>
                 <DialogTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.subjectCode)}>
+                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.RDID)}>
                     <span className="sr-only">Edit prerequisite</span>
                     <Edit className="h-4 w-4" />
                 </Button>
@@ -123,7 +123,7 @@ export const prerequisiteColumns: ColumnDef<PrerequisiteCol>[] = [
                 <DialogContent className="max-h-[90vh] overflow-y-scroll scrollbar-hidden">
                     <PrerequisiteForm 
                         editMode={true}
-                        subjectToEdit={subjectCode} 
+                        subjectToEdit={RDID} 
                         onCancel={handlePrerequisiteUpdate}
                     />
                 </DialogContent>

@@ -1,8 +1,7 @@
-import { columns } from "@/components/FldrDatatable/rate1-col.tsx";
-import { DataTable } from "@/components/FldrDatatable/data-table";
+import { Rate1Table } from "@/components/FldrDatatable/rate1-col.tsx";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Rate1Col } from "@/FldrTypes/kim-types";
+import { Rate1Col } from "@/FldrTypes/types";
 import {
   Dialog,
   DialogContent,
@@ -24,8 +23,7 @@ export default function Rate1() {
       setLoading(true)
       const res = await axios.get(`${plsConnect()}/API/WebAPI/RateController/ListRate1`)
       
-      const formattedData = res.data.map((item: any, index: number) => ({
-        fieldNumber: index + 1,
+      const formattedData = res.data.map((item: Rate1Col) => ({
         pkRate1: item.pkRate1 || "",
         yearCode: item.yearCode || "",
         courseCode: item.courseCode || "",
@@ -66,17 +64,11 @@ export default function Rate1() {
                 />
             </DialogContent>
           </Dialog>
-        </div>
         <div className="mt-4">
-          <DataTable 
-            columns={columns} 
-            data={data} 
-            loading={loading} 
-            title="rate 1" 
-            onRefresh={getRate1}
-          />
+          <Rate1Table data={data} loading={loading} onRefresh={getRate1} />
         </div>
       <Toaster />
+      </div>
     </div>
   )
 }

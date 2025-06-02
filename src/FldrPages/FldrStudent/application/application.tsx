@@ -132,12 +132,20 @@ export default function StudentApplication() {
   }
 
   const onSubmit = async (values: FormValues) => {
-    console.log("Submitting form with values:", values);
     try {
       setSubmitting(true);
 
+      // Find the label for the selected city code
+      const selectedCityObj = townCities.find(city => city.value === values.city);
+      const cityLabel = selectedCityObj ? selectedCityObj.label : values.city;
+
+      // Find the label for the selected barangay code
+      const selectedBarangayObj = barangay.find(brgy => brgy.value === values.barangay);
+      const barangayLabel = selectedBarangayObj ? selectedBarangayObj.label : values.barangay;
+
       const applicationData = {
         ...values,
+        address: `${barangayLabel}, ${cityLabel}`,
         userCode: currentUser.userCode,
       };
 

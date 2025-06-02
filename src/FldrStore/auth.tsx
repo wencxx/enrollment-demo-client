@@ -4,6 +4,7 @@ import { loginSchema } from '@/FldrSchema/userSchema'
 import axios from 'axios'
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import { User } from '@/FldrTypes/user'
+import type { NavigateFunction } from "react-router-dom";
 
 interface AuthState {
     currentUser: User | null
@@ -11,21 +12,25 @@ interface AuthState {
     auth: boolean | null
     permissions: string[]
     loading: boolean
-    login: (credentials: z.infer<typeof loginSchema>, navigate: any) => Promise<void>
+    login: (credentials: z.infer<typeof loginSchema>, navigate: NavigateFunction) => Promise<void>
     logout: () => void
     rehydrate: () => void
   }
 
+type Permission = {
+    objectName: string
+}
+
   const useAuthStore = create<AuthState>((set) => ({
-    currentUser: sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')!) : null,
-    token: sessionStorage.getItem('token') || null,
-    auth: !!sessionStorage.getItem('token'),
-    permissions: sessionStorage.getItem('permissions') ? JSON.parse(sessionStorage.getItem('permissions')!) : [],
+    currentUser: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
+    token: localStorage.getItem('token') || null,
+    auth: !!localStorage.getItem('token'),
+    permissions: localStorage.getItem('permissions') ? JSON.parse(localStorage.getItem('permissions')!) : [],
     loading: true,
     rehydrate: () => {
-        const user = sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')!) : null
-        const token = sessionStorage.getItem('token')
-        const permissions = sessionStorage.getItem('permissions') ? JSON.parse(sessionStorage.getItem('permissions')!) : []
+        const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null
+        const token = localStorage.getItem('token')
+        const permissions = localStorage.getItem('permissions') ? JSON.parse(localStorage.getItem('permissions')!) : []
     
         set({
           currentUser: user,
@@ -39,20 +44,19 @@ interface AuthState {
     login: async (credentials, navigate) => {
       try {
         set({ loading: true })
-        const res: any = await axios.get(`${plsConnect()}/API/WebAPI/tblUserAll/GetLoginAllUserInfo?strUserName=${credentials.username}&strPassword=${credentials.password}`)
+        const res = await axios.get(`${plsConnect()}/API/WebAPI/tblUserAll/GetLoginAllUserInfo?strUserName=${credentials.username}&strPassword=${credentials.password}`)
   
         const user = res.data
         const token = user.token
         const groupCode = user.groupCode
   
         const permRes = await axios.get(`${plsConnect()}/api/Permission/ListPermissions?groupCode=${groupCode}`)
-        // console.log("permissions para sa role:", permRes.data)
         console.log("logging in as", user.groupName)
-        const permissions = permRes.data.map((p: any) => p.objectName)
+        const permissions = permRes.data.map((p: Permission) => p.objectName)
   
-        sessionStorage.setItem('user', JSON.stringify(user))
-        sessionStorage.setItem('token', token)
-        sessionStorage.setItem('permissions', JSON.stringify(permissions))
+        localStorage.setItem('user', JSON.stringify(user))
+        localStorage.setItem('token', token)
+        localStorage.setItem('permissions', JSON.stringify(permissions))
   
         set({
           currentUser: user,
@@ -72,9 +76,9 @@ interface AuthState {
     },
   
     logout: () => {
-      sessionStorage.removeItem('user')
-      sessionStorage.removeItem('token')
-      sessionStorage.removeItem('permissions')
+      localStorage.removeItem('user')
+      localStorage.removeItem('token')
+      localStorage.removeItem('permissions')
       set({ auth: false, currentUser: null, permissions: [], loading: false })
     }
   }))

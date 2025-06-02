@@ -14,41 +14,40 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { acadYearSchema } from "@/FldrSchema/userSchema.ts"
-import { AcademicYear } from "@/FldrTypes/types";
+import { semesterSchema } from "@/FldrSchema/userSchema.ts"
+import { Semester } from "@/FldrTypes/types";
 
-type AcadYearFormData = z.infer<typeof acadYearSchema>
+
+type AcadYearFormData = z.infer<typeof semesterSchema>
 
 interface AcadYearFormProps {
   onSuccess?: () => void;
-  acadYear: AcademicYear[]
+  semesters: Semester[]
 }
 
-export function AcadYearForm({ onSuccess, acadYear }: AcadYearFormProps) {
+export function SemesterForm({ onSuccess, semesters }: AcadYearFormProps) {
   const form = useForm<AcadYearFormData>({
-    resolver: zodResolver(acadYearSchema),
+    resolver: zodResolver(semesterSchema),
     defaultValues: {
-      ayStart: undefined,
-      ayEnd: undefined,
+      semDesc: undefined,
     },
   })
 
   const onSubmit = async (values: AcadYearFormData) => {
-    const alreadyExisting = acadYear.find((ay) => ay.ayStart === values.ayStart && ay.ayEnd === values.ayEnd)
+
+    const alreadyExisting = semesters.find((sem) => sem.semDesc === values.semDesc)
 
 
-    if(alreadyExisting) return toast.warning('Academic year already exist.')
+    if(alreadyExisting) return toast.warning('Semester year already exist.')
 
     const data = {
-      ayCode: '12345',
+    //   semCode: '5',
       ...values
     }
 
     try {
-      const response = await axios.post(`${plsConnect()}/api/AcademicYear`, data)
-      console.log("Data submitted successfully:", response.data)
-      console.log("Data sent:", values)
-      toast("Academic year entered successfully.")
+      await axios.post(`${plsConnect()}/api/Semester`, data)
+      toast("Semester year entered successfully.")
 
       if (onSuccess) {
         onSuccess();
@@ -69,32 +68,20 @@ export function AcadYearForm({ onSuccess, acadYear }: AcadYearFormProps) {
 
   return (
     <>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold">Add Academic Year</h2>
+            <h2 className="text-xl font-semibold">Add Semester</h2>
           </div>
           <FormField
             control={form.control}
-            name="ayStart"
+            name="semDesc"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Start</FormLabel>
+                <FormLabel>Semester</FormLabel>
                 <FormControl>
-                  <Input {...field} type="number" value={field.value || ""} onChange={(e) => field.onChange(e.target.valueAsNumber)} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="ayEnd"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>End</FormLabel>
-                <FormControl>
-                  <Input {...field} type="number" value={field.value || ""} onChange={(e) => field.onChange(e.target.valueAsNumber)} />
+                  <Input {...field} value={field.value || ""} onChange={(e) => field.onChange(e.target.value)} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

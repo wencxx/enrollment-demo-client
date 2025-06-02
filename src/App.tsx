@@ -23,7 +23,7 @@ import StatementOfAccount from "./FldrPages/FldrStudent/statement-of-account"
 import Users from "./FldrPages/FldrPermissions/users"
 import GrantPermission from "./FldrPages/FldrPermissions/permissions-manager"
 import RoutePage from "./FldrPages/FldrPermissions/routes"
-import Subject from "./FldrPages/FldrEntry/subject-prerequisite"
+// import Subject from "./FldrPages/FldrEntry/subject-prerequisite"
 import AcademicYearPage from "./FldrPages/FldrEntry/academicyear"
 import Professor from "./FldrPages/FldrEntry/professor"
 import HighSchool from "./FldrPages/FldrEntry/highschool"
@@ -37,6 +37,8 @@ import RateDesc from "./FldrPages/FldrEntry/ratedesc"
 import Rate2 from "./FldrPages/FldrEntry/rate2"
 import Students from "./FldrPages/FldrEntry/students"
 import College from "./FldrPages/FldrEntry/college"
+import Semester from "./FldrPages/FldrEntry/semester"
+import ManageGradesPage from './FldrPages/FldrTeacher/manage-grades'
 
 const router = createBrowserRouter([
   {
@@ -94,10 +96,11 @@ const router = createBrowserRouter([
         path: "/entry/rate",
         element: <Rate />,
       },
-      {
-        path: "/entry/subject-prerequisite",
-        element: <Subject />,
-      },
+      // REMOVED FROM tblObjects:
+      // {
+      //   path: "/entry/subject-prerequisite",
+      //   element: <Subject />,
+      // },
       {
         path: "/entry/ratecourse",
         element: <RateCourse />,
@@ -105,6 +108,10 @@ const router = createBrowserRouter([
       {
         path: "/entry/AY",
         element: <AcademicYearPage />,
+      },
+      {
+        path: "/entry/semester",
+        element: <Semester />,
       },
       {
         path: "/entry/professors",
@@ -161,6 +168,10 @@ const router = createBrowserRouter([
       {
         path: "/student/profile",
         element: <StudentProfile />,
+      },
+      {
+        path: "/teacher/manage-grades",
+        element: <ManageGradesPage />,
       },
       {
         path: "/student/statement-of-account",

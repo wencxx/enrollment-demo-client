@@ -1,10 +1,10 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { plsConnect } from "@/FldrClass/ClsGetConnection"
-import axios from "axios"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { plsConnect } from "@/FldrClass/ClsGetConnection";
+import axios from "axios";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -12,123 +12,143 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { rateDescSchema } from "@/FldrSchema/userSchema"
-import { useEffect, useState } from "react"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { rateDescSchema } from "@/FldrSchema/userSchema.ts";
+import { useEffect, useState } from "react";
+import { Save } from "lucide-react";
 
-type RateDescFormData = z.infer<typeof rateDescSchema>
+type RateDescFormData = z.infer<typeof rateDescSchema>;
 
-interface RateDescFormProps {
+interface RateDescFormFrops {
   editMode?: boolean;
-  RDToEdit?: string;
+  toEdit?: string;
   onCancel?: () => void;
   onSuccess?: () => void;
 }
 
-export function RateDescForm({ editMode = false, RDToEdit = "", onCancel }: RateDescFormProps) {
-  const [isEditing] = useState(editMode)
-  const [selectedRateDesc] = useState(RDToEdit)
-  const [isLoading, setIsLoading] = useState(false)
-  const [originalRDID, setOriginalRDID] = useState("")
+export function RateDescForm({ editMode = false, toEdit = "", onCancel, onSuccess }: RateDescFormFrops) {
+  const [isEditing] = useState(editMode);
+  const [rdCode] = useState(toEdit);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<RateDescFormData>({
     resolver: zodResolver(rateDescSchema),
-    defaultValues: {},
-  })
+    defaultValues: {
+      rdCode: "",
+      rdid: "",
+      rdDesc: ""
+    },
+  });
 
   useEffect(() => {
-    const fetchRateDesc = async () => {
-      if (isEditing && selectedRateDesc) {
+    const fetchData = async () => {
+      if (isEditing && rdCode) {
         try {
-          console.log(`Fetching rate description details for ${selectedRateDesc}`)
-          setIsLoading(true)
-          const response = await axios.get(`${plsConnect()}/API/WebAPI/RateController/GetRateDesc/${selectedRateDesc}`)
-          console.log("Rate description details received:", response.data)
-
-          const rdid = response.data.RDID ?? response.data.rdid
-          setOriginalRDID(rdid)
-          form.setValue("RDID", rdid)
-          form.setValue("RDDesc", response.data.RDDesc ?? response.data.rdDesc)
-          form.setValue("OldRDID" , rdid)
+          setIsLoading(true);
+          const response = await axios.get(`${plsConnect()}/API/WebAPI/RateController/GetRateDesc/${rdCode}`)
+          
+          console.log("Details received:", response.data)
+          
+          form.setValue("rdCode", rdCode)
+          form.setValue("rdid", response.data.rdid)
+          form.setValue("rdDesc", response.data.rdDesc)
         } catch (error) {
-          console.error("Error fetching rate description details:", error)
-          toast.error("Error fetching rate description details.")
+          console.error("Error fetching details:", error);
+          toast.error("Error fetching details.");
         } finally {
-          setIsLoading(false)
+          setIsLoading(false);
         }
       }
+    };
+  
+    if (isEditing && rdCode) {
+      fetchData();
     }
-
-    if (isEditing && selectedRateDesc) {
-      fetchRateDesc()
-    }
-  }, [isEditing, selectedRateDesc, form])
+  }, [isEditing, rdCode, form]);
 
   const onSubmit = async (values: RateDescFormData) => {
     try {
-      setIsLoading(true)
-      let response
-
+      setIsLoading(true);
+      let response;
+      
       if (isEditing) {
-        console.log("Updating rate description:", values)
-        const updateData = {
-          OldRDID: originalRDID,
-          RDID: values.RDID,
-          RDDesc: values.RDDesc,
-        }
-        console.log("Connection URL:", plsConnect());
-        response = await axios.put(`${plsConnect()}/API/WebAPI/RateController/UpdateRateDesc`, updateData)
-        toast("Rate description updated successfully.")
+        console.log("Updating:", values);
+        response = await axios.put(`${plsConnect()}/API/WebAPI/RateController/UpdateRateDesc`, {
+          RDCode: values.rdCode,
+          rdid: values.rdid,
+          RDDesc: values.rdDesc
+        });
+        toast("Updated successfully.");
       } else {
-        console.log("Connection URL:", plsConnect());
-        console.log("Adding new rate description:", values)
-        response = await axios.post(`${plsConnect()}/API/WebAPI/RateController/InsertRateDesc`, {
-          RDID: values.RDID, 
-          RDDesc: values.RDDesc
-        })
-        toast("Rate description added successfully.")
+        console.log("Adding:", values);
+        response = await axios.post(
+          `${plsConnect()}/API/WebAPI/RateController/InsertRateDesc`,
+          {
+            rdid: values.rdid,
+            RDDesc: values.rdDesc
+          });
+        toast("Added successfully.");
       }
-
-      console.log("API response:", response.data)
-      form.reset()
+      
+      console.log("API response:", response.data);
+      form.reset();
+      if (onSuccess) {
+        onSuccess();
+      }
       if (onCancel) {
-        onCancel()
+        onCancel();
       }
-
-    } catch (error: any) {
+    } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response && error.response.status === 409) {
-          toast.error("Rate description ID already exists.")
-        }
-        else {
-          const errorMessage = error.response?.data?.message || "Error submitting form."
+        const errorMessage = error.response?.data || "An error occurred.";
+        if (error.response?.status === 409) {
           toast.error(errorMessage);
-          console.error("API error:", error.response?.data)
+        } else if (error.response?.status === 400) {
+          toast.error(errorMessage);
+        } else {
+          toast.error("An unexpected error occurred.");
         }
+        console.error("API error:", error.response?.data);
       } else {
-        console.error("Network error:", error)
-        toast.error("Network error.")
+        console.error("Network error:", error);
+        toast.error("Network error.");
       }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">{isEditing ? "Edit Rate Description" : "Add New Rate Description"}</h2>
+        <h2 className="text-lg font-semibold">{isEditing ? "Edit College" : "Add New College"}</h2>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          {isEditing && (
+            <FormField
+              control={form.control}
+              name="rdCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Code</FormLabel>
+                  <FormControl>
+                    <Input {...field} disabled={true} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
           <FormField
             control={form.control}
-            name="RDID"
+            name="rdid"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Rate Description ID</FormLabel>
+                <FormLabel>Subject ID</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -139,10 +159,10 @@ export function RateDescForm({ editMode = false, RDToEdit = "", onCancel }: Rate
 
           <FormField
             control={form.control}
-            name="RDDesc"
+            name="rdDesc"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Rate Description</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -150,7 +170,7 @@ export function RateDescForm({ editMode = false, RDToEdit = "", onCancel }: Rate
               </FormItem>
             )}
           />
-
+          
           <div className="flex justify-end gap-2">
             {isEditing && onCancel && (
               <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
@@ -166,11 +186,16 @@ export function RateDescForm({ editMode = false, RDToEdit = "", onCancel }: Rate
                   </svg>
                   Processing...
                 </span>
-              ) : isEditing ? "Update" : "Submit"}
+              ) : isEditing ? (
+                <span className="flex items-center gap-2">
+                  <Save />
+                  Update
+                </span>
+              ) : ("Submit")}
             </Button>
           </div>
         </form>
       </Form>
     </>
-  )
+  );
 }

@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Check, ChevronsUpDown, Save } from "lucide-react";
-import { CourseCol, SemCol, YearCol } from "@/FldrTypes/kim-types";
+import { CourseCol, SemCol, YearCol } from "@/FldrTypes/types";
 import { cn } from "@/lib/utils";
 
 type Rate1FormData = {
@@ -33,17 +33,16 @@ type Rate1FormData = {
 };
 
 interface Rate1FormProps {
-    toEdit?: string;
+    pkRate1: string;
     onCancel?: () => void;
     onSuccess?: () => void;
 }
 
-export function EditRate1Form({ toEdit = "", onCancel, onSuccess }: Rate1FormProps) {
+export function EditRate1Form({ pkRate1, onCancel, onSuccess }: Rate1FormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [year, setYear] = useState<YearCol[]>([])
   const [course, setCourse] = useState<CourseCol[]>([])
   const [sem, setSem] = useState<SemCol[]>([])
-  const [pkRate1] = useState(toEdit);
 
   const form = useForm<Rate1FormData>({
     defaultValues: {

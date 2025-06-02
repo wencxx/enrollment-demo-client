@@ -1,4 +1,3 @@
-import { toDate } from "date-fns"
 import { z } from "zod"
 
 export const loginSchema = z.object({
@@ -73,6 +72,7 @@ export const highschoolSchema = z.object({
 })
 
 export const elementarySchema = z.object({
+  elementaryCode: z.string().optional(),
   elementaryDesc: z.string().nonempty('Elementary description is required'),
 })
 
@@ -149,8 +149,7 @@ export const rateSchema = z.object({
   rows: z.array(
     z.object({
       // rateRowNum: z.number(),
-      academicUnits: z.string().min(1),
-      labUnits: z.string().min(1),
+      noUnits: z.string().min(1),
       rdCode: z.string().min(1),
       rateTypeCode: z.string().min(1),
       perSem: z.string().min(1),
@@ -158,6 +157,16 @@ export const rateSchema = z.object({
       rateSubTypeCode: z.string().min(1),
     })
   ),
+});
+
+export const editRate2Schema = z.object({
+  pkRate1: z.string().min(1, "pkRate1 is required"),
+  rdCode: z.string().min(1, "rdCode is required"),
+  rateTypeCode: z.string().min(1, "rateTypeCode is required"),
+  rateSubTypeCode: z.string().min(1, "rateSubTypeCode is required"),
+  perSem: z.coerce.number().nonnegative("perSem must be a number"),
+  noUnits: z.coerce.number().nonnegative("noUnits must be a number"),
+  rateAmount: z.coerce.number().nonnegative("rateAmount must be a number"),
 });
 
 
@@ -223,13 +232,14 @@ export const editRateSchema = z.object({
 });
 
 export const subjectSchema = z.object({
-  subjectCode: z.string().min(1, 'Subject code is required'),
-  subjectDesc: z.string().min(1, 'Subject description is required'),
+  rdCode: z.string().optional(),
+  rdid: z.string().min(1, 'Subject ID is required'),
+  rdDesc: z.string().min(1, 'Subject description is required'),
 });
 
 export const prerequisiteSchema = z.object({
-  subjectCode: z.string().min(1, 'Subject code is required'),
-  prerequisiteCode: z.string().min(1, 'Subject prerequisite is required'),
+  RDID: z.string().min(1, 'Subject code is required'),
+  PrerequisiteCode: z.string().min(1, 'Subject prerequisite is required'),
 });
 
 export const acadYearSchema = z.object({
@@ -268,12 +278,12 @@ export const sectionSchema = z.object({
 })
 
 export const rateDescSchema = z.object({
-  OldRDID: z.string().optional(),
-  RDID: z.string().min(2, {
-    message: "Rate Id cannot be empty.",
+  rdCode: z.string().optional(),
+  rdid: z.string().min(2, {
+    message: "ID cannot be empty.",
   }),
-  RDDesc: z.string().min(2, {
-    message: "Rate description cannot be empty",
+  rdDesc: z.string().min(2, {
+    message: "Description cannot be empty",
   })
 })
 
@@ -299,3 +309,7 @@ export const collegeSchema = z.object({
     message: "College must be at least 2 characters.",
   }),
 })
+
+export const semesterSchema = z.object({
+  semDesc: z.string().min(5),
+});

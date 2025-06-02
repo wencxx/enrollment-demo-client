@@ -2,7 +2,7 @@ import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import axios from "axios";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
-import { StudentCol } from "@/FldrTypes/kim-types";
+import { StudentCol } from "@/FldrTypes/types";
 import { CardContent } from "@/components/ui/card";
 
 interface StudentProps {

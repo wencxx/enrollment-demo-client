@@ -9,7 +9,8 @@ import {
   Route,
   ClipboardList,
   ReceiptText,
-  Calendar1
+  Calendar1,
+  FileDigit
 } from "lucide-react"
 import {
   Avatar,
@@ -71,6 +72,13 @@ const data = {
       icon: ReceiptText,
     }
   ],
+  menuTeacher: [
+    {
+      name: 'Manage Grades',
+      url: 'teacher/manage-grades',
+      icon: FileDigit,
+    },
+  ],
   menuPersmissions: [
     {
       name: 'Users',
@@ -102,6 +110,10 @@ const data = {
           title: "Course",
           url: "entry/course",
         },
+        // {
+        //   title: "Subject",
+        //   url: "entry/subject-prerequisite",
+        // },
         {
           title: "Professors",
           url: "entry/professors",
@@ -146,6 +158,10 @@ const data = {
           title: "Academic Year",
           url: "entry/AY",
         },
+        {
+          title: "Semester",
+          url: "entry/semester",
+        },
       ],
     },
   ],
@@ -173,8 +189,6 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  // const store = useAuthStore()
-  // const user = store.currentUser
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -200,6 +214,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent className="scrollbar-hidden">
         <SingleMenu data={data.menuDashboard} />
         <SingleMenu data={data.menuStudent} title="Student" />
+        <SingleMenu data={data.menuTeacher} title="Teacher" />
         <MenuMain items={data.menuMain} />
         <MenuEnrollment items={data.menuEnrollment} />
         <SingleMenu data={data.menuPersmissions} title="Permissions" />

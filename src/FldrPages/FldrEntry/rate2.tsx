@@ -1,11 +1,11 @@
-import { columns } from "@/components/FldrDatatable/rate2-col.tsx";
-import { DataTable } from "@/components/FldrDatatable/data-table";
+import { Rate2Table } from "@/components/FldrDatatable/rate2-col.tsx";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Rate2Col } from "@/FldrTypes/kim-types";
+import { Rate2Col } from "@/FldrTypes/types";
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -20,6 +20,8 @@ type Rate2ApiResponse = {
   courseDesc?: string;
   rdDesc?: string;
   rateTypeDesc?: string;
+  rateSubTypeDesc?: string;
+  semDesc?: string;
 };
 
 export default function Rate2() {
@@ -36,8 +38,10 @@ export default function Rate2() {
         pkRate: item.pkRate || "",
         yearDesc: item.yearDesc || "",
         courseDesc: item.courseDesc || "",
+        semDesc: item.semDesc || "",
         rdDesc: item.rdDesc || "",
         rateTypeDesc: item.rateTypeDesc || "",
+        rateSubTypeDesc: item.rateSubTypeDesc || "",
       }));
       console.log("List received:", res.data);  
       setData(formattedData)
@@ -50,6 +54,7 @@ export default function Rate2() {
   useEffect(() => {
     getRate2()
   }, []);
+  
 
   return (
     <div className="container py-6">
@@ -61,8 +66,8 @@ export default function Rate2() {
                 Add new Rate 2
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden"
-  aria-labelledby="dialog-title">
+            <DialogContent className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden" aria-labelledby="dialog-title">
+                <DialogTitle>Insert Rates</DialogTitle>
                 <div className="w-full overflow-x-auto">
                 <EntryRate2Form
                 onCancel={getRate2}
@@ -76,13 +81,7 @@ export default function Rate2() {
           </Dialog>
         </div>
         <div className="mt-4">
-          <DataTable 
-            columns={columns} 
-            data={data} 
-            loading={loading} 
-            title="rate 2" 
-            onRefresh={getRate2}
-          />
+          <Rate2Table data={data} loading={loading} onRefresh={getRate2} />
         </div>
       <Toaster />
     </div>

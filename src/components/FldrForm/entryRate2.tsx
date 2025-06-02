@@ -31,7 +31,7 @@ import { useEffect, useState } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Check, ChevronsUpDown, Plus, Save, Trash } from "lucide-react";
-import { Rate1Col, RateDescCol, RateSubTypeCol, RateTypeCol, } from "@/FldrTypes/kim-types";
+import { Rate1Col, RateDescCol, RateSubTypeCol, RateTypeCol, } from "@/FldrTypes/types";
 import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { z } from "zod";
@@ -57,8 +57,7 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
             rateTypeCode: "",
             perSem: "",
             rateAmount: "",
-            academicUnits: "0",
-            labUnits: "0",
+            noUnits: "",
             rateSubTypeCode: "",
             // rowNum: 0
             },
@@ -82,12 +81,9 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
 
     useEffect(() => {
         watchedRows?.forEach((row, index) => {
-            const academicUnits = parseInt(row.academicUnits || "0", 10) || 0;
-            const labUnits = parseInt(row.labUnits || "0", 10) || 0;
+            const noUnits = parseInt(row.noUnits || "0", 10) || 0;
             const perSem = parseInt(row.perSem || "0", 10) || 0;
-            const totalUnits = academicUnits + labUnits;
-            const rateAmount = perSem * totalUnits;
-            // Only update if value is different to avoid unnecessary rerenders
+            const rateAmount = perSem * noUnits;
             if (row.rateAmount !== rateAmount.toString()) {
                 setValue(`rows.${index}.rateAmount`, rateAmount.toString());
             }
@@ -142,8 +138,7 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
         rateTypeCode: "",
         rateSubTypeCode: "",
         rateAmount: "",
-        academicUnits: "",
-        labUnits: "",
+        noUnits: "",
         perSem: "",
         // rowNum: nextRowNum,
         });
@@ -165,8 +160,7 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
             rdCode: row.rdCode,
             rateTypeCode: row.rateTypeCode,
             rateSubTypeCode: row.rateSubTypeCode,
-            academicUnits: parseInt(row.academicUnits, 10),
-            labUnits: parseInt(row.labUnits, 10),
+            noUnits: parseInt(row.noUnits, 10),
             perSem: parseFloat(row.perSem),
             rateAmount: parseFloat(row.rateAmount),
             // rowNum: row.rowNum,
@@ -207,208 +201,202 @@ export function EntryRate2Form({ onCancel, onSuccess }: Rate2FormProps) {
 
 return (
 <>
-    <div className="flex justify-between items-center mb-4">
-    <h2 className="text-lg font-semibold">Add New Rate2</h2>
-    </div>
+  <Form {...form}>
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+      <div className="colspan-2">
+          <FormField
+          control={form.control}
+          name="pkRate1"
+          render={({ field }) => (
+              <FormItem className="flex flex-col">
+              <FormLabel>Rate 1</FormLabel>
+              <Popover>
+                  <PopoverTrigger asChild>
+                  <FormControl>
+                      <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                          "w-full justify-between",
+                          !field.value && "text-muted-foreground"
+                      )}
+                      >
+                      {field.value
+                          ? rate1.find(
+                              (rate1) => rate1.value === field.value
+                          )?.label
+                          : "Select Rate 1"}
+                      <ChevronsUpDown className="opacity-50" />
+                      </Button>
+                  </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0 min-w-[var(--radix-popover-trigger-width)]"
+                  style={{ pointerEvents: "auto" }}>
+                  <Command>
+                      <CommandInput
+                      placeholder="Search..."
+                      className="h-9"
+                      />
+                      <CommandList>
+                      <CommandEmpty>None found.</CommandEmpty>
+                      <CommandGroup>
+                          {rate1.map((rate1) => (
+                          <CommandItem
+                              value={rate1.label}
+                              key={rate1.value}
+                              onSelect={() => {
+                                  form.setValue("pkRate1", rate1.value);
+                                  field.onChange(rate1.value);
+                              }}
+                          >
+                              {rate1.label}
+                              <Check
+                              className={cn(
+                                  "ml-auto",
+                                  rate1.value === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                              />
+                          </CommandItem>
+                          ))}
+                      </CommandGroup>
+                      </CommandList>
+                  </Command>
+                  </PopoverContent>
+              </Popover>
+              </FormItem>
+          )}
+          />
+      </div>
+  
+          <Table className="min-w-[800px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Subtype</TableHead>
+                  <TableHead>Subject</TableHead>
+                  <TableHead>Units</TableHead>
+                  <TableHead>Per Semester</TableHead>
+                  <TableHead className="text-right">Rate Amount</TableHead>
+                  <TableHead className="text-center"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+              {fields.map((item, index) => {
+                  const noUnits = watchedRows?.[index]?.noUnits ?? "0";
+                  const perSem = watchedRows?.[index]?.perSem ?? "0";
+                  const rateAmount =
+                  (parseFloat(perSem || "0") || 0) * (parseInt(noUnits || "0"));
 
-    {/* to be revised */}
-    <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-
-        <div className="colspan-2">
-            <FormField
-            control={form.control}
-            name="pkRate1"
-            render={({ field }) => (
-                <FormItem className="flex flex-col">
-                <FormLabel>Rate 1</FormLabel>
-                <Popover>
-                    <PopoverTrigger asChild>
-                    <FormControl>
-                        <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                            "w-full justify-between",
-                            !field.value && "text-muted-foreground"
-                        )}
-                        >
-                        {field.value
-                            ? rate1.find(
-                                (rate1) => rate1.value === field.value
-                            )?.label
-                            : "Select Rate 1"}
-                        <ChevronsUpDown className="opacity-50" />
-                        </Button>
-                    </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0 min-w-[var(--radix-popover-trigger-width)]"
-                    style={{ pointerEvents: "auto" }}>
-                    <Command>
-                        <CommandInput
-                        placeholder="Search..."
-                        className="h-9"
+                  // const selectedRateType = watch(`rows.${index}.rateTypeCode`);
+                  return (
+                    <TableRow key={item.id}>
+                      <TableCell className="text-right w-[20%]">
+                        <FormField
+                          control={control}
+                          name={`rows.${index}.rateTypeCode`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger className="w-full">
+                                      <SelectValue placeholder="Select rate type" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {rateType.length > 0 ? (
+                                      rateType.map((rateType) => (
+                                        <SelectItem key={rateType.rateTypeCode} value={rateType.rateTypeCode}>
+                                          {rateType.rateTypeDesc}
+                                        </SelectItem>
+                                      ))
+                                    ) : (
+                                      <SelectItem value="placeholder" disabled>No rate types available</SelectItem>
+                                    )}
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                            </FormItem>
+                          )}
                         />
-                        <CommandList>
-                        <CommandEmpty>None found.</CommandEmpty>
-                        <CommandGroup>
-                            {rate1.map((rate1) => (
-                            <CommandItem
-                                value={rate1.label}
-                                key={rate1.value}
-                                onSelect={() => {
-                                    form.setValue("pkRate1", rate1.value);
-                                    field.onChange(rate1.value);
-                                }}
-                            >
-                                {rate1.label}
-                                <Check
-                                className={cn(
-                                    "ml-auto",
-                                    rate1.value === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                                />
-                            </CommandItem>
-                            ))}
-                        </CommandGroup>
-                        </CommandList>
-                    </Command>
-                    </PopoverContent>
-                </Popover>
-                </FormItem>
-            )}
-            />
-        </div>
-    
-            <Table className="min-w-[800px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Subtype</TableHead>
-                    <TableHead>Subject</TableHead>
-                    <TableHead>Academic</TableHead>
-                    <TableHead>Laboratory</TableHead>
-                    <TableHead>Total Units</TableHead>
-                    <TableHead>Per Semester</TableHead>
-                    <TableHead className="text-right">Rate Amount</TableHead>
-                    <TableHead className="text-center"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                {fields.map((item, index) => {
-                    const academicUnits = watchedRows?.[index]?.academicUnits ?? "0";
-                    const labUnits = watchedRows?.[index]?.labUnits ?? "0";
-                    const totalUnits =
-                    (parseInt(academicUnits || "0", 10) || 0) +
-                    (parseInt(labUnits || "0", 10) || 0);
-
-                    const perSem = watchedRows?.[index]?.perSem ?? "0";
-                    const rateAmount =
-                    (parseFloat(perSem || "0") || 0) * totalUnits;
-
-                    // const selectedRateType = watch(`rows.${index}.rateTypeCode`);
-                    return (
-                      <TableRow key={item.id}>
-                        <TableCell className="text-right w-[20%]">
-                          <FormField
-                            control={control}
-                            name={`rows.${index}.rateTypeCode`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <Select onValueChange={field.onChange} value={field.value}>
+                      </TableCell>
+                      <TableCell className="text-right w-[20%]">
+                        <FormField
+                          control={control}
+                          name={`rows.${index}.rateSubTypeCode`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger className="w-full">
+                                      <SelectValue placeholder="Select rate subtype" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {rateSubType.length > 0 ? (
+                                      rateSubType.map((rateSubType) => (
+                                        <SelectItem key={rateSubType.rateSubTypeCode} value={rateSubType.rateSubTypeCode}>
+                                          {rateSubType.rateSubTypeDesc}
+                                        </SelectItem>
+                                      ))
+                                    ) : (
+                                      <SelectItem value="placeholder" disabled>No rate subtypes available</SelectItem>
+                                    )}
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </TableCell>
+                      <TableCell className="text-right w-[40%]">
+                        <FormField
+                          control={form.control}
+                          name={`rows.${index}.rdCode`}
+                          render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                              {/* {selectedRateType === "1" ? ( */}
+                                <Popover>
+                                  <PopoverTrigger asChild>
                                     <FormControl>
-                                      <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select rate type" />
-                                      </SelectTrigger>
+                                      <Button
+                                        variant="outline"
+                                        role="combobox"
+                                        className={cn(
+                                          "w-full justify-between",
+                                          !field.value && "text-muted-foreground"
+                                        )}
+                                      >
+                                        {field.value
+                                          ? rateDesc.find(
+                                              (rateDesc) => rateDesc.value === field.value
+                                            )?.label
+                                          : "Select subject"}
+                                        <ChevronsUpDown className="opacity-50" />
+                                      </Button>
                                     </FormControl>
-                                    <SelectContent>
-                                      {rateType.length > 0 ? (
-                                        rateType.map((rateType) => (
-                                          <SelectItem key={rateType.rateTypeCode} value={rateType.rateTypeCode}>
-                                            {rateType.rateTypeDesc}
-                                          </SelectItem>
-                                        ))
-                                      ) : (
-                                        <SelectItem value="placeholder" disabled>No rate types available</SelectItem>
-                                      )}
-                                    </SelectContent>
-                                  </Select>
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell className="text-right w-[20%]">
-                          <FormField
-                            control={control}
-                            name={`rows.${index}.rateSubTypeCode`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                      <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select rate subtype" />
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                      {rateSubType.length > 0 ? (
-                                        rateSubType.map((rateSubType) => (
-                                          <SelectItem key={rateSubType.rateSubTypeCode} value={rateSubType.rateSubTypeCode}>
-                                            {rateSubType.rateSubTypeDesc}
-                                          </SelectItem>
-                                        ))
-                                      ) : (
-                                        <SelectItem value="placeholder" disabled>No rate subtypes available</SelectItem>
-                                      )}
-                                    </SelectContent>
-                                  </Select>
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell className="text-right w-[40%]">
-                          <FormField
-                            control={form.control}
-                            name={`rows.${index}.rdCode`}
-                            render={({ field }) => (
-                              <FormItem className="flex flex-col">
-                                {/* {selectedRateType === "1" ? ( */}
-                                  <Popover>
-                                    <PopoverTrigger asChild>
-                                      <FormControl>
-                                        <Button
-                                          variant="outline"
-                                          role="combobox"
-                                          className={cn(
-                                            "w-full justify-between",
-                                            !field.value && "text-muted-foreground"
-                                          )}
-                                        >
-                                          {field.value
-                                            ? rateDesc.find(
-                                                (rateDesc) => rateDesc.value === field.value
-                                              )?.label
-                                            : "Select subject"}
-                                          <ChevronsUpDown className="opacity-50" />
-                                        </Button>
-                                      </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-full p-0"
-                                    style={{ pointerEvents: "auto" }}>
-                                      <Command>
-                                        <CommandInput
-                                          placeholder="Search..."
-                                          className="h-9"
-                                        />
-                                        <CommandList>
-                                          <CommandEmpty>None found.</CommandEmpty>
-                                          <CommandGroup>
-                                            {rateDesc.map((rateDesc) => (
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-full p-0"
+                                  style={{ pointerEvents: "auto" }}>
+                                    <Command>
+                                      <CommandInput
+                                        placeholder="Search..."
+                                        className="h-9"
+                                      />
+                                      <CommandList>
+                                        <CommandEmpty>None found.</CommandEmpty>
+                                        <CommandGroup>
+                                          {rateDesc
+                                            .filter((item) =>
+                                              !watchedRows
+                                                .filter((_, i) => i !== index)
+                                                .map((row) => row.rdCode)
+                                                .includes(item.value)
+                                            )
+                                            .map((rateDesc) => (
                                               <CommandItem
                                                 value={rateDesc.label}
                                                 key={rateDesc.value}
@@ -421,363 +409,122 @@ return (
                                                 <Check
                                                   className={cn(
                                                     "ml-auto",
-                                                    rateDesc.value === field.value
-                                                      ? "opacity-100"
-                                                      : "opacity-0"
+                                                    rateDesc.value === field.value ? "opacity-100" : "opacity-0"
                                                   )}
                                                 />
                                               </CommandItem>
                                             ))}
-                                          </CommandGroup>
-                                        </CommandList>
-                                      </Command>
-                                    </PopoverContent>
-                                  </Popover>
-                                {/* ) : ( */}
-                                  {/* <FormControl>
-                                    <Input placeholder="Enter subject code" {...field} />
-                                  </FormControl> */}
-                                {/* )} */}
-                              </FormItem>
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell className="text-right w-[15%]">
-                          <FormField
-                            control={control}
-                            name={`rows.${index}.academicUnits`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                    <Input
-                                        {...field}
-                                        type="number"
-                                        placeholder="Units"
-                                        min={0}
-                                    />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell className="text-right w-[15%]">
-                          <FormField
-                            control={control}
-                            name={`rows.${index}.labUnits`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                    <Input
-                                        {...field}
-                                        type="number"
-                                        placeholder="Units"
-                                        min={0}
-                                    />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input placeholder="Total" value={totalUnits} readOnly />
-                        </TableCell>
-                        <TableCell className="text-right w-[20%]">
-                          <FormField
-                            control={control}
-                            name={`rows.${index}.perSem`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
+                                        </CommandGroup>
+                                      </CommandList>
+                                    </Command>
+                                  </PopoverContent>
+                                </Popover>
+                              {/* ) : ( */}
+                                {/* <FormControl>
+                                  <Input placeholder="Enter subject code" {...field} />
+                                </FormControl> */}
+                              {/* )} */}
+                            </FormItem>
+                          )}
+                        />
+                      </TableCell>
+                      <TableCell className="text-right w-[15%]">
+                        <FormField
+                          control={control}
+                          name={`rows.${index}.noUnits`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
                                   <Input
-                                    {...field}
-                                    type="number"
-                                    placeholder="Ex. 50"
-                                    min={1}
-                                />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell className="text-right w-[20%]">
-                          <FormField
-                            control={control}
-                            name={`rows.${index}.rateAmount`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                    {/* calculate */}
-                                  <Input
-                                    {...field}
-                                    readOnly
-                                    value={rateAmount}
-                                    placeholder="Total"
-                                />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell className="text-center w-[50px]">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={() => {
-                              handleRemoveRow(index);
-                            }}
-                            className="text-red-500"
-                          >
-                            <Trash size={16} />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-    
-              <div className="col-span-2 flex justify-center">
-                <Button type="button" onClick={handleAddRow} variant="ghost" className="w-full sm:w-10">
-                  <Plus />
-                </Button>
-              </div>
-    
-            <div className="col-span-2">
-            <Button type="submit" disabled={isLoading} className="float-end">
-              {isLoading ? (
-                <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Processing...
-                </span>
-              ) : (
-                <span className="flex items-center gap-2">
-                <Save />
-                Submit
-                </span>
-            )}
-            </Button>
+                                      {...field}
+                                      type="number"
+                                      placeholder="Units"
+                                      min={0}
+                                  />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </TableCell>
+                      <TableCell className="text-right w-[20%]">
+                        <FormField
+                          control={control}
+                          name={`rows.${index}.perSem`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  type="number"
+                                  placeholder="Ex. 50"
+                                  min={1}
+                              />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </TableCell>
+                      <TableCell className="text-right w-[20%]">
+                        <FormField
+                          control={control}
+                          name={`rows.${index}.rateAmount`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                  {/* calculate */}
+                                <Input
+                                  {...field}
+                                  readOnly
+                                  value={rateAmount}
+                                  placeholder="Total"
+                              />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </TableCell>
+                      <TableCell className="text-center w-[50px]">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => {
+                            handleRemoveRow(index);
+                          }}
+                          className="text-red-500"
+                        >
+                          <Trash size={16} />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+  
+            <div className="col-span-2 flex justify-center">
+              <Button type="button" onClick={handleAddRow} variant="ghost" className="w-full sm:w-10">
+                <Plus />
+              </Button>
             </div>
-          </form>
-    </Form>
-
-    {/* old */}
-    {/* <Form {...form}>
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-    
-    <div className="colspan-2">
-        <FormField
-        control={form.control}
-        name="pkRate1"
-        render={({ field }) => (
-            <FormItem className="flex flex-col">
-            <FormLabel>Rate 1</FormLabel>
-            <Popover>
-                <PopoverTrigger asChild>
-                <FormControl>
-                    <Button
-                    variant="outline"
-                    role="combobox"
-                    className={cn(
-                        "w-full justify-between",
-                        !field.value && "text-muted-foreground"
-                    )}
-                    >
-                    {field.value
-                        ? rate1.find(
-                            (rate1) => rate1.value === field.value
-                        )?.label
-                        : "Select Rate 1"}
-                    <ChevronsUpDown className="opacity-50" />
-                    </Button>
-                </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-full p-0 min-w-[var(--radix-popover-trigger-width)]">
-                <Command>
-                    <CommandInput
-                    placeholder="Search..."
-                    className="h-9"
-                    />
-                    <CommandList>
-                    <CommandEmpty>None found.</CommandEmpty>
-                    <CommandGroup>
-                        {rate1.map((rate1) => (
-                        <CommandItem
-                            value={rate1.label}
-                            key={rate1.value}
-                            onSelect={() => {
-                                form.setValue("pkRate1", rate1.value);
-                                field.onChange(rate1.value);
-                            }}
-                        >
-                            {rate1.label}
-                            <Check
-                            className={cn(
-                                "ml-auto",
-                                rate1.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                            />
-                        </CommandItem>
-                        ))}
-                    </CommandGroup>
-                    </CommandList>
-                </Command>
-                </PopoverContent>
-            </Popover>
-            </FormItem>
-        )}
-        />
-    </div>
-    <div className="flex flex-wrap gap-4">
-    <div className="flex-1 flex flex-col gap-y-4">
-    <FormField
-        control={form.control}
-        name="rdCode"
-        render={({ field }) => (
-            <FormItem className="flex flex-col">
-            <FormLabel>Rate Description</FormLabel>
-            <Popover>
-                <PopoverTrigger asChild>
-                <FormControl>
-                    <Button
-                    variant="outline"
-                    role="combobox"
-                    className={cn(
-                        "w-full justify-between",
-                        !field.value && "text-muted-foreground"
-                    )}
-                    >
-                    {field.value
-                        ? rateDesc.find(
-                            (rateDesc) => rateDesc.value === field.value
-                        )?.label
-                        : "Select rate description"}
-                    <ChevronsUpDown className="opacity-50" />
-                    </Button>
-                </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-full p-0 min-w-[var(--radix-popover-trigger-width)]">
-                <Command>
-                    <CommandInput
-                    placeholder="Search..."
-                    className="h-9"
-                    />
-                    <CommandList>
-                    <CommandEmpty>None found.</CommandEmpty>
-                    <CommandGroup>
-                        {rateDesc.map((rateDesc) => (
-                        <CommandItem
-                            value={rateDesc.label}
-                            key={rateDesc.value}
-                            onSelect={() => {
-                                form.setValue("rdCode", rateDesc.value);
-                                field.onChange(rateDesc.value);
-                            }}
-                        >
-                            {rateDesc.label}
-                            <Check
-                            className={cn(
-                                "ml-auto",
-                                rate1.value === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                            />
-                        </CommandItem>
-                        ))}
-                    </CommandGroup>
-                    </CommandList>
-                </Command>
-                </PopoverContent>
-            </Popover>
-            </FormItem>
-        )}
-        />
-
-<FormField
-        control={form.control}
-        name="rateTypeCode"
-        render={({ field }) => (
-            <FormItem>
-            <FormLabel>Rate Type</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select rate type" />
-                </SelectTrigger>
-                <SelectContent>
-                    {rateType.map((item) => (
-                    <SelectItem key={item.rateTypeCode} value={item.rateTypeCode}>
-                        {item.rateTypeDesc}
-                    </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-            </FormItem>
-        )}
-        />
-    </div>
-
-    <div className="flex-1 flex flex-col gap-y-4">
-    <FormField
-            control={form.control}
-            name="noUnits"
-            render={({ field }) => (
-            <FormItem>
-                <FormLabel>No. of Units</FormLabel>
-                <FormControl>
-                <Input {...field}
-                type="number"
-                onChange={(e) => {
-                    const value = e.target.value;
-                    field.onChange(value === "" ? undefined : parseInt(value));
-                  }}
-                />
-                </FormControl>
-                <FormMessage />
-            </FormItem>
-            )}
-        />
-        <FormField
-            control={form.control}
-            name="rateAmount"
-            render={({ field }) => (
-            <FormItem>
-                <FormLabel>Rate Amount</FormLabel>
-                <FormControl>
-                <Input {...field}
-                type="number"
-                onChange={(e) => {
-                    const value = e.target.value;
-                    field.onChange(value === "" ? undefined : parseFloat(value));
-                  }}
-                />
-                </FormControl>
-                <FormMessage />
-            </FormItem>
-            )}
-        />
-        </div>
-    </div>
-
-        <div className="flex justify-end gap-2">
-        <Button type="submit" disabled={isLoading}>
+  
+          <div className="col-span-2">
+          <Button type="submit" disabled={isLoading} className="float-end">
             {isLoading ? (
-            <span className="flex items-center">
+              <span className="flex items-center">
                 <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
                 Processing...
-            </span>
-            ) : ("Submit")}
-        </Button>
-        </div>
-    </form>
-    </Form> */}
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+              <Save /> Submit </span>
+          )}
+          </Button>
+          </div>
+        </form>
+  </Form>
 </>
 );
 }

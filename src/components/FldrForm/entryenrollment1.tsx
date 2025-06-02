@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
-import { EnrollDescCol, StudentCol } from "@/FldrTypes/kim-types";
+import { EnrollDescCol, StudentCol } from "@/FldrTypes/types";
 import { cn } from "@/lib/utils";
 import { enrollment1Schema } from "@/FldrSchema/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";

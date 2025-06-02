@@ -7,7 +7,7 @@ import { approvedColumns } from "@/components/FldrDatatable/enrollment1approved-
 import { allStudentsColumn } from "@/components/FldrDatatable/enrollment1allstudents-columns";
 import { pendingColumn } from "@/components/FldrDatatable/enrollment1pending-columns";
 import { DataTable } from "@/components/FldrDatatable/data-table";
-import { Enrollment1Col, StudentCol } from "@/FldrTypes/kim-types";
+import { Enrollment1Col, StudentCol } from "@/FldrTypes/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 

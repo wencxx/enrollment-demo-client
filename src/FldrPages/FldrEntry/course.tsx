@@ -1,9 +1,8 @@
-import { columns } from "@/components/FldrDatatable/course-columns";
-import { DataTable } from "@/components/FldrDatatable/data-table";
+import { CourseTable } from "@/components/FldrDatatable/course-columns";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { CourseForm } from "@/components/FldrForm/entrycourse"
-import { CourseCol } from "@/FldrTypes/course.col";
+import { CourseCol } from "@/FldrTypes/types";
 import {
   Dialog,
   DialogContent,
@@ -18,12 +17,12 @@ export default function Course() {
   const [data, setData] = useState<CourseCol[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
 
-  const getCourse = async () => {
+  const getData = async () => {
     try {
       setLoading(true)
       const res = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListCourse`)
       
-      const formattedData = res.data.map((item: any) => ({
+      const formattedData = res.data.map((item: CourseCol) => ({
         courseCode: item.courseCode,
         courseDesc: item.courseDesc,  
         collegeCode: item.collegeCode,
@@ -37,9 +36,8 @@ export default function Course() {
       setLoading(false)
     }
   }
-
   useEffect(() => {
-    getCourse()
+    getData()
   }, []);
 
   return (
@@ -53,18 +51,12 @@ export default function Course() {
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <CourseForm onCancel={getCourse} />
+              <CourseForm onCancel={getData} />
             </DialogContent>
           </Dialog>
         </div>
         <div className="mt-4">
-          <DataTable 
-            columns={columns} 
-            data={data} 
-            loading={loading} 
-            title="courses" 
-            onRefresh={getCourse}
-          />
+          <CourseTable data={data} loading={loading} onRefresh={getData} />
         </div>
       <Toaster />
     </div>
