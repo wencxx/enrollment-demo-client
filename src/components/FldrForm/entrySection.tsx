@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { sectionSchema } from "@/FldrSchema/userSchema.ts";
 import { useEffect, useState } from "react";
-import { Save, SaveAll } from "lucide-react";
+import { Save } from "lucide-react";
 
 type SectionFormData = z.infer<typeof sectionSchema>;
 

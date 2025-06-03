@@ -194,3 +194,10 @@ export type RoomCol = {
     roomCode: string,
     roomDesc: string,
 }
+
+export type SectionCol = {
+    sectionCode: string
+    sectionDesc: string
+    value?: string
+    label?: string
+}
