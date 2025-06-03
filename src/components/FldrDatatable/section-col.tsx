@@ -1,19 +1,24 @@
-import { ColumnDef } from "@tanstack/react-table"
 import { Edit, ArrowUpDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { SectionCol } from "@/FldrTypes/section"
-import {
-    Dialog,
-    DialogContent,
-    DialogTrigger,
-    // DialogTitle,
-    // DialogHeader
-  } from "@/components/ui/dialog"
-import { useState } from "react"
-import { SectionForm } from "../FldrForm/entrySection"
+import React, { useState } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { SectionCol } from "@/FldrTypes/types";
+import { DataTable } from "./data-table";
+import { SectionForm } from "../FldrForm/entrySection";
 
-export const columns: ColumnDef<SectionCol>[] = [
+interface SectionTableProps {
+  data: SectionCol[];
+  loading?: boolean;
+  onRefresh: () => void;
+}
+
+export const SectionTable: React.FC<SectionTableProps> = ({ data, loading, onRefresh }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [sectionCode, setSectionCode] = useState("");
+
+  const columns: ColumnDef<SectionCol>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -43,7 +48,7 @@ export const columns: ColumnDef<SectionCol>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Section Code
+                Code
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
@@ -55,48 +60,53 @@ export const columns: ColumnDef<SectionCol>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Section Description
+                Description
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
     },
     {
-        id: "actions",
-        cell: ({ row, table }) => {
-          const [isDialogOpen, setIsDialogOpen] = useState(false);
-          const [sectionCode, setSectionCode] = useState("");
-
-          const handleDialogOpen = (code: string) => {
-            setSectionCode(code);
-            setIsDialogOpen(true);
-          };
-
-          const handleUpdate = () => {
-            setIsDialogOpen(false);
-            const onRefresh = table.options.meta?.refreshData;
-            if (typeof onRefresh === 'function') {
-              console.log("Refreshing...");
-              onRefresh();
-            }
-          };
-
-          return (
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.sectionCode)}>
-                    <span className="sr-only">Edit room</span>
-                    <Edit className="h-4 w-4" />
-                </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md" aria-labelledby="dialog-title">
-                    <SectionForm 
-                      editMode={true}
-                      toEdit={sectionCode} 
-                      onCancel={handleUpdate}
-                    />
-                </DialogContent>
-            </Dialog>
-          );
-        },
+      id: "actions",
+      cell: ({ row }) => (
+        <Dialog open={isDialogOpen && sectionCode === row.original.sectionCode} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+              onClick={() => {
+                setSectionCode(row.original.sectionCode);
+                setIsDialogOpen(true);
+              }}
+            >
+              <span className="sr-only">Edit room</span>
+              <Edit className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden"
+            aria-labelledby="dialog-title"
+          >
+            <SectionForm 
+                editMode={true}
+                toEdit={sectionCode} 
+                onCancel={() => {
+                setIsDialogOpen(false);
+                onRefresh();
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      ),
     },
-]
+  ];
+
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      loading={loading}
+      title="sections"
+      onRefresh={onRefresh}
+    />
+  );
+};

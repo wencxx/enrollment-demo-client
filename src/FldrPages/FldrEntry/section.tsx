@@ -1,9 +1,5 @@
-import { columns } from "@/components/FldrDatatable/section-col.tsx";
-import { DataTable } from "@/components/FldrDatatable/data-table";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { SectionForm } from "@/components/FldrForm/entrySection"
-import { SectionCol } from "@/FldrTypes/section";
 import {
   Dialog,
   DialogContent,
@@ -13,21 +9,23 @@ import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { Plus } from 'lucide-react'
+import { SectionCol } from "@/FldrTypes/types";
+import { SectionForm } from "@/components/FldrForm/entrySection";
+import { SectionTable } from "@/components/FldrDatatable/section-col";
 
-export default function Section() {
+export default function Room() {
   const [data, setData] = useState<SectionCol[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const getSections = async () => {
+  const getData = async () => {
     try {
       setLoading(true)
       const res = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListSection`)
       
-      const formattedData = res.data.map((item: any, index: number) => ({
-        fieldNumber: index + 1,
-        sectionCode: item.sectionCode || item.sectionCode,
-        sectionDesc: item.sectionDesc || item.sectionDesc,
+      const formattedData = res.data.map((item: SectionCol) => ({
+        sectionCode: item.sectionCode || "",
+        sectionDesc: item.sectionDesc || "",
       }));
       
       setData(formattedData)
@@ -38,13 +36,12 @@ export default function Section() {
     }
   }
   useEffect(() => {
-    getSections()
+    getData()
   }, []);
 
   return (
     <div className="container py-6">
         <div className="space-x-2">
-          {/* <h2 className="text-xl font-semibold">Courses</h2> */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
@@ -53,24 +50,18 @@ export default function Section() {
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <SectionForm
-                onCancel={getSections}
+                <SectionForm
+                onCancel={getData}
                 onSuccess={() => {
-                  getSections();
-                  setIsDialogOpen(false);
+                    getData();
+                    setIsDialogOpen(false);
                 }}
-              />
+                />
             </DialogContent>
           </Dialog>
         </div>
         <div className="mt-4">
-          <DataTable 
-            columns={columns} 
-            data={data} 
-            loading={loading} 
-            title="sections" 
-            onRefresh={getSections}
-          />
+          <SectionTable data={data} loading={loading} onRefresh={getData} />
         </div>
       <Toaster />
     </div>
