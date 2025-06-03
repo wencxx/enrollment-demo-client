@@ -18,21 +18,21 @@ import { sectionSchema } from "@/FldrSchema/userSchema.ts";
 import { useEffect, useState } from "react";
 import { Save } from "lucide-react";
 
-type SectionFormData = z.infer<typeof sectionSchema>;
+type FormData = z.infer<typeof sectionSchema>;
 
-interface SectionFormProps {
+interface FormProps {
   editMode?: boolean;
   toEdit?: string;
   onCancel?: () => void;
   onSuccess?: () => void;
 }
 
-export function SectionForm({ editMode = false, toEdit = "", onCancel, onSuccess }: SectionFormProps) {
+export function SectionForm({ editMode = false, toEdit = "", onCancel, onSuccess }: FormProps) {
   const [isEditing] = useState(editMode);
   const [sectionCode] = useState(toEdit);
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<SectionFormData>({
+  const form = useForm<FormData>({
     resolver: zodResolver(sectionSchema),
     defaultValues: {
       sectionCode: "",
@@ -41,22 +41,16 @@ export function SectionForm({ editMode = false, toEdit = "", onCancel, onSuccess
   });
 
   useEffect(() => {
-    const fetchSections = async () => {
+    const fetchData = async () => {
       if (isEditing && sectionCode) {
         try {
           setIsLoading(true);
-          const response = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListSection`);
+          const response = await axios.get(`${plsConnect()}/API/WebAPI/ListController/GetSection/${sectionCode}`)
           
-          console.log("List received:", response.data);
-  
-          const list = response.data.find((list: { sectionCode: string }) => list.sectionCode === sectionCode);
-  
-          if (list) {
-            form.setValue("sectionCode", list.sectionCode || "");
-            form.setValue("sectionDesc", list.sectionDesc || "");
-          } else {
-            toast.error("Section not found.");
-          }
+          console.log("Details received:", response.data)
+          
+          form.setValue("sectionCode", sectionCode)
+          form.setValue("sectionDesc", response.data.sectionDesc)
         } catch (error) {
           console.error("Error fetching details:", error);
           toast.error("Error fetching details.");
@@ -67,33 +61,31 @@ export function SectionForm({ editMode = false, toEdit = "", onCancel, onSuccess
     };
   
     if (isEditing && sectionCode) {
-      fetchSections();
+      fetchData();
     }
   }, [isEditing, sectionCode, form]);
 
-  const onSubmit = async (values: SectionFormData) => {
+  const onSubmit = async (values: FormData) => {
     try {
       setIsLoading(true);
       let response;
       
       if (isEditing) {
-        console.log("Updating section:", values);
+        console.log("Updating:", values);
         response = await axios.put(`${plsConnect()}/API/WEBAPI/UpdateEntry/UpdateSection`, {
-          sectionCode: values.sectionCode,
-          sectionDesc: values.sectionDesc
+          SectionCode: values.sectionCode,
+          SectionDesc: values.sectionDesc
         });
-        toast("Section updated successfully.");
+        toast("Updated successfully.");
       } else {
-        console.log("Adding new section:", values);
-        response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertSection`, {
-            sectionDesc: values.sectionDesc
-        });
-        toast("Section added successfully.");
+        console.log("Adding:", values);
+        response = await axios.post(`${plsConnect()}/API/WEBAPI/InsertEntry/InsertSection`,
+          { sectionDesc: values.sectionDesc });
+        toast("Added successfully.");
       }
       
       console.log("API response:", response.data);
       form.reset();
-      
       if (onSuccess) {
         onSuccess();
       }
@@ -123,7 +115,7 @@ export function SectionForm({ editMode = false, toEdit = "", onCancel, onSuccess
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">{isEditing ? "Edit Section" : "Add New Section"}</h2>
+        <h2 className="text-lg font-semibold">{isEditing ? "Edit Room" : "Add New Room"}</h2>
       </div>
 
       <Form {...form}>
