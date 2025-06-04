@@ -1,60 +1,69 @@
-import { columns } from "@/components/FldrDatatable/professor-columns";
-import { DataTable } from "@/components/FldrDatatable/data-table";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { ProfessorForm } from "@/components/FldrForm/entryprofessor"
-import { ProfessorCol } from "@/FldrTypes/professor.col";
+import { ProfessorCol } from "@/FldrTypes/types";
 import {
   Dialog,
   DialogContent,
+  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { Plus } from 'lucide-react'
-import { DialogTitle } from "@radix-ui/react-dialog";
+import { ProfessorForm } from "@/components/FldrForm/entryprofessor";
+import { ProfessorTable } from "@/components/FldrDatatable/professor-columns";
 
-export default function Professor() {
-  const [openForm, setOpenForm] = useState<boolean>(false)
+export default function Room() {
   const [data, setData] = useState<ProfessorCol[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-
-  const getProfessor = async () => {
+  const getData = async () => {
     try {
       setLoading(true)
       const res = await axios.get(`${plsConnect()}/api/Professors`)
-      setData(res.data)
+      
+      const formattedData = res.data.map((item: ProfessorCol) => ({
+        professorCode: item.professorCode || "",
+        professorName: item.professorName || "",
+      }));
+      
+      setData(formattedData)
     } catch (error) {
       console.log(error)
     } finally {
       setLoading(false)
     }
   }
-
   useEffect(() => {
-    getProfessor()
+    getData()
   }, []);
 
   return (
-    <>
-      <Button variant="outline" onClick={(() => setOpenForm(true))}>
-        <Plus />
-        Add professor
-      </Button>
-
-      <div className="mt-4">
-        <DataTable columns={columns({getProfessor})} data={data} loading={loading} title="professors" />
-      </div>
-
-      {/* dialog for adding prof */}
-      <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogContent>
-          <DialogTitle className="text-lg font-medium">Add new course</DialogTitle>
-          <ProfessorForm setOpenForm={setOpenForm} getProfessor={getProfessor} />
-        </DialogContent>
-      </Dialog>
+    <div className="container py-6">
+        <div className="space-x-2">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add new professor
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <ProfessorForm
+                onCancel={getData}
+                onSuccess={() => {
+                    getData();
+                    setIsDialogOpen(false);
+                }}
+                />
+            </DialogContent>
+          </Dialog>
+        </div>
+        <div className="mt-4">
+          <ProfessorTable data={data} loading={loading} onRefresh={getData} />
+        </div>
       <Toaster />
-    </>
+    </div>
   )
 }

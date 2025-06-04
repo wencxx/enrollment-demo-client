@@ -64,6 +64,7 @@ export const courseSchema = z.object({
 })
 
 export const professorSchema = z.object({
+  professorCode: z.string().optional(),
   professorName: z.string().nonempty('Professor name is required'),
 })
 

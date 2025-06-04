@@ -1,9 +1,7 @@
  export const plsConnect = () => {
 
     // const strEndpoint: string = 'https://localhost:7092'
-    // const strEndpoint: string = 'https://192.168.254.113:7092'
-    // const strEndpoint: string = 'https://localhost:7092'
-    const strEndpoint: string = 'https://192.168.254.121:7092'
+    const strEndpoint: string = 'https://192.168.254.119:7092'
 
     return strEndpoint
 }  
