@@ -201,3 +201,8 @@ export type SectionCol = {
     value?: string
     label?: string
 }
+
+export type ProfessorCol = {
+    professorCode: string
+    professorName: string
+}
