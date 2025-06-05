@@ -30,8 +30,11 @@ import { group } from "@/FldrTypes/group"
 
 type UserFormData = z.infer<typeof registerSchema>
 
-export function Userform({ groups }: { groups: group[] }) {
-
+export function UserForm({ groups, onCancel, onSuccess }: {
+  groups: group[];
+  onCancel?: () => void;
+  onSuccess?: () => void;
+}) {
   const form = useForm<UserFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -40,7 +43,7 @@ export function Userform({ groups }: { groups: group[] }) {
       firstName: "",
       middleName: "",
       lastName: "",
-      // groupCode: "",
+      groupCode: "",
     }
   })
 
@@ -53,9 +56,16 @@ export function Userform({ groups }: { groups: group[] }) {
     }
 
     try {
-      const res = await axios.post<any>(`${plsConnect()}/API/WebAPI/UserController/AddUser`, userData)
-
+      const res = await axios.post<UserFormData>(`${plsConnect()}/API/WebAPI/UserController/AddUser`, userData)
+      console.log(res.data);
       toast("User added successfully.")
+
+      if (onSuccess) {
+        onSuccess();
+      }
+      if (onCancel) {
+        onCancel();
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast("Error submitting form.")

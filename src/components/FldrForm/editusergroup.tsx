@@ -68,7 +68,7 @@ export function EditUserGroup({ toEdit = "", onCancel, onSuccess }: UserGroupPro
       }
     }
     fetchData()
-  }, [userCode]);
+  }, [userCode, form]);
 
   const onSubmit = async (values: UserGroupData) => {
     try {

@@ -142,15 +142,6 @@ export type AcademicYear = {
     ayEnd: number;
 }
 
-// export type AcademicYearData = {
-//     cumulativeGWA: number
-//     year: number
-//     section: string
-//     semesters: {
-//         [key: string]: SemesterGradeData
-//     }
-// }
-
 export interface DialogState {
   isDialogOpen: boolean;
   setIsDialogOpen: (open: boolean) => void;
@@ -205,4 +196,28 @@ export type SectionCol = {
 export type ProfessorCol = {
     professorCode: string
     professorName: string
+}
+
+export type User = {
+    groupName: string,
+    userCode: string,
+    userName: string,
+    fullName: string,
+    groupCode: string,
+    token: string,
+    expiresIn: number,
+    expiryTimeStamp: Date,
+    cnCode: string,
+    active: boolean
+}
+
+export type user2 = {
+    fullName: string,
+    userName: string,
+    userCode: string
+}
+
+export type group = {
+    groupCode: string,
+    groupName: string
 }
