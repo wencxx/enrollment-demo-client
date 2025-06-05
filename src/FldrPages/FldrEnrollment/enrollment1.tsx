@@ -1,8 +1,6 @@
-import { Toaster } from "@/components/ui/sonner";
 import { useState, useEffect } from "react";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import axios from "axios";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { approvedColumns } from "@/components/FldrDatatable/enrollment1approved-columns";
 import { allStudentsColumn } from "@/components/FldrDatatable/enrollment1allstudents-columns";
 import { pendingColumn } from "@/components/FldrDatatable/enrollment1pending-columns";
@@ -17,24 +15,12 @@ export default function Enrollment1() {
   const [oldStudents, setOldStudents] = useState<StudentCol[]>([]);
   const [pending, setPending] = useState<StudentCol[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  // const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const getData = async () => {
     try {
       setLoading(true);
-      const approvedRes = await axios.get<Enrollment1Col[]>(
-        `${plsConnect()}/API/WEBAPI/Enrollment1Controller/ListEnrollment1`
-      );
-      const approvedData = approvedRes.data.map((item) => ({
-        ...item,
-        fullName: `${item.firstName} ${
-          item.middleName ? item.middleName + " " : ""
-        }${item.lastName}${item.suffix ? " " + item.suffix : ""}`,
-        pkedDesc: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc} - ${item.sectionDesc} (${item.aYearDesc})`,
-      }));
-      setApproved(approvedData);
-      // console.log(approvedData)
-
+  
       const allRes = await axios.get<StudentCol[]>(
         `${plsConnect()}/API/WebAPI/StudentController/ListStudent`
       );
@@ -45,7 +31,6 @@ export default function Enrollment1() {
         }${item.lastName}${item.suffix ? " " + item.suffix : ""}`,
       }));
       setAllStudents(allData);
-      // console.log(allData)
 
       const oldRes = await axios.get<StudentCol[]>(
         `${plsConnect()}/API/WebAPI/StudentController/ListContinuingStudent`
@@ -68,7 +53,18 @@ export default function Enrollment1() {
         }${item.lastName}${item.suffix ? " " + item.suffix : ""}`,
       }));
       setPending(pendingData);
-      // console.log(pendingData)
+
+      const approvedRes = await axios.get<Enrollment1Col[]>(
+        `${plsConnect()}/API/WEBAPI/Enrollment1Controller/ListEnrollment1`
+      );
+      const approvedData = approvedRes.data.map((item) => ({
+        ...item,
+        fullName: `${item.firstName} ${
+          item.middleName ? item.middleName + " " : ""
+        }${item.lastName}${item.suffix ? " " + item.suffix : ""}`,
+        pkedDesc: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc} - ${item.sectionDesc} (${item.ayStart}-${item.ayEnd})`,
+      }));
+      setApproved(approvedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {

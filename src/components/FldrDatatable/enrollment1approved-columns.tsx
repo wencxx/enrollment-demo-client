@@ -10,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog"
-import { EntryEnrollment1Form } from "../FldrForm/entryEnrollment1"
 import { ViewEnrollment1Form } from "../FldrForm/viewEnrollment1"
 
 export const approvedColumns: ColumnDef<Enrollment1Col>[] = [
@@ -50,20 +49,6 @@ export const approvedColumns: ColumnDef<Enrollment1Col>[] = [
       )
     },
   },
-  // {
-  //   accessorKey: "studentCode",
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant="ghost"
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-  //       >
-  //         Student Code
-  //         <ArrowUpDown className="ml-2 h-4 w-4" />
-  //       </Button>
-  //     )
-  //   },
-  // },
   {
     accessorKey: "fullName",
     header: ({ column }) => {

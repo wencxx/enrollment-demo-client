@@ -103,7 +103,8 @@ export type Enrollment1Col = {
     semDesc: string
     courseDesc: string
     sectionDesc: string
-    aYearDesc: string
+    ayStart: number
+    ayEnd: number
     firstName: string
     middleName: string
     lastName: string
