@@ -25,10 +25,10 @@ export const registerSchema = z.object({
   }).min(2),
   lastName: z.string({
     required_error: "Please enter users last name"
+  }).min(2),
+  groupCode: z.string({
+    required_error: "Please enter group name"
   }).min(2)
-  // groupCode: z.string({
-  //   required_error: "Please enter group name"
-  // }).min(2)
 })
 
 export const studentSchema = z.object({
