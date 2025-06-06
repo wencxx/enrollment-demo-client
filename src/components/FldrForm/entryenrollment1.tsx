@@ -76,7 +76,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
           }
         }
         fetchData()
-      }, [studentCode])
+      }, [studentCode, form])
 
   const onSubmit = async (values: Enrollment1FormData) => {
     try {

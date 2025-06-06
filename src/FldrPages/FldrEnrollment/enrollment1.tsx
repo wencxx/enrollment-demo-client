@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import axios from "axios";
-import { approvedColumns } from "@/components/FldrDatatable/enrollment1approved-columns";
+import { approvedColumns, ApprovedEnrollmentsTable } from "@/components/FldrDatatable/enrollment1approved-columns";
 import { AllStudentsTable } from "@/components/FldrDatatable/enrollment1allstudents-columns";
 import { pendingColumn } from "@/components/FldrDatatable/enrollment1pending-columns";
 import { DataTable } from "@/components/FldrDatatable/data-table";
@@ -167,13 +167,14 @@ export default function Enrollment1() {
             </TabsContent>
             <TabsContent value="approved">
               <div className="mt-4">
-                <DataTable
+                {/* <DataTable
                   columns={approvedColumns}
                   data={approved}
                   loading={loading}
                   title="approved enrollments"
                   onRefresh={getData}
-                />
+                /> */}
+                <ApprovedEnrollmentsTable data={approved} loading={loading} onRefresh={getData} />
               </div>
             </TabsContent>
           </Tabs>
