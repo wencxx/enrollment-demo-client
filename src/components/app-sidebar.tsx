@@ -127,10 +127,6 @@ const data = {
           url: "entry/elementary",
         },
         {
-          title: "Town/City",
-          url: "entry/town",
-        },
-        {
           title: "Room",
           url: "entry/room",
         },

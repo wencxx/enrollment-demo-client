@@ -130,3 +130,4 @@ export const columnsPending: ColumnDef<PendingApplicantCol>[] = [
     },
   },
 ]
+

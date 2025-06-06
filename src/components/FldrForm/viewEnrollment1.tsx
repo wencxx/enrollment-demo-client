@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import { Enrollment1Col, EnrollDescCol, StudentCol } from "@/FldrTypes/types";
@@ -12,14 +12,12 @@ interface Props {
 }
 
 export function ViewEnrollment1Form({ toEdit, onCancel }: Props) {
-  const [isLoading, setIsLoading] = useState(false);
   const [student, setStudent] = useState<StudentCol | null>(null);
   const [enrollDesc, setEnrollDesc] = useState<EnrollDescCol | null>(null);
   const [enrollmentData, setEnrollmentData] = useState<Enrollment1Col | null>(null);
 
   useEffect(() => {
     async function fetchData() {
-      setIsLoading(true);
       try {
         const [studentsRes, descRes, enrollRes] = await Promise.all([
           axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`),
@@ -42,9 +40,7 @@ export function ViewEnrollment1Form({ toEdit, onCancel }: Props) {
       } catch (err) {
         console.error(err);
         toast.error("Failed to load enrollment details.");
-      } finally {
-        setIsLoading(false);
-      }
+      } 
     }
 
     if (toEdit) fetchData();
@@ -89,7 +85,9 @@ export function ViewEnrollment1Form({ toEdit, onCancel }: Props) {
             </div>
             <div>
               <h3 className="text-sm font-medium text-gray-500">Academic Year</h3>
-              <p className="text-lg font-medium">{displayValue(enrollDesc?.aYearDesc)}</p>
+              <p className="text-lg font-medium">
+                {enrollDesc ? `${enrollDesc.ayStart}-${enrollDesc.ayEnd}` : ""}
+              </p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-gray-500">Regular</h3>
