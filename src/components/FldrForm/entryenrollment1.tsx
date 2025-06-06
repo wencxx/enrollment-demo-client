@@ -56,7 +56,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
 
             const EDRes = await axios.get(`${plsConnect()}/api/EnrollDescription`)
             const mappedEDRes = EDRes.data.map((item: EnrollDescCol) => ({
-              label: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc} - Section ${item.sectionDesc} (${item.aYearDesc})`,
+              label: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc} - Section ${item.sectionDesc} (${item.ayStart}-${item.ayEnd})`,
               value: item.pkedCode,
             }))
             setEnrollDesc(mappedEDRes)

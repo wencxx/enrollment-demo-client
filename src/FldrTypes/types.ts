@@ -91,7 +91,8 @@ export type EnrollDescCol = {
     courseDesc: string
     semDesc: string
     sectionDesc: string
-    aYearDesc: string
+    ayStart: string
+    ayEnd: string
     value: string
     label: string
 }

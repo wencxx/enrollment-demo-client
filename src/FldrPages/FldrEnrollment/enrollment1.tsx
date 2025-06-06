@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import axios from "axios";
 import { approvedColumns } from "@/components/FldrDatatable/enrollment1approved-columns";
-import { allStudentsColumn } from "@/components/FldrDatatable/enrollment1allstudents-columns";
+import { AllStudentsTable } from "@/components/FldrDatatable/enrollment1allstudents-columns";
 import { pendingColumn } from "@/components/FldrDatatable/enrollment1pending-columns";
 import { DataTable } from "@/components/FldrDatatable/data-table";
 import { Enrollment1Col, StudentCol } from "@/FldrTypes/types";
@@ -98,7 +98,7 @@ export default function Enrollment1() {
                 Continuing
                 {oldStudents.length > 0 && (
                   <Badge
-                    className="ml-2 bg-gray-200 text-gray-700"
+                    className="ml-2 bg-blue-100 text-blue-700"
                     variant="outline"
                   >
                     {oldStudents.length}
@@ -110,7 +110,7 @@ export default function Enrollment1() {
                 All
                 {allStudents.length > 0 && (
                   <Badge
-                    className="ml-2 bg-purple-100 text-purple-700"
+                    className="ml-2 bg-blue-100 text-blue-700"
                     variant="outline"
                   >
                     {allStudents.length}
@@ -122,7 +122,7 @@ export default function Enrollment1() {
                 Approved Enrollments
                 {approved.length > 0 && (
                   <Badge
-                    className="ml-2 bg-green-100 text-green-700"
+                    className="ml-2 bg-blue-100 text-blue-700"
                     variant="outline"
                   >
                     {approved.length}
@@ -144,24 +144,25 @@ export default function Enrollment1() {
             {/* same columns as "All Students" */}
             <TabsContent value="old">
               <div className="mt-4">
-                <DataTable
+                {/* <DataTable
                   columns={allStudentsColumn}
                   data={oldStudents}
                   loading={loading}
                   title="continuing students"
                   onRefresh={getData}
-                />
+                /> */}
               </div>
             </TabsContent>
             <TabsContent value="allStudents">
               <div className="mt-4">
-                <DataTable
+                {/* <DataTable
                   columns={allStudentsColumn}
                   data={allStudents}
                   loading={loading}
                   title="all students"
                   onRefresh={getData}
-                />
+                /> */}
+                <AllStudentsTable data={allStudents} loading={loading} onRefresh={getData} />
               </div>
             </TabsContent>
             <TabsContent value="approved">
