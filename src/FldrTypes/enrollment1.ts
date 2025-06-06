@@ -1,11 +1,11 @@
-export type Enrollment1Col = {
-    studentCode: string
-    firstName: string
-    lastName: string
-    middleName: string
-    studentStatus: boolean
-    void: boolean
-}
+// export type Enrollment1Col = {
+//     studentCode: string
+//     firstName: string
+//     lastName: string
+//     middleName: string
+//     studentStatus: boolean
+//     void: boolean
+// }
 
 export type studentProfile = {
     pkCode: string
@@ -19,9 +19,3 @@ export type studentProfile = {
     yearCode: string
     semCode: string
 }
-    // birthDate: Date
-    // address: string
-    // enrollRemarks: string
-    // courseCode: string
-    // semCode: string
-    // yearCode: string

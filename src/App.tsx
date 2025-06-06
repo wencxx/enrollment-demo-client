@@ -28,7 +28,6 @@ import AcademicYearPage from "./FldrPages/FldrEntry/academicyear"
 import Professor from "./FldrPages/FldrEntry/professor"
 import HighSchool from "./FldrPages/FldrEntry/highschool"
 import Elementary from "./FldrPages/FldrEntry/elementary"
-import Town from "./FldrPages/FldrEntry/town"
 import EnrollDescription from "./FldrPages/FldrEntry/enrolldescription"
 import Room from "./FldrPages/FldrEntry/room"
 import Section from "./FldrPages/FldrEntry/section"
@@ -124,10 +123,6 @@ const router = createBrowserRouter([
       {
         path: "/entry/elementary",
         element: <Elementary />,
-      },
-      {
-        path: "/entry/town",
-        element: <Town />,
       },
       {
         path: "/entry/rate1",

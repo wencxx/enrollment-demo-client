@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";
 import axios from "axios";
-import { approvedColumns, ApprovedEnrollmentsTable } from "@/components/FldrDatatable/enrollment1approved-columns";
+import { ApprovedEnrollmentsTable } from "@/components/FldrDatatable/enrollment1approved-columns";
 import { AllStudentsTable } from "@/components/FldrDatatable/enrollment1allstudents-columns";
-import { pendingColumn } from "@/components/FldrDatatable/enrollment1pending-columns";
-import { DataTable } from "@/components/FldrDatatable/data-table";
+import { ApplicantsTable } from "@/components/FldrDatatable/enrollment1pending-columns";
 import { Enrollment1Col, StudentCol } from "@/FldrTypes/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +14,6 @@ export default function Enrollment1() {
   const [oldStudents, setOldStudents] = useState<StudentCol[]>([]);
   const [pending, setPending] = useState<StudentCol[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  // const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const getData = async () => {
     try {
@@ -132,48 +130,21 @@ export default function Enrollment1() {
             </TabsList>
             <TabsContent value="pending">
               <div className="mt-4">
-                <DataTable
-                  columns={pendingColumn}
-                  data={pending}
-                  loading={loading}
-                  title="new applicants"
-                  onRefresh={getData}
-                />
+                <ApplicantsTable data={pending} loading={loading} onRefresh={getData} />
               </div>
             </TabsContent>
-            {/* same columns as "All Students" */}
             <TabsContent value="old">
               <div className="mt-4">
-                {/* <DataTable
-                  columns={allStudentsColumn}
-                  data={oldStudents}
-                  loading={loading}
-                  title="continuing students"
-                  onRefresh={getData}
-                /> */}
+                <AllStudentsTable data={oldStudents} loading={loading} onRefresh={getData} />
               </div>
             </TabsContent>
             <TabsContent value="allStudents">
               <div className="mt-4">
-                {/* <DataTable
-                  columns={allStudentsColumn}
-                  data={allStudents}
-                  loading={loading}
-                  title="all students"
-                  onRefresh={getData}
-                /> */}
                 <AllStudentsTable data={allStudents} loading={loading} onRefresh={getData} />
               </div>
             </TabsContent>
             <TabsContent value="approved">
               <div className="mt-4">
-                {/* <DataTable
-                  columns={approvedColumns}
-                  data={approved}
-                  loading={loading}
-                  title="approved enrollments"
-                  onRefresh={getData}
-                /> */}
                 <ApprovedEnrollmentsTable data={approved} loading={loading} onRefresh={getData} />
               </div>
             </TabsContent>
