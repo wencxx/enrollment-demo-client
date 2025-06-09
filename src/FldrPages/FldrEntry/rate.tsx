@@ -14,8 +14,6 @@ import { Plus } from 'lucide-react'
 import { RateForm } from "@/components/FldrForm/entryrate";
 import { DialogTitle } from "@radix-ui/react-dialog";
 
-
-
 export default function Rate() {
   const [rates, setRate] = useState<RateCol[]>([]);
   const [loading, setLoading] = useState<boolean>(false)

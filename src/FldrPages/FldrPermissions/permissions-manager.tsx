@@ -183,7 +183,6 @@ function GrantPermission() {
           <div className="flex gap-8">
             <div className="w-1/2">
               <h4 className="font-bold mb-2">Allowed</h4>
-                {/* allowed */}
                 <div className="border rounded-md p-4 min-h-[200px] flex flex-col gap-2">
                 {permissionsLoading ? (
                     <div className="text-center text-gray-500">Loading...</div>
@@ -205,7 +204,6 @@ function GrantPermission() {
 
             <div className="w-1/2">
               <h4 className="font-bold mb-2">Not Allowed</h4>
-                {/* not allowed */}
                 <div className="border rounded-md p-4 min-h-[200px] flex flex-col gap-2">
                 {permissionsLoading ? (
                     <div className="text-center text-gray-500">Loading...</div>

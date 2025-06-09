@@ -163,11 +163,12 @@ export default function StudentApplication() {
       } else {
         toast.error(response.data?.message || "Failed to submit application");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error submitting application:", error);
-
-      const backendMessage = error?.response?.data?.message;
-
+      let backendMessage = "";
+      if (axios.isAxiosError(error)) {
+        backendMessage = error.response?.data?.message;
+      }
       if (backendMessage) {
         toast.error(backendMessage);
       } else {
@@ -283,6 +284,7 @@ export default function StudentApplication() {
                                 onSelect={field.onChange}
                                 disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                                 initialFocus
+                                captionLayout="dropdown"
                               />
                             </PopoverContent>
                           </Popover>
@@ -290,6 +292,7 @@ export default function StudentApplication() {
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="genderCode"

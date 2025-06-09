@@ -68,6 +68,7 @@ export const AllStudentsTable: React.FC<TableProps> = ({ data, loading, onRefres
     {
       id: "actions",
       cell: ({ row }) => (
+        <div className="flex justify-end">
         <Dialog open={isDialogOpen && studentCode === row.original.studentCode} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
@@ -97,6 +98,7 @@ export const AllStudentsTable: React.FC<TableProps> = ({ data, loading, onRefres
             />
           </DialogContent>
         </Dialog>
+        </div>
       ),
     },
   ];

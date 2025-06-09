@@ -1,4 +1,4 @@
-import { Edit, ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, Eye } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
@@ -80,6 +80,7 @@ export const ApprovedEnrollmentsTable: React.FC<TableProps> = ({ data, loading, 
     {
       id: "actions",
       cell: ({ row }) => (
+        <div className="flex justify-end">
         <Dialog open={isDialogOpen && pkCode === row.original.pkCode} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
@@ -90,7 +91,7 @@ export const ApprovedEnrollmentsTable: React.FC<TableProps> = ({ data, loading, 
                 setIsDialogOpen(true);
               }}
             >
-              <Edit className="h-4 w-4" />
+              <Eye className="h-4 w-4" />
             </Button>
           </DialogTrigger>
           <DialogContent
@@ -109,6 +110,7 @@ export const ApprovedEnrollmentsTable: React.FC<TableProps> = ({ data, loading, 
             />
           </DialogContent>
         </Dialog>
+        </div>
       ),
     },
   ];

@@ -1,4 +1,4 @@
-import { Edit, ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, Stamp } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
@@ -68,6 +68,7 @@ export const ApplicantsTable: React.FC<TableProps> = ({ data, loading, onRefresh
     {
       id: "actions",
       cell: ({ row }) => (
+        <div className="flex justify-end">
         <Dialog open={isDialogOpen && studentCode === row.original.studentCode} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
@@ -78,7 +79,7 @@ export const ApplicantsTable: React.FC<TableProps> = ({ data, loading, onRefresh
                 setIsDialogOpen(true);
               }}
             >
-              <Edit className="h-4 w-4" />
+              <Stamp className="h-4 w-4" />
             </Button>
           </DialogTrigger>
           <DialogContent
@@ -97,6 +98,7 @@ export const ApplicantsTable: React.FC<TableProps> = ({ data, loading, onRefresh
             />
           </DialogContent>
         </Dialog>
+        </div>
       ),
     },
   ];

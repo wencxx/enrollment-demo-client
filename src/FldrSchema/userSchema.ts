@@ -9,7 +9,6 @@ export const loginSchema = z.object({
   }).min(3).max(16),
 })
 
-
 export const registerSchema = z.object({
   userName: z.string({
     required_error: "Please enter a username"
