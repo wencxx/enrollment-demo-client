@@ -106,7 +106,7 @@ export const AllStudentsTable: React.FC<TableProps> = ({ data, loading, onRefres
       columns={columns}
       data={data}
       loading={loading}
-      title="all students"
+      title="students"
       onRefresh={onRefresh}
     />
   );

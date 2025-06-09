@@ -1,75 +1,41 @@
-import { Toaster } from "@/components/ui/sonner"
-import { useState, useEffect } from "react"
-import { plsConnect } from "@/FldrClass/ClsGetConnection"
-import axios from "axios"
-import { allStudentsCol } from "@/components/FldrDatatable/allStudents-col"
-import { DataTable } from "@/components/FldrDatatable/data-table";
-import { Enrollment1Col, StudentCol } from "@/FldrTypes/types"
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { StudentCol } from "@/FldrTypes/types";
 import { Button } from "@/components/ui/button"
-import {
-    AlertDialog,
-    AlertDialogTrigger,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogCancel,
-    AlertDialogAction
-  } from "@/components/ui/alert-dialog"
-import { toast } from "sonner"
-  
-
+import { Toaster } from "@/components/ui/sonner"
+import { plsConnect } from "@/FldrClass/ClsGetConnection";
+import { StudentsTable } from "@/components/FldrDatatable/allStudents-col";
+import { RefreshCw } from "lucide-react";
 
 export default function Students() {
-  const [approved, setApproved] = useState<Enrollment1Col[]>([]);
-  const [allStudents, setAllStudents] = useState<StudentCol[]>([]);
+  const [data, setData] = useState<StudentCol[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
 
   const getData = async () => {
     try {
       setLoading(true)
-      const allRes = await axios.get<StudentCol[]>(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`);
-      const allData = allRes.data.map((item) => ({
+      const res = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`)
+      
+      const formattedData = res.data.map((item: StudentCol) => ({
         ...item,
         fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}${item.suffix ? ' '+item.suffix : ''}`,
       }));
-      setAllStudents(allData);
-      console.log(allData)
-
+      
+      setData(formattedData)
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.log(error)
     } finally {
       setLoading(false)
     }
-  };
-
+  }
   useEffect(() => {
-    getData();
+    getData()
   }, []);
 
-  const handleBatchReset = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.put(`${plsConnect()}/API/WebAPI/StudentController/ResetEnrollmentStatus`);
-      console.log(res.data.message);
-      getData();
-      toast("All approved statues reset successfully.");
-    } catch (error) {
-      console.error("Reset failed:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  
-  
-
   return (
-      <>
-      <div className="container py-6">
-        <div className="flex flex-wrap items-center gap-2">
-        <Button 
+    <div className="container">
+        <div className="space-x-2">
+          <Button 
             onClick={getData}
             disabled={loading}
             variant="outline"
@@ -79,10 +45,11 @@ export default function Students() {
                 Refreshing...
             </>
             ) : (
-            "Refresh Data"
+            <RefreshCw />
             )}
         </Button>
-        <AlertDialog>
+        {/* FOR: Resetting EnrollStatusCode in tblEntryStudent back to "Pending". No longer used. */}
+        {/* <AlertDialog>
             <AlertDialogTrigger asChild>
                 <Button variant="outline" disabled={loading}>
                 Reset Enrollment Status
@@ -102,19 +69,13 @@ export default function Students() {
                 </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
-        </AlertDialog>
+        </AlertDialog> */}
 
         </div>
-        <div className="space-x-2 mt-3">
-              <DataTable 
-                columns={allStudentsCol} 
-                data={allStudents} 
-                loading={loading} 
-                title="all students" 
-                onRefresh={getData}
-              />
+        <div className="mt-4">
+          <StudentsTable data={data} loading={loading} onRefresh={getData} />
         </div>
+      <Toaster />
     </div>
-    </>
   )
 }

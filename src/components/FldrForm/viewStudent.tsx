@@ -40,7 +40,7 @@ export function ViewStudent({ toEdit = "" }: StudentProps) {
   return (
     <>
       <div className="w-full mx-auto">
-              <CardContent className="pt-6">
+              <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Student</h3>
