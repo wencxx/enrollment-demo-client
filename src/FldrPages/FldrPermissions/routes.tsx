@@ -1,16 +1,5 @@
 import { columns } from "@/components/FldrDatatable/routes-columns";
 import { DataTable } from "@/components/FldrDatatable/data-table";
-import { RoutesForm } from "@/components/FldrForm/entryroutes"
-import {
-    Dialog,
-    DialogContent,
-    DialogTrigger,
-    DialogHeader,
-    DialogDescription
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Plus } from 'lucide-react'
-import { DialogTitle } from "@radix-ui/react-dialog";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { plsConnect } from "@/FldrClass/ClsGetConnection";

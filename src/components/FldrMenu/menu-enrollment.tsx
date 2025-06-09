@@ -16,7 +16,6 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import useAuthStore from "@/FldrStore/auth"
 
 export function MenuEnrollment({
   items,
@@ -35,11 +34,8 @@ export function MenuEnrollment({
   }[]
 }) {
 
-  const store = useAuthStore()
   const location = useLocation()
   
-  const user = store.currentUser
-
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Enrollment</SidebarGroupLabel>

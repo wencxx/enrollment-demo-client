@@ -1,9 +1,9 @@
-import { Edit, ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, Eye } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Enrollment1Col } from "@/FldrTypes/types"
 import { DataTable } from "./data-table";
 import { ViewEnrollment1Form } from "../FldrForm/viewEnrollment1";
@@ -80,6 +80,7 @@ export const ApprovedEnrollmentsTable: React.FC<TableProps> = ({ data, loading, 
     {
       id: "actions",
       cell: ({ row }) => (
+        <div className="flex justify-end">
         <Dialog open={isDialogOpen && pkCode === row.original.pkCode} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
@@ -90,16 +91,13 @@ export const ApprovedEnrollmentsTable: React.FC<TableProps> = ({ data, loading, 
                 setIsDialogOpen(true);
               }}
             >
-              <Edit className="h-4 w-4" />
+              <Eye className="h-4 w-4" />
             </Button>
           </DialogTrigger>
           <DialogContent
             className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden"
             aria-labelledby="dialog-title"
           >
-            <DialogTitle>
-              Enrollment details
-            </DialogTitle>
             <ViewEnrollment1Form 
                 toEdit={pkCode} 
                 onCancel={() => {
@@ -109,6 +107,7 @@ export const ApprovedEnrollmentsTable: React.FC<TableProps> = ({ data, loading, 
             />
           </DialogContent>
         </Dialog>
+        </div>
       ),
     },
   ];

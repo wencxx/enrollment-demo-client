@@ -73,7 +73,7 @@ export const EditGrades =  ({ studentCode }: GradeFormProps) => {
         setLoading(true);
         const response = await axios.get(`${plsConnect()}/API/WebAPI/ListController/ListSubjectStatus`)
         setSubjStatus(response.data)
-        } catch (error: any) {
+        } catch (error) {
         console.error("Error fetching years:", error)
         }
     }

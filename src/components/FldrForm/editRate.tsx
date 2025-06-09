@@ -110,7 +110,7 @@ const form = useForm<RateFormData>({
       try {
         const response = await axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListRateType`) 
         setRateType(response.data) 
-        } catch (error: any) {
+        } catch (error) {
             console.error("Error fetching rate types:", error)
         }
         }

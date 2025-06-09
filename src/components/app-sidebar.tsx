@@ -66,11 +66,11 @@ const data = {
       url: 'student/grades',
       icon: ClipboardList,
     },
-    {
-      name: 'Statement of Account',
-      url: 'student/statement-of-account',
-      icon: ReceiptText,
-    }
+    // {
+    //   name: 'Statement of Account',
+    //   url: 'student/statement-of-account',
+    //   icon: ReceiptText,
+    // }
   ],
   menuTeacher: [
     {

@@ -9,13 +9,11 @@ import Layout from '@/FldrPages/FldrLayout/layout'
 import Dashboard from "@/FldrPages/FldrDashboard/dashboard"
 import Schedules from "@/FldrPages/FldrSchedules/schedule"
 import Course from "@/FldrPages/FldrEntry/course"
-import Student from "./FldrPages/FldrEntry/student"
 import Rate from "./FldrPages/FldrEntry/rate"
 import Enrollment1 from "./FldrPages/FldrEnrollment/enrollment1"
 import Enrollment2 from "./FldrPages/FldrEnrollment/enrollment2"
 import Enrollment3 from "./FldrPages/FldrEnrollment/enrollment3"
 import Unauthorized from "@/FldrPages/redirects/unauthorized"
-import RateCourse from "@/FldrPages/FldrEntry/ratecourse"
 import Application from "./FldrPages/FldrStudent/application/application"
 import Grades from "./FldrPages/FldrStudent/grades"
 import StudentProfile from "./FldrPages/FldrStudent/profile"
@@ -87,10 +85,10 @@ const router = createBrowserRouter([
         path: "/entry/section",
         element: <Section />,
       },
-      {
-        path: "/entry/student",
-        element: <Student />,
-      },
+      // {
+      //   path: "/entry/student",
+      //   element: <Student />,
+      // },
       {
         path: "/entry/rate",
         element: <Rate />,
@@ -100,10 +98,10 @@ const router = createBrowserRouter([
       //   path: "/entry/subject-prerequisite",
       //   element: <Subject />,
       // },
-      {
-        path: "/entry/ratecourse",
-        element: <RateCourse />,
-      },
+      // {
+      //   path: "/entry/ratecourse",
+      //   element: <RateCourse />,
+      // },
       {
         path: "/entry/AY",
         element: <AcademicYearPage />,
