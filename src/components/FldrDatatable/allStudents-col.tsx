@@ -7,7 +7,6 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { StudentCol } from "@/FldrTypes/types";
 import { DataTable } from "./data-table";
 import { ViewStudent } from "../FldrForm/viewStudent";
-import { DialogTitle } from "@radix-ui/react-dialog";
 
 interface TableProps {
   data: StudentCol[];
@@ -86,9 +85,6 @@ export const StudentsTable: React.FC<TableProps> = ({ data, loading, onRefresh }
             className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden"
             aria-labelledby="dialog-title"
           >
-            <DialogTitle className="font-semibold">
-              Student details
-            </DialogTitle>
             <ViewStudent 
                 toEdit={studentCode} 
                 onCancel={() => {

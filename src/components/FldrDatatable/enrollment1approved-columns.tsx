@@ -3,7 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Enrollment1Col } from "@/FldrTypes/types"
 import { DataTable } from "./data-table";
 import { ViewEnrollment1Form } from "../FldrForm/viewEnrollment1";
@@ -98,9 +98,6 @@ export const ApprovedEnrollmentsTable: React.FC<TableProps> = ({ data, loading, 
             className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden"
             aria-labelledby="dialog-title"
           >
-            <DialogTitle>
-              Enrollment details
-            </DialogTitle>
             <ViewEnrollment1Form 
                 toEdit={pkCode} 
                 onCancel={() => {

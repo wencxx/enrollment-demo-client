@@ -175,7 +175,7 @@ function GrantPermission() {
       )}
 
       {selectedGroup && (
-        <div className="mt-2">
+        <div className="mt-2 rounded-md border p-4">
           <h3 className="text-xl font-semibold mb-4">
             Editing Permissions for: <span className="text-gray-600">{selectedGroup.groupName}</span>
           </h3>

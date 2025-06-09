@@ -10,9 +10,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+// import { Calendar } from "@/components/ui/calendar";
+// import { CalendarIcon } from "lucide-react";
+// import { format } from "date-fns";
 import { toast } from "sonner";
 import { formSchema } from "@/FldrSchema/application";
 import useAuthStore from "@/FldrStore/auth";
@@ -258,7 +258,7 @@ export default function StudentApplication() {
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                    <FormField
+                    {/* <FormField
                       control={form.control}
                       name="birthDate"
                       render={({ field }) => (
@@ -285,14 +285,38 @@ export default function StudentApplication() {
                                 disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                                 initialFocus
                                 captionLayout="dropdown"
+                                fromYear={1900}
+                                toYear={new Date().getFullYear()}
                               />
                             </PopoverContent>
                           </Popover>
                           <FormMessage />
                         </FormItem>
                       )}
+                    /> */}
+                    <FormField
+                      control={form.control}
+                      name="birthDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Date of Birth</FormLabel>
+                          <FormControl>
+                            <input
+                              type="date"
+                              value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
+                              onChange={e => {
+                                const val = e.target.value;
+                                field.onChange(val ? new Date(val) : undefined);
+                              }}
+                              max={new Date().toISOString().split("T")[0]}
+                              min="1900-01-01"
+                              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary focus:ring focus:ring-primary/20"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-
                     <FormField
                       control={form.control}
                       name="genderCode"
