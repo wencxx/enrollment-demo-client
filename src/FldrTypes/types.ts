@@ -224,3 +224,16 @@ export type group = {
     groupName: string
 }
 
+export type Enrollment2Col = {
+    pkCode: string,
+    firstName: string,
+    middleName: string,
+    lastName: string,
+    courseDesc: string,
+    yearDesc: string,
+    sectionDesc: string,
+    fullName: string,
+    courseCode: string,
+    yearCode: string,
+    sectionCode: string
+}

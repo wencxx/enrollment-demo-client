@@ -210,7 +210,6 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent className="w-full min-w-[var(--radix-popover-trigger-width)]"
-                // override nlng gd bc default none? for some reason
                 style={{ pointerEvents: "auto" }}
                 >
                   <Command>
