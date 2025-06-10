@@ -8,8 +8,8 @@ export type CourseCol = {
     courseCode: string
     collegeCode: string
     collegeDesc: string
-    value?: string
-    label?: string
+    value: string
+    label: string
 }
 
 export type SemCol = {
@@ -236,4 +236,17 @@ export type Enrollment2Col = {
     courseCode: string,
     yearCode: string,
     sectionCode: string
+
+    rdDesc: string,
+    professorName: string,
+    scheduleDayDesc: string,
+    roomDesc: string,
+    classStart: string,
+    classEnd: string,
+    semDesc: string,
+    pkRate: string,
+
+    rowNum: number,
+    amount: number,
+    noUnits: number
 }

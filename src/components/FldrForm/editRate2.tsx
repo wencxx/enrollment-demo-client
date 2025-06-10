@@ -383,7 +383,7 @@ return (
                                             <Check
                                             className={cn(
                                                 "ml-auto",
-                                                rateType.value === field.value
+                                                rateSubType.value === field.value
                                                 ? "opacity-100"
                                                 : "opacity-0"
                                             )}

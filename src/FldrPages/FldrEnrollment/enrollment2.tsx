@@ -104,40 +104,18 @@ export default function Enrollment2() {
             </TabsList>
 
             <TabsContent value="all" className="mt-4">
-              {/* <DataTable
-                columns={columnsEnrolled}
-                data={allStudents}
-                title="Students"
-                loading={isLoading}
-                onRefresh={fetchStudents}
-              /> */}
               <Enrollment2Table data={allStudents} loading={isLoading} onRefresh={()=>allStudents} />
             </TabsContent>
             
             <TabsContent value="no-subjects" className="mt-4">
-              {/* <DataTable
-                columns={columnsEnrolled}
-                data={studentsWithoutSubjects}
-                title="Students Without Subjects"
-                loading={isLoading}
-                onRefresh={fetchStudents}
-              /> */}
               <Enrollment2Table data={studentsWithoutSubjects} loading={isLoading} onRefresh={()=>studentsWithoutSubjects} />
             </TabsContent>
             
             <TabsContent value="with-subjects" className="mt-4">
-              {/* <DataTable
-                columns={columnsEnrolled}
-                data={studentsWithSubjects}
-                title="Students With Subjects"
-                loading={isLoading}
-                onRefresh={fetchStudents}
-              /> */}
               <Enrollment2Table data={studentsWithSubjects} loading={isLoading} onRefresh={()=>studentsWithSubjects} />
             </TabsContent>
           </Tabs>
         </div>
-
         <Toaster />
       </div>
     </>
