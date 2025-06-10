@@ -95,7 +95,7 @@ export const UserTable: React.FC<TableProps> = ({ data, loading, onRefresh }) =>
             </Button>
           </DialogTrigger>
           <DialogContent
-            className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden"
+            className="max-h-[90vh] overflow-y-auto md:!max-w-[40dvw] lg:!max-w-[30dvw] scrollbar-hidden"
             aria-labelledby="dialog-title"
           >
             <EditUserGroup 
