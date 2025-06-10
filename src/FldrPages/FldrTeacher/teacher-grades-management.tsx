@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -6,102 +6,104 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, Save, Users, GraduationCap } from "lucide-react"
+import { Save, Users, GraduationCap } from "lucide-react"
+import { plsConnect } from "@/FldrClass/ClsGetConnection"
+import axios from "axios"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { toast } from "sonner"
 
-// Sample data
-const subjects = [
-  { id: "math101", name: "Mathematics 101", code: "MATH101" },
-  { id: "eng102", name: "English Literature", code: "ENG102" },
-  { id: "sci103", name: "Physics", code: "SCI103" },
-  { id: "hist104", name: "World History", code: "HIST104" },
-]
-
-const students = [
-  {
-    id: "1",
-    name: "Alice Johnson",
-    studentId: "2024001",
-    section: "A",
-    year: "1st Year",
-    course: "Computer Science",
-    grades: { math101: 85, eng102: 92, sci103: 78, hist104: 88 },
-  },
-  {
-    id: "2",
-    name: "Bob Smith",
-    studentId: "2024002",
-    section: "A",
-    year: "1st Year",
-    course: "Computer Science",
-    grades: { math101: 78, eng102: 85, sci103: 82, hist104: 90 },
-  },
-  {
-    id: "3",
-    name: "Carol Davis",
-    studentId: "2024003",
-    section: "B",
-    year: "1st Year",
-    course: "Information Technology",
-    grades: { math101: 92, eng102: 88, sci103: 85, hist104: 87 },
-  },
-  {
-    id: "4",
-    name: "David Wilson",
-    studentId: "2024004",
-    section: "A",
-    year: "2nd Year",
-    course: "Computer Science",
-    grades: { math101: 88, eng102: 90, sci103: 92, hist104: 85 },
-  },
-  {
-    id: "5",
-    name: "Emma Brown",
-    studentId: "2024005",
-    section: "B",
-    year: "2nd Year",
-    course: "Information Technology",
-    grades: { math101: 95, eng102: 87, sci103: 89, hist104: 93 },
-  },
-  {
-    id: "6",
-    name: "Frank Miller",
-    studentId: "2024006",
-    section: "A",
-    year: "1st Year",
-    course: "Engineering",
-    grades: { math101: 82, eng102: 79, sci103: 94, hist104: 81 },
-  },
-  {
-    id: "7",
-    name: "Grace Lee",
-    studentId: "2024007",
-    section: "B",
-    year: "1st Year",
-    course: "Computer Science",
-    grades: { math101: 90, eng102: 88, sci103: 85, hist104: 92 },
-  },
-  {
-    id: "8",
-    name: "Henry Clark",
-    studentId: "2024008",
-    section: "A",
-    year: "2nd Year",
-    course: "Engineering",
-    grades: { math101: 87, eng102: 83, sci103: 96, hist104: 89 },
-  },
-]
+// --- New: Types for API data ---
+type Professor = {
+  professorCode: string;
+  professorName: string;
+};
+type GradeRow = {
+  gradeCode: string;
+  pkedCode: string;
+  yearDesc: string;
+  courseDesc: string;
+  semDesc: string;
+  sectionDesc: string;
+  ayStart: number;
+  ayEnd: number;
+  rdCode: string;
+  rdDesc: string;
+  professorName: string;
+  studentID: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  suffix: string;
+  midterm: number;
+  final: number;
+};
 
 export default function TeacherGradeManagement() {
-  // Only one subject per teacher, use the first subject
-  const subject = subjects[0]
+  // --- New: State for professors and grades ---
+  const [professors, setProfessors] = useState<Professor[]>([])
+  const [selectedProfessor, setSelectedProfessor] = useState<string>("")
+  const [grades, setGrades] = useState<GradeRow[]>([])
+  const [loadingProfessors, setLoadingProfessors] = useState(false)
+  const [loadingGrades, setLoadingGrades] = useState(false)
 
-  const [grades, setGrades] = useState(() => {
-    const initialGrades: Record<string, number> = {}
-    students.forEach((student) => {
-      initialGrades[student.id] = student.grades[subject.id as keyof typeof student.grades] || 0
-    })
-    return initialGrades
-  })
+  // --- New: State for selected subject ---
+  const [selectedSubject, setSelectedSubject] = useState("")
+
+  // --- New: State for subject assignments (pkedGroups) ---
+  const [pkedGroups, setPkedGroups] = useState<any[]>([])
+
+  // --- New: State for selected class ---
+  const [selectedClass, setSelectedClass] = useState("")
+
+  // --- New: State for confirmation dialog ---
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  // Fetch professors on mount
+  useEffect(() => {
+    setLoadingProfessors(true)
+    axios.get(plsConnect() + "/api/Professors")
+      .then(res => setProfessors(res.data))
+      .finally(() => setLoadingProfessors(false))
+  }, [])
+
+  // Fetch grades when professor, class, and subject are all selected
+  useEffect(() => {
+    if (!selectedProfessor || !selectedClass || !selectedSubject) return;
+    setLoadingGrades(true);
+    axios.get(
+      plsConnect() + `/API/WebAPI/Grades/professor/${selectedProfessor}/pked/${selectedClass}/rdcode/${selectedSubject}`
+    )
+      .then(res => {
+        setGrades(res.data)
+      })
+      .finally(() => setLoadingGrades(false));
+  }, [selectedProfessor, selectedClass, selectedSubject])
+
+  // Fetch pkedGroups when professor changes
+  useEffect(() => {
+    if (!selectedProfessor) return;
+    setLoadingGrades(true);
+    axios.get(plsConnect() + `/API/WebAPI/SubjectAssignment/${selectedProfessor}`)
+      .then(res => {
+        const data = res.data && res.data.length > 0 ? res.data[0].pkedGroups : [];
+        setPkedGroups(data);
+      })
+      .finally(() => setLoadingGrades(false));
+  }, [selectedProfessor]);
+
+  // --- Class and Subject selection based on pkedGroups ---
+  const classOptions = pkedGroups.map((group) => ({
+    value: group.pkedCode,
+    label: `${group.courseDesc} - ${group.yearDesc} - Section ${group.sectionDesc} (${group.ayStart}-${group.ayEnd}, ${group.semDesc})`,
+    group
+  }));
+
+  const selectedPkedGroup = pkedGroups.find(g => g.pkedCode === selectedClass);
+  const subjectOptions = selectedPkedGroup ? selectedPkedGroup.subjects.map((sub: any) => ({
+    value: sub.rdCode,
+    label: sub.rdDesc
+  })) : [];
 
   const getGradeColor = (grade: number) => {
     if (grade >= 90) return "text-green-600"
@@ -132,154 +134,217 @@ export default function TeacherGradeManagement() {
     return <Badge variant="destructive">Needs Improvement</Badge>
   }
 
-  // Group students by class (course + year + section)
-  const groupStudentsByClass = () => {
-    const classes: Record<string, typeof students> = {}
-
-    students.forEach((student) => {
-      const classKey = `${student.course} - ${student.year} - Section ${student.section}`
-      if (!classes[classKey]) {
-        classes[classKey] = []
-      }
-      classes[classKey].push(student)
-    })
-
-    // Sort students within each class by name
-    Object.keys(classes).forEach((classKey) => {
-      classes[classKey].sort((a, b) => a.name.localeCompare(b.name))
-    })
-
-    return classes
+  const handleGradeChange = (gradeCode: string, type: 'midterm' | 'final', value: string) => {
+    const numericGrade = Math.max(0, Math.min(100, Number.parseInt(value) || 0))
+    setGrades((prev) => prev.map(row =>
+      row.gradeCode === gradeCode ? { ...row, [type]: numericGrade } : row
+    ))
   }
 
-  const classes = groupStudentsByClass()
-  const classKeys = Object.keys(classes).sort()
+  const getAverage = (row: GradeRow) => Math.round((row.midterm + row.final) / 2)
 
-  const [selectedClass, setSelectedClass] = useState(classKeys[0] || "")
-
-  const handleGradeChange = (studentId: string, grade: string) => {
-    const numericGrade = Math.max(0, Math.min(100, Number.parseInt(grade) || 0))
-    setGrades((prev) => ({
-      ...prev,
-      [studentId]: numericGrade,
-    }))
-  }
-
-  const StudentTable = ({ classStudents, className }: { classStudents: typeof students; className: string }) => (
+  const StudentTable = ({ classStudents, className }: { classStudents: GradeRow[], className?: string }) => (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">{className}</h3>
+          {className && <h3 className="text-lg font-semibold">{className}</h3>}
           <p className="text-sm text-muted-foreground">{classStudents.length} students enrolled</p>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline">{classStudents.length} students</Badge>
           <Badge variant="secondary">
             Avg:{" "}
-            {Math.round(
-              classStudents.reduce((sum, student) => sum + (grades[student.id] || 0), 0) / classStudents.length,
-            )}
+            {classStudents.length > 0 ? Math.round(
+              classStudents.reduce((sum, row) => sum + getAverage(row), 0) / classStudents.length
+            ) : 0}
           </Badge>
         </div>
       </div>
-
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Student ID</TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>Grade</TableHead>
+            <TableHead>Subject</TableHead>
+            <TableHead>Midterm</TableHead>
+            <TableHead>Final</TableHead>
+            <TableHead>Average</TableHead>
             <TableHead>Performance</TableHead>
-            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {classStudents.map((student) => (
-            <TableRow key={student.id}>
-              <TableCell className="font-medium">{student.studentId}</TableCell>
-              <TableCell className="font-medium">{student.name}</TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={grades[student.id] || 0}
-                  onChange={(e) => handleGradeChange(student.id, e.target.value)}
-                  className={`w-20 ${getGradeColor(grades[student.id] || 0)}`}
-                />
-              </TableCell>
-              <TableCell>{getGradeBadge(grades[student.id] || 0)}</TableCell>
-              <TableCell>
-                <Button variant="ghost" size="sm">
-                  View Details
-                </Button>
-              </TableCell>
+          {classStudents.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center text-muted-foreground">No data available</TableCell>
             </TableRow>
-          ))}
+          ) : (
+            classStudents.map((row) => (
+              <TableRow key={row.gradeCode}>
+                <TableCell className="font-medium">{row.studentID}</TableCell>
+                <TableCell className="font-medium">{`${row.lastName}, ${row.firstName} ${row.middleName} ${row.suffix}`}</TableCell>
+                <TableCell>{row.rdDesc}</TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={row.midterm}
+                    onChange={(e) => handleGradeChange(row.gradeCode, 'midterm', e.target.value)}
+                    className={`w-20 ${getGradeColor(row.midterm)}`}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={row.final}
+                    onChange={(e) => handleGradeChange(row.gradeCode, 'final', e.target.value)}
+                    className={`w-20 ${getGradeColor(row.final)}`}
+                  />
+                </TableCell>
+                <TableCell className="font-bold">{getAverage(row)}</TableCell>
+                <TableCell>{getGradeBadge(getAverage(row))}</TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>
   )
 
+  // Remove filtering for now and just show all grades
+  const filteredClassStudents = grades;
+
+  // --- Filtered summary statistics ---
+  const filteredGrades = filteredClassStudents;
+  const filteredTotalStudents = filteredGrades.length;
+  const filteredAverageGrade = filteredGrades.length > 0 ? Math.round(filteredGrades.reduce((a, b) => a + getAverage(b), 0) / filteredGrades.length) : 0;
+  const filteredExcellentCount = filteredGrades.filter((g) => getAverage(g) >= 90).length;
+
+  // --- Save All Grades function ---
+  const handleSaveAllGrades = async () => {
+    setSaving(true);
+    try {
+      const payload = grades.map(g => ({
+        gradeCode: g.gradeCode,
+        midterm: g.midterm,
+        final: g.final
+      }));
+      await axios.put(plsConnect() + "/API/WebAPI/Grades", payload);
+      toast.success("Success", { description: "Grades saved successfully!"});
+    } catch (error) {
+      toast.error("Error", { description: "Failed to save grades. Please try again."});
+    } finally {
+      setSaving(false);
+      setShowConfirmDialog(false);
+    }
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {/* Confirmation Dialog */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Save</DialogTitle>
+          </DialogHeader>
+          <div>Are you sure you want to save all grades? This action cannot be undone.</div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)} disabled={saving}>Cancel</Button>
+            <Button onClick={handleSaveAllGrades} disabled={saving}>Confirm</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Grade Management</h1>
-          <p className="text-muted-foreground">Manage student grades by class sections</p>
+          <p className="text-muted-foreground">Registrar: Manage student grades by teacher and class sections</p>
         </div>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2" onClick={() => setShowConfirmDialog(true)}>
           <Save className="h-4 w-4" />
           Save All Grades
         </Button>
       </div>
 
-      {/* Subject Display (no selection) */}
+      {/* Teacher Selector */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
-            Subject: {subject.code} - {subject.name}
-          </CardTitle>
-          <CardDescription>This is the subject you are assigned to manage grades for.</CardDescription>
+          <CardTitle>Select Teacher</CardTitle>
+          <CardDescription>Select a teacher to view and manage their grades</CardDescription>
         </CardHeader>
-      </Card>
-
-      {/* Class Lists */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Class Lists</CardTitle>
-          <CardDescription>Select a class to view and manage student grades</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Class Selector */}
+        <CardContent>
           <div className="flex items-center gap-4">
-            <Label htmlFor="class">Select Class:</Label>
-            <Select value={selectedClass} onValueChange={setSelectedClass}>
+            <Label htmlFor="teacher">Teacher:</Label>
+            <Select value={selectedProfessor} onValueChange={setSelectedProfessor} disabled={loadingProfessors}>
               <SelectTrigger className="w-[400px]">
-                <SelectValue placeholder="Select a class" />
+                <SelectValue placeholder={loadingProfessors ? "Loading..." : "Select a teacher"} />
               </SelectTrigger>
               <SelectContent>
-                {classKeys.map((classKey) => (
-                  <SelectItem key={classKey} value={classKey}>
-                    {classKey}
+                {professors.map((prof) => (
+                  <SelectItem key={prof.professorCode} value={prof.professorCode}>
+                    {prof.professorName}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-
-          {/* Selected Class Display */}
-          {selectedClass && (
-            <Card>
-              <CardContent className="pt-6">
-                <StudentTable classStudents={classes[selectedClass]} className={selectedClass} />
-              </CardContent>
-            </Card>
-          )}
         </CardContent>
       </Card>
+
+      {/* Class Lists */}
+      {selectedProfessor && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Class Lists</CardTitle>
+            <CardDescription>Select a class to view and manage student grades</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Class Selector */}
+            <div className="flex items-center gap-4">
+              <Label htmlFor="class">Select Class:</Label>
+              <Select value={selectedClass} onValueChange={setSelectedClass} disabled={loadingGrades}>
+                <SelectTrigger className="w-[400px]">
+                  <SelectValue placeholder={loadingGrades ? "Loading..." : "Select a class"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {classOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {/* Subject Selector */}
+            {selectedClass && (
+              <div className="flex items-center gap-4 mt-4">
+                <Label htmlFor="subject">Select Subject:</Label>
+                <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+                  <SelectTrigger className="w-[400px]">
+                    <SelectValue placeholder="Select a subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {subjectOptions.map((option: any) => (
+                      <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {/* Selected Class Display */}
+            {selectedClass && (
+              <Card>
+                <CardContent className="pt-6">
+                  <StudentTable
+                    classStudents={filteredClassStudents}
+                    className={selectedClass}
+                  />
+                </CardContent>
+              </Card>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Summary Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -289,7 +354,7 @@ export default function TeacherGradeManagement() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{students.length}</div>
+            <div className="text-2xl font-bold">{filteredTotalStudents}</div>
           </CardContent>
         </Card>
         <Card>
@@ -298,7 +363,7 @@ export default function TeacherGradeManagement() {
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{classKeys.length}</div>
+            <div className="text-2xl font-bold">{classOptions.length}</div>
           </CardContent>
         </Card>
         <Card>
@@ -308,7 +373,7 @@ export default function TeacherGradeManagement() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {Math.round(Object.values(grades).reduce((a, b) => a + b, 0) / Object.values(grades).length)}
+              {filteredAverageGrade}
             </div>
           </CardContent>
         </Card>
@@ -318,7 +383,9 @@ export default function TeacherGradeManagement() {
             <Badge className="h-4 w-4 bg-green-100" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{Object.values(grades).filter((grade) => grade >= 90).length}</div>
+            <div className="text-2xl font-bold">
+              {filteredExcellentCount}
+            </div>
           </CardContent>
         </Card>
       </div>
