@@ -44,8 +44,9 @@ interface semester {
   semDesc: string
 }
 interface academic {
-  aYearCode: string
-  aYearDesc: string
+  ayCode: string
+  ayStart: string
+  ayEnd: string
 }
 interface section {
   sectionCode: string
@@ -118,7 +119,7 @@ export function EnrollDesciprtionForm({ getEnrollDescription }: { getEnrollDescr
       courseCode: "",
       semCode: "",
       sectionCode: "",
-      aYearCode: "",
+      ayCode: "",
     },
   });
 
@@ -254,7 +255,7 @@ export function EnrollDesciprtionForm({ getEnrollDescription }: { getEnrollDescr
 
           <FormField
             control={form.control}
-            name="aYearCode"
+            name="ayCode"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Select Academic Year</FormLabel>
@@ -265,8 +266,8 @@ export function EnrollDesciprtionForm({ getEnrollDescription }: { getEnrollDescr
                     </SelectTrigger>
                     <SelectContent>
                       {academicYears.length && academicYears.map((ay, index) => (
-                        <SelectItem key={index} value={ay.aYearCode}>
-                          {ay.aYearDesc}
+                        <SelectItem key={index} value={ay.ayCode}>
+                          {ay.ayStart}-{ay.ayEnd}
                         </SelectItem>
                       ))}
                     </SelectContent>

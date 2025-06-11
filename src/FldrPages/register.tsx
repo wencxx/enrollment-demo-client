@@ -5,9 +5,7 @@ import { useForm } from "react-hook-form"
 import { registerSchema } from '@/FldrSchema/userSchema'
 import { LoaderCircle } from 'lucide-react'
 import axios from 'axios'
-import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
-
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -44,7 +42,6 @@ function Login({
         },
     })
     
-    const navigate = useNavigate()
     const [registering, setRegistering] = useState<boolean>(false)
 
     const handleRegister = async (values: z.infer<typeof registerSchema>) => {

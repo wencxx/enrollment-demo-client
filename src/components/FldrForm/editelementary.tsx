@@ -54,7 +54,7 @@ export function EditElementary({ data , getElementary, setOpenEdit}: CourseFormP
       await getElementary()
       setOpenEdit(false)
       toast("Elementary updated successfully.");
-    } catch (error: any) {
+    } catch (error) {
       toast("Error updating course details.");
       console.log(error)
     }

@@ -24,6 +24,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { CourseCol, Enrollment2Col, YearCol } from "@/FldrTypes/types";
 
 type ComboOption = { label: string; value: string };
 
@@ -43,7 +44,7 @@ type Student = {
 type Subject = {
   pkRate: string;
   rdCode: string;
-  rdDesc: string;
+  rdDesc?: string;
   noUnits: number;
   rateAmount: number;
   rateTypeCode: string;
@@ -92,16 +93,22 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
   const [enrollmentToDelete, setEnrollmentToDelete] = useState<Enrollment | null>(null);
   const [deletingEnrollment, setDeletingEnrollment] = useState(false);
 
-  const isRegularSubject = (subject: any) => {
-    if (!subject) return false;
-    
-    if (subject.rateTypeCode === "2" || subject.rateTypeCode === "3" || subject.rateTypeCode === "4") {
+  const isRegularSubject = (subject: Subject | Enrollment | null | undefined): boolean => {
+  if (!subject) return false;
+
+  if ('rateTypeCode' in subject) {
+    if (
+      subject.rateTypeCode === "2" ||
+      subject.rateTypeCode === "3" ||
+      subject.rateTypeCode === "4"
+    ) {
       return false;
     }
-    
-    const desc = (subject.rdDesc || "").toLowerCase();
-    return !desc.includes("laboratory") && !desc.includes("misc") && !desc.includes("others");
-  };
+  }
+
+  const desc = (subject.rdDesc || "").toLowerCase();
+  return !desc.includes("laboratory") && !desc.includes("misc") && !desc.includes("others");
+};
 
   // Memoized filtered lists
   const regularCurrentEnrollments = useMemo(() => 
@@ -129,12 +136,12 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
           axios.get(`${plsConnect()}/API/WEBAPI/ListController/ListYear`),
         ]);
         
-        setCourses(coursesRes.data.map((c: any) => ({
+        setCourses(coursesRes.data.map((c: CourseCol) => ({
           label: c.courseDesc,
           value: c.courseCode,
         })));
         
-        setYears(yearsRes.data.map((y: any) => ({
+        setYears(yearsRes.data.map((y: YearCol) => ({
           label: y.yearDesc,
           value: y.yearCode,
         })));
@@ -157,20 +164,20 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
           `${plsConnect()}/api/Enrollment2/AllData?pkCode=${preselectedStudent.pkCode}`
         );
         
-        const studentEnrollments = response.data.filter((item: any) => 
+        const studentEnrollments = response.data.filter((item: Enrollment2Col) => 
           item.pkCode === preselectedStudent.pkCode
         );
         
         setCurrentEnrollments(studentEnrollments);
         
         // Create a Set of enrolled PKRates for quick lookup
-        const pkRatesSet = new Set();
-        studentEnrollments.forEach((enrollment: any) => {
+        const pkRatesSet: Set<string> = new Set();
+        studentEnrollments.forEach((enrollment: Enrollment2Col) => {
           if (enrollment.pkRate) {
             pkRatesSet.add(String(enrollment.pkRate).trim());
           }
-          if (enrollment.PKRate) {
-            pkRatesSet.add(String(enrollment.PKRate).trim());
+          if (enrollment.pkRate) {
+            pkRatesSet.add(String(enrollment.pkRate).trim());
           }
         });
         setEnrolledPkRates(pkRatesSet);
@@ -231,7 +238,13 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
         
         setFilteredSubjects(availableSubjects);
       } catch (error) {
-        toast.error("Failed to fetch additional subjects");
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 409) {
+            toast.error("Entry already exists.")
+          } else {
+            toast.error(error.response?.data?.message || "Error submitting form.");
+          }
+        }
       }
     }
     
@@ -291,7 +304,7 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
       onSubmitSuccess();
       onAddRate();
       toast.success(`Successfully enrolled with ${rows.length} subjects!`);
-    } catch (error: any) {
+    } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 409) {
           toast.error("Entry already exists.")
@@ -568,7 +581,8 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
+                    <PopoverContent className="w-full p-0 min-w-[var(--radix-popover-trigger-width)]"
+                    style={{ pointerEvents: "auto" }}>
                       <Command>
                         <CommandInput placeholder="Search years..." className="h-9" />
                         <CommandList>
@@ -617,7 +631,8 @@ export function Enrollment2Form({ onSubmitSuccess, onAddRate, preselectedStudent
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
+                    <PopoverContent className="w-full p-0 min-w-[var(--radix-popover-trigger-width)]"
+                    style={{ pointerEvents: "auto" }}>
                       <Command>
                         <CommandInput placeholder="Search courses..." className="h-9" />
                         <CommandList>

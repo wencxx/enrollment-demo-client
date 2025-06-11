@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { CourseForm } from "@/components/FldrForm/entrycourse"
 import { SubjectCol } from "@/FldrTypes/types";
 import {
   Dialog,

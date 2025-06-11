@@ -1,6 +1,5 @@
 import { ChevronRight, type LucideIcon } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -16,7 +15,6 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import useAuthStore from "@/FldrStore/auth"
 
 export function MenuMain({
   items,
@@ -26,19 +24,15 @@ export function MenuMain({
     url: string
     icon?: LucideIcon
     isActive?: boolean
-    // authorizeUsers: string[]
     items?: {
       title: string
       url: string,
-      // authorizeUsers: string[]
     }[]
   }[]
 }) {
 
-  const store = useAuthStore()
   const location = useLocation()
   
-  const user = store.currentUser
 
   return (
     <SidebarGroup>
@@ -62,7 +56,6 @@ export function MenuMain({
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
-                    // <SidebarMenuSubItem className={`${user && !subItem.authorizeUsers?.includes(user.groupCode) && 'hidden'}`} key={subItem.title}>
                     <SidebarMenuSubItem key={subItem.title}> 
                       <SidebarMenuSubButton asChild>
                         <NavLink to={subItem.url} className={`${subItem.url === location.pathname.slice(1) && 'bg-sidebar-accent text-sidebar-accent-foreground'}`}>

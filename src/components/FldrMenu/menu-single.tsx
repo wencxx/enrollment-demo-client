@@ -33,7 +33,7 @@ export function SingleMenu({
         {data.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <NavLink to={item.url} className={`${item.url === location.pathname.slice(1) && 'bg-gray-200 hover:!bg-gray-200'}`}>
+              <NavLink to={item.url} className={`${item.url === location.pathname.slice(1) && 'bg-sidebar-accent text-sidebar-accent-foreground'}`}>
                 {item.icon && <item.icon />}
                 <span>{item.name}</span>
               </NavLink>

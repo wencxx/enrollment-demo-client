@@ -9,7 +9,6 @@ export const loginSchema = z.object({
   }).min(3).max(16),
 })
 
-
 export const registerSchema = z.object({
   userName: z.string({
     required_error: "Please enter a username"
@@ -25,10 +24,10 @@ export const registerSchema = z.object({
   }).min(2),
   lastName: z.string({
     required_error: "Please enter users last name"
+  }).min(2),
+  groupCode: z.string({
+    required_error: "Please enter group name"
   }).min(2)
-  // groupCode: z.string({
-  //   required_error: "Please enter group name"
-  // }).min(2)
 })
 
 export const studentSchema = z.object({
@@ -64,6 +63,7 @@ export const courseSchema = z.object({
 })
 
 export const professorSchema = z.object({
+  professorCode: z.string().optional(),
   professorName: z.string().nonempty('Professor name is required'),
 })
 
@@ -74,6 +74,7 @@ export const assignSubjectSchema = z.object({
 })
 
 export const highschoolSchema = z.object({
+  hsCode: z.string().optional(),
   hsDesc: z.string().nonempty('High school description is required'),
 })
 
@@ -91,7 +92,7 @@ export const enrollDescriptionSchema = z.object({
   courseCode: z.string().nonempty('Course is required'),
   semCode: z.string().nonempty('Semester is required'),
   sectionCode: z.string().nonempty('Section is required'),
-  aYearCode: z.string().nonempty('Academic year is required'),
+  ayCode: z.string().nonempty('Academic year is required'),
 })
 
 export const enrollment1Schema = z.object({

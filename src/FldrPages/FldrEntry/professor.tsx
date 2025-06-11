@@ -1,3 +1,4 @@
+
 import { columns } from "@/components/FldrDatatable/professor-columns";
 import { columns2 } from "@/components/FldrDatatable/assigned-columns";
 import { DataTable } from "@/components/FldrDatatable/data-table";
@@ -9,6 +10,7 @@ import { ProfessorCol, AssignedCol } from "@/FldrTypes/professor.col";
 import {
   Dialog,
   DialogContent,
+  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Toaster } from "@/components/ui/sonner"
@@ -17,8 +19,8 @@ import { Plus } from 'lucide-react'
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
-export default function Professor() {
-  const [openForm, setOpenForm] = useState<boolean>(false)
+
+export default function Room() {
   const [data, setData] = useState<ProfessorCol[]>([]);
   const [assignedSubjects, setAssignedSubjects] = useState<AssignedCol[]>([]);
   const [loading, setLoading] = useState<boolean>(false)
@@ -28,16 +30,21 @@ export default function Professor() {
     try {
       setLoading(true)
       const res = await axios.get(`${plsConnect()}/api/Professors`)
-      setData(res.data)
+      
+      const formattedData = res.data.map((item: ProfessorCol) => ({
+        professorCode: item.professorCode || "",
+        professorName: item.professorName || "",
+      }));
+      
+      setData(formattedData)
     } catch (error) {
       console.log(error)
     } finally {
       setLoading(false)
     }
   }
-
   useEffect(() => {
-    getProfessor()
+    getData()
   }, []);
 
    const getAssignedSubjects = async () => {

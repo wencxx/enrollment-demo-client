@@ -54,7 +54,7 @@ export function EditHighschool({ data , getHighschool, setOpenEdit}: CourseFormP
       await getHighschool()
       setOpenEdit(false)
       toast("Highschool updated successfully.");
-    } catch (error: any) {
+    } catch (error) {
       toast("Error updating course details.");
       console.log(error)
     }

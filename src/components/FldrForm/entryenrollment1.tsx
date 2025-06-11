@@ -56,18 +56,17 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
 
             const EDRes = await axios.get(`${plsConnect()}/api/EnrollDescription`)
             const mappedEDRes = EDRes.data.map((item: EnrollDescCol) => ({
-              label: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc} - Section ${item.sectionDesc} (${item.aYearDesc})`,
+              label: `${item.courseDesc} - ${item.yearDesc} - ${item.semDesc} - Section ${item.sectionDesc} (${item.ayStart}-${item.ayEnd})`,
               value: item.pkedCode,
             }))
             setEnrollDesc(mappedEDRes)
 
             if (studentCode) {
-                const entryRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/ListStudent`);
-                const entryData = entryRes.data.find((entry: StudentCol) => entry.studentCode === studentCode);
-      
-                form.reset({
-                  studentCode: entryData.studentCode,
-                });
+                const entryRes = await axios.get(`${plsConnect()}/API/WebAPI/StudentController/GetStudent/${studentCode}`);
+                const entryData = entryRes.data;
+                console.log("fetched:", entryData)
+
+                form.setValue("studentCode", entryData.studentCode)
               }
           } catch (error) {
             console.error("Error fetching data:", error)
@@ -77,7 +76,7 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
           }
         }
         fetchData()
-      }, [studentCode])
+      }, [studentCode, form])
 
   const onSubmit = async (values: Enrollment1FormData) => {
     try {
@@ -211,7 +210,6 @@ export function EntryEnrollment1Form({ toEdit = "", onCancel, onSuccess }: Enrol
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent className="w-full min-w-[var(--radix-popover-trigger-width)]"
-                // override nlng gd bc default none? for some reason
                 style={{ pointerEvents: "auto" }}
                 >
                   <Command>

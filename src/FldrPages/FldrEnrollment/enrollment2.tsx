@@ -1,10 +1,8 @@
 import { Toaster } from "@/components/ui/sonner"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { useState, useEffect } from "react"
 import { plsConnect } from "@/FldrClass/ClsGetConnection"
 import axios from "axios"
-import { columnsEnrolled } from "@/components/FldrDatatable/enrollment2-columns"
-import { DataTable } from "@/components/FldrDatatable/data-table"
+import { Enrollment2Table } from "@/components/FldrDatatable/enrollment2-columns"
 import {
   Tabs,
   TabsContent,
@@ -13,11 +11,12 @@ import {
 } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
+import { Enrollment2Col } from "@/FldrTypes/types"
 
 export default function Enrollment2() {
-  const [allStudents, setAllStudents] = useState<any[]>([]);
-  const [studentsWithSubjects, setStudentsWithSubjects] = useState<any[]>([]);
-  const [studentsWithoutSubjects, setStudentsWithoutSubjects] = useState<any[]>([]);
+  const [allStudents, setAllStudents] = useState<Enrollment2Col[]>([]);
+  const [studentsWithSubjects, setStudentsWithSubjects] = useState<Enrollment2Col[]>([]);
+  const [studentsWithoutSubjects, setStudentsWithoutSubjects] = useState<Enrollment2Col[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchStudents = async () => {
@@ -29,7 +28,7 @@ export default function Enrollment2() {
       );
       
       // Format student names
-      const students = studentsResponse.data.map((item: any) => ({
+      const students = studentsResponse.data.map((item: Enrollment2Col) => ({
         ...item,
         fullName: `${item.firstName} ${item.middleName ? item.middleName + ' ' : ''}${item.lastName}`,
       }));
@@ -45,16 +44,16 @@ export default function Enrollment2() {
       
       // Get unique PKCodes that have enrollments
       const studentsWithEnrollments = new Set();
-      enrollments.forEach((enrollment: any) => {
+      enrollments.forEach((enrollment: Enrollment2Col) => {
         studentsWithEnrollments.add(enrollment.pkCode);
       });
       
       // Filter students with and without subjects
-      const withSubjects = students.filter((student: any) => 
+      const withSubjects = students.filter((student: Enrollment2Col) => 
         studentsWithEnrollments.has(student.pkCode)
       );
       
-      const withoutSubjects = students.filter((student: any) => 
+      const withoutSubjects = students.filter((student: Enrollment2Col) => 
         !studentsWithEnrollments.has(student.pkCode)
       );
       
@@ -105,37 +104,18 @@ export default function Enrollment2() {
             </TabsList>
 
             <TabsContent value="all" className="mt-4">
-              <DataTable
-                columns={columnsEnrolled}
-                data={allStudents}
-                title="Students"
-                loading={isLoading}
-                onRefresh={fetchStudents}
-              />
+              <Enrollment2Table data={allStudents} loading={isLoading} onRefresh={()=>allStudents} />
             </TabsContent>
             
             <TabsContent value="no-subjects" className="mt-4">
-              <DataTable
-                columns={columnsEnrolled}
-                data={studentsWithoutSubjects}
-                title="Students Without Subjects"
-                loading={isLoading}
-                onRefresh={fetchStudents}
-              />
+              <Enrollment2Table data={studentsWithoutSubjects} loading={isLoading} onRefresh={()=>studentsWithoutSubjects} />
             </TabsContent>
             
             <TabsContent value="with-subjects" className="mt-4">
-              <DataTable
-                columns={columnsEnrolled}
-                data={studentsWithSubjects}
-                title="Students With Subjects"
-                loading={isLoading}
-                onRefresh={fetchStudents}
-              />
+              <Enrollment2Table data={studentsWithSubjects} loading={isLoading} onRefresh={()=>studentsWithSubjects} />
             </TabsContent>
           </Tabs>
         </div>
-
         <Toaster />
       </div>
     </>

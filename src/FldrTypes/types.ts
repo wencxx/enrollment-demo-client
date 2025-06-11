@@ -8,8 +8,8 @@ export type CourseCol = {
     courseCode: string
     collegeCode: string
     collegeDesc: string
-    value?: string
-    label?: string
+    value: string
+    label: string
 }
 
 export type SemCol = {
@@ -80,6 +80,9 @@ export type StudentCol = {
     contactNo: string
     emailAddress: string
     userCode: string
+
+    value: string
+    label: string
 }
 
 export type EnrollDescCol = {
@@ -88,7 +91,10 @@ export type EnrollDescCol = {
     courseDesc: string
     semDesc: string
     sectionDesc: string
-    aYearDesc: string
+    ayStart: string
+    ayEnd: string
+    value: string
+    label: string
 }
 
 export type Enrollment1Col = {
@@ -98,7 +104,8 @@ export type Enrollment1Col = {
     semDesc: string
     courseDesc: string
     sectionDesc: string
-    aYearDesc: string
+    ayStart: number
+    ayEnd: number
     firstName: string
     middleName: string
     lastName: string
@@ -119,8 +126,9 @@ export type GroupCol = {
 }
 
 export type AYCol = {
-    aYearCode: string
-    aYearDesc: string
+    ayCode: string;
+    ayStart: number;
+    ayEnd: number;
 }
 
 export type CollegeCol = {
@@ -135,15 +143,6 @@ export type AcademicYear = {
     ayStart: number;
     ayEnd: number;
 }
-
-// export type AcademicYearData = {
-//     cumulativeGWA: number
-//     year: number
-//     section: string
-//     semesters: {
-//         [key: string]: SemesterGradeData
-//     }
-// }
 
 export interface DialogState {
   isDialogOpen: boolean;
@@ -182,4 +181,72 @@ export type ElementaryCol = {
 export type TownCol = {
     tcCode: string
     tcDesc: string
+}
+
+export type RoomCol = {
+    roomCode: string,
+    roomDesc: string,
+}
+
+export type SectionCol = {
+    sectionCode: string
+    sectionDesc: string
+    value?: string
+    label?: string
+}
+
+export type ProfessorCol = {
+    professorCode: string
+    professorName: string
+}
+
+export type User = {
+    groupName: string,
+    userCode: string,
+    userName: string,
+    fullName: string,
+    groupCode: string,
+    token: string,
+    expiresIn: number,
+    expiryTimeStamp: Date,
+    cnCode: string,
+    active: boolean
+}
+
+export type user2 = {
+    fullName: string,
+    userName: string,
+    userCode: string
+}
+
+export type group = {
+    groupCode: string,
+    groupName: string
+}
+
+export type Enrollment2Col = {
+    pkCode: string,
+    firstName: string,
+    middleName: string,
+    lastName: string,
+    courseDesc: string,
+    yearDesc: string,
+    sectionDesc: string,
+    fullName: string,
+    courseCode: string,
+    yearCode: string,
+    sectionCode: string
+
+    rdDesc: string,
+    professorName: string,
+    scheduleDayDesc: string,
+    roomDesc: string,
+    classStart: string,
+    classEnd: string,
+    semDesc: string,
+    pkRate: string,
+
+    rowNum: number,
+    amount: number,
+    noUnits: number
 }

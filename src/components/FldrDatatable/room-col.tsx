@@ -1,19 +1,24 @@
-import { ColumnDef } from "@tanstack/react-table"
 import { Edit, ArrowUpDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { RoomCol } from "@/FldrTypes/room"
-import {
-    Dialog,
-    DialogContent,
-    DialogTrigger,
-    // DialogTitle,
-    // DialogHeader
-  } from "@/components/ui/dialog"
-import { useState } from "react"
-import { RoomForm } from "../FldrForm/entryRoom"
+import React, { useState } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { RoomCol } from "@/FldrTypes/types";
+import { DataTable } from "./data-table";
+import { RoomForm } from "../FldrForm/entryRoom";
 
-export const columns: ColumnDef<RoomCol>[] = [
+interface RoomTableProps {
+  data: RoomCol[];
+  loading?: boolean;
+  onRefresh: () => void;
+}
+
+export const RoomTable: React.FC<RoomTableProps> = ({ data, loading, onRefresh }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [roomCode, setRoomCode] = useState("");
+
+  const columns: ColumnDef<RoomCol>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -43,7 +48,7 @@ export const columns: ColumnDef<RoomCol>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Room Code
+                Code
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
@@ -55,48 +60,53 @@ export const columns: ColumnDef<RoomCol>[] = [
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-                Room Description
+                Description
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
     },
     {
-        id: "actions",
-        cell: ({ row, table }) => {
-          const [isDialogOpen, setIsDialogOpen] = useState(false);
-          const [roomCode, setRoomCode] = useState("");
-
-          const handleDialogOpen = (code: string) => {
-            setRoomCode(code);
-            setIsDialogOpen(true);
-          };
-
-          const handleUpdate = () => {
-            setIsDialogOpen(false);
-            const onRefresh = table.options.meta?.refreshData;
-            if (typeof onRefresh === 'function') {
-              console.log("Refreshing...");
-              onRefresh();
-            }
-          };
-
-          return (
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => handleDialogOpen(row.original.roomCode)}>
-                    <span className="sr-only">Edit room</span>
-                    <Edit className="h-4 w-4" />
-                </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md" aria-labelledby="dialog-title">
-                    <RoomForm 
-                      editMode={true}
-                      toEdit={roomCode} 
-                      onCancel={handleUpdate}
-                    />
-                </DialogContent>
-            </Dialog>
-          );
-        },
+      id: "actions",
+      cell: ({ row }) => (
+        <Dialog open={isDialogOpen && roomCode === row.original.roomCode} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+              onClick={() => {
+                setRoomCode(row.original.roomCode);
+                setIsDialogOpen(true);
+              }}
+            >
+              <span className="sr-only">Edit room</span>
+              <Edit className="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent
+            className="max-h-[90vh] overflow-y-auto md:!max-w-[90dvw] lg:!max-w-[80dvw] scrollbar-hidden"
+            aria-labelledby="dialog-title"
+          >
+            <RoomForm 
+                editMode={true}
+                toEdit={roomCode} 
+                onCancel={() => {
+                setIsDialogOpen(false);
+                onRefresh();
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      ),
     },
-]
+  ];
+
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      loading={loading}
+      title="rooms"
+      onRefresh={onRefresh}
+    />
+  );
+};

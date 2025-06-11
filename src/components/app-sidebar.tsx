@@ -8,7 +8,7 @@ import {
   KeyRound,
   Route,
   ClipboardList,
-  ReceiptText,
+  // ReceiptText,
   Calendar1,
   FileDigit
 } from "lucide-react"
@@ -66,11 +66,11 @@ const data = {
       url: 'student/grades',
       icon: ClipboardList,
     },
-    {
-      name: 'Statement of Account',
-      url: 'student/statement-of-account',
-      icon: ReceiptText,
-    }
+    // {
+    //   name: 'Statement of Account',
+    //   url: 'student/statement-of-account',
+    //   icon: ReceiptText,
+    // }
   ],
   menuTeacher: [
     {
@@ -125,10 +125,6 @@ const data = {
         {
           title: "Elementary",
           url: "entry/elementary",
-        },
-        {
-          title: "Town/City",
-          url: "entry/town",
         },
         {
           title: "Room",
