@@ -67,6 +67,12 @@ export const professorSchema = z.object({
   professorName: z.string().nonempty('Professor name is required'),
 })
 
+export const assignSubjectSchema = z.object({
+  professorCode: z.string().nonempty('Professor is required'),
+  pkedCode: z.string().nonempty('Enroll Description is required'),
+  rdCode: z.string().nonempty('Subject is required'),
+})
+
 export const highschoolSchema = z.object({
   hsCode: z.string().optional(),
   hsDesc: z.string().nonempty('High school description is required'),

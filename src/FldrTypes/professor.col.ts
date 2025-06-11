@@ -3,4 +3,16 @@ export type ProfessorCol = {
     professorName: string
 }
 
-/api/Professors
+export type AssignedCol = {
+    enrollDescription: {
+        yearDesc: string,
+        semDesc: string,
+        courseDesc: string,
+        sectionDesc: string,
+        ayStart: number,
+        ayEnd: number
+    },
+    professorName: string,
+    rdid: string,
+    rdDesc: string
+}
