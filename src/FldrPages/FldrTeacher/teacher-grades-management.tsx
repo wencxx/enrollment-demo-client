@@ -59,6 +59,15 @@ export default function TeacherGradeManagement() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  // --- Add Grade Dialog State ---
+  const [showAddGradeDialog, setShowAddGradeDialog] = useState(false);
+  const [addGradeProfessor, setAddGradeProfessor] = useState("");
+  const [addGradeClass, setAddGradeClass] = useState("");
+  const [addGradeSubject, setAddGradeSubject] = useState("");
+  const [addGradeStudent, setAddGradeStudent] = useState("");
+  const [addGradeMidterm, setAddGradeMidterm] = useState(0);
+  const [addGradeFinal, setAddGradeFinal] = useState(0);
+
   // Fetch professors on mount
   useEffect(() => {
     setLoadingProfessors(true)
@@ -143,75 +152,79 @@ export default function TeacherGradeManagement() {
 
   const getAverage = (row: GradeRow) => Math.round((row.midterm + row.final) / 2)
 
-  const StudentTable = ({ classStudents, className }: { classStudents: GradeRow[], className?: string }) => (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          {className && <h3 className="text-lg font-semibold">{className}</h3>}
-          <p className="text-sm text-muted-foreground">{classStudents.length} students enrolled</p>
+  const StudentTable = ({ classStudents, className }: { classStudents: GradeRow[], className?: string }) => {
+    // Find the class label from classOptions using className (which is pkedCode)
+    const classLabel = classOptions.find(option => option.value === className)?.label || className;
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            {className && <h3 className="text-lg font-semibold">{classLabel}</h3>}
+            <p className="text-sm text-muted-foreground">{classStudents.length} students enrolled</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline">{classStudents.length} students</Badge>
+            <Badge variant="secondary">
+              Avg:{" "}
+              {classStudents.length > 0 ? Math.round(
+                classStudents.reduce((sum, row) => sum + getAverage(row), 0) / classStudents.length
+              ) : 0}
+            </Badge>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline">{classStudents.length} students</Badge>
-          <Badge variant="secondary">
-            Avg:{" "}
-            {classStudents.length > 0 ? Math.round(
-              classStudents.reduce((sum, row) => sum + getAverage(row), 0) / classStudents.length
-            ) : 0}
-          </Badge>
-        </div>
-      </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Student ID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Subject</TableHead>
-            <TableHead>Midterm</TableHead>
-            <TableHead>Final</TableHead>
-            <TableHead>Average</TableHead>
-            <TableHead>Performance</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {classStudents.length === 0 ? (
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={7} className="text-center text-muted-foreground">No data available</TableCell>
+              <TableHead>Student ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Subject</TableHead>
+              <TableHead>Midterm</TableHead>
+              <TableHead>Final</TableHead>
+              <TableHead>Average</TableHead>
+              <TableHead>Performance</TableHead>
             </TableRow>
-          ) : (
-            classStudents.map((row) => (
-              <TableRow key={row.gradeCode}>
-                <TableCell className="font-medium">{row.studentID}</TableCell>
-                <TableCell className="font-medium">{`${row.lastName}, ${row.firstName} ${row.middleName} ${row.suffix}`}</TableCell>
-                <TableCell>{row.rdDesc}</TableCell>
-                <TableCell>
-                  <Input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={row.midterm}
-                    onChange={(e) => handleGradeChange(row.gradeCode, 'midterm', e.target.value)}
-                    className={`w-20 ${getGradeColor(row.midterm)}`}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={row.final}
-                    onChange={(e) => handleGradeChange(row.gradeCode, 'final', e.target.value)}
-                    className={`w-20 ${getGradeColor(row.final)}`}
-                  />
-                </TableCell>
-                <TableCell className="font-bold">{getAverage(row)}</TableCell>
-                <TableCell>{getGradeBadge(getAverage(row))}</TableCell>
+          </TableHeader>
+          <TableBody>
+            {classStudents.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center text-muted-foreground">No data available</TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  )
+            ) : (
+              classStudents.map((row) => (
+                <TableRow key={row.gradeCode}>
+                  <TableCell className="font-medium">{row.studentID}</TableCell>
+                  <TableCell className="font-medium">{`${row.lastName}, ${row.firstName} ${row.middleName} ${row.suffix}`}</TableCell>
+                  <TableCell>{row.rdDesc}</TableCell>
+                  <TableCell>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={row.midterm}
+                      onChange={(e) => handleGradeChange(row.gradeCode, 'midterm', e.target.value)}
+                      className={`w-20 ${getGradeColor(row.midterm)}`}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={row.final}
+                      onChange={(e) => handleGradeChange(row.gradeCode, 'final', e.target.value)}
+                      className={`w-20 ${getGradeColor(row.final)}`}
+                    />
+                  </TableCell>
+                  <TableCell className="font-bold">{getAverage(row)}</TableCell>
+                  <TableCell>{getGradeBadge(getAverage(row))}</TableCell>
+                </TableRow>
+              )))
+            }
+          </TableBody>
+        </Table>
+      </div>
+    )
+  }
 
   // Remove filtering for now and just show all grades
   const filteredClassStudents = grades;
@@ -220,7 +233,6 @@ export default function TeacherGradeManagement() {
   const filteredGrades = filteredClassStudents;
   const filteredTotalStudents = filteredGrades.length;
   const filteredAverageGrade = filteredGrades.length > 0 ? Math.round(filteredGrades.reduce((a, b) => a + getAverage(b), 0) / filteredGrades.length) : 0;
-  const filteredExcellentCount = filteredGrades.filter((g) => getAverage(g) >= 90).length;
 
   // --- Save All Grades function ---
   const handleSaveAllGrades = async () => {
@@ -232,14 +244,64 @@ export default function TeacherGradeManagement() {
         final: g.final
       }));
       await axios.put(plsConnect() + "/API/WebAPI/Grades", payload);
-      toast.success("Success", { description: "Grades saved successfully!"});
+      toast.success("Success", { description: "Grades saved successfully!" });
     } catch (error) {
-      toast.error("Error", { description: "Failed to save grades. Please try again."});
+      toast.error("Error", { description: "Failed to save grades. Please try again." });
     } finally {
       setSaving(false);
       setShowConfirmDialog(false);
     }
   };
+
+  // Function to add a new grade for a student
+  const addGrade = async ({
+    professorCode,
+    pkedCode,
+    rdCode,
+    studentCode,
+    midterm = 0,
+    final = 0
+  }: {
+    professorCode: string;
+    pkedCode: string;
+    rdCode: string;
+    studentCode: string;
+    midterm?: number;
+    final?: number;
+  }) => {
+    try {
+      const payload = {
+        professorCode,
+        pkedCode,
+        rdCode,
+        studentCode,
+        midterm,
+        final
+      };
+      await axios.post(plsConnect() + "/API/WebAPI/Grades", payload);
+      toast.success("Success", { description: "Grade added successfully!" });
+    } catch (error) {
+      toast.error("Error", { description: "Failed to add grade. Please try again." });
+    }
+  };
+
+  // --- Add Grade Dialog Data State ---
+  const [allAssignments, setAllAssignments] = useState<any[]>([]);
+
+  // Fetch all subject assignments for Add Grade dialog
+  useEffect(() => {
+    axios.get(plsConnect() + "/API/WebAPI/SubjectAssignment/All")
+      .then(res => setAllAssignments(res.data || []));
+  }, []);
+
+  // Get pkedGroups for selected professor in Add Grade dialog
+  const addGradePkedGroups = allAssignments.find((p: any) => p.professorCode === addGradeProfessor)?.pkedGroups || [];
+  // Get subjects and students for selected class in Add Grade dialog
+  const addGradeSelectedPked = addGradePkedGroups.find((g: any) => g.pkedCode === addGradeClass);
+  const addGradeSubjects = addGradeSelectedPked ? addGradeSelectedPked.subjects : [];
+  let addGradeStudents = addGradeSelectedPked ? addGradeSelectedPked.students : [];
+  // Filter out empty student objects
+  addGradeStudents = addGradeStudents.filter((student: any) => student.studentCode && student.studentID && student.lastName);
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -256,16 +318,166 @@ export default function TeacherGradeManagement() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Add Grade Dialog */}
+      <Dialog open={showAddGradeDialog} onOpenChange={setShowAddGradeDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Grade</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {/* Professor Selector */}
+            <div className="flex items-center gap-4">
+              <Label htmlFor="add-professor">Teacher:</Label>
+              <Select value={addGradeProfessor} onValueChange={value => {
+                setAddGradeProfessor(value);
+                setAddGradeClass("");
+                setAddGradeSubject("");
+                setAddGradeStudent("");
+              }}>
+                <SelectTrigger className="w-[300px]">
+                  <SelectValue placeholder="Select a teacher" />
+                </SelectTrigger>
+                <SelectContent>
+                  {allAssignments.map((prof: any) => (
+                    <SelectItem key={prof.professorCode} value={prof.professorCode}>
+                      {prof.professorName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {/* Class Selector (pkedCode) */}
+            {addGradeProfessor && (
+              <div className="flex items-center gap-4">
+                <Label htmlFor="add-class">Class:</Label>
+                <Select value={addGradeClass} onValueChange={value => {
+                  setAddGradeClass(value);
+                  setAddGradeSubject("");
+                  setAddGradeStudent("");
+                }}>
+                  <SelectTrigger className="w-[300px]">
+                    <SelectValue placeholder="Select a class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {addGradePkedGroups.map((group: any) => (
+                      <SelectItem key={group.pkedCode} value={group.pkedCode}>
+                        {group.courseDesc} - {group.yearDesc} - Section {group.sectionDesc} ({group.ayStart}-{group.ayEnd}, {group.semDesc})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {/* Subject Selector */}
+            {addGradeClass && (
+              <div className="flex items-center gap-4">
+                <Label htmlFor="add-subject">Subject:</Label>
+                <Select value={addGradeSubject} onValueChange={setAddGradeSubject}>
+                  <SelectTrigger className="w-[300px]">
+                    <SelectValue placeholder="Select a subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {addGradeSubjects.map((sub: any) => (
+                      <SelectItem key={sub.rdCode} value={sub.rdCode}>{sub.rdDesc}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {/* Student Selector */}
+            {addGradeClass && (
+              <div className="flex items-center gap-4">
+                <Label htmlFor="add-student">Student:</Label>
+                <Select value={addGradeStudent} onValueChange={setAddGradeStudent}>
+                  <SelectTrigger className="w-[300px]">
+                    <SelectValue placeholder={addGradeStudents.length === 0 ? 'No students available' : 'Select a student'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {addGradeStudents.length === 0 ? (
+                      // Do not render a SelectItem with value="". Instead, just show nothing or a disabled message outside SelectItem.
+                      <div className="px-4 py-2 text-muted-foreground">No students available</div>
+                    ) : (
+                      addGradeStudents.map((student: any) => (
+                        <SelectItem key={student.studentCode} value={student.studentCode}>
+                          {student.lastName}, {student.firstName} {student.middleName} {student.suffix} ({student.studentID})
+                        </SelectItem>
+                      )))
+                    }
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {/* Midterm and Final Inputs */}
+            {addGradeClass && (
+              <div className="flex items-center gap-4">
+                <Label htmlFor="add-midterm">Midterm:</Label>
+                <Input
+                  id="add-midterm"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={addGradeMidterm}
+                  onChange={e => setAddGradeMidterm(Number(e.target.value))}
+                  className="w-24"
+                />
+                <Label htmlFor="add-final">Final:</Label>
+                <Input
+                  id="add-final"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={addGradeFinal}
+                  onChange={e => setAddGradeFinal(Number(e.target.value))}
+                  className="w-24"
+                />
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddGradeDialog(false)}>Cancel</Button>
+            <Button onClick={async () => {
+              if (!addGradeProfessor || !addGradeClass || !addGradeSubject || !addGradeStudent) {
+                toast.error("Error", { description: "Please select all fields." });
+                return;
+              }
+              await addGrade({
+                professorCode: addGradeProfessor,
+                pkedCode: addGradeClass,
+                rdCode: addGradeSubject,
+                studentCode: addGradeStudent,
+                midterm: addGradeMidterm,
+                final: addGradeFinal
+              });
+              setShowAddGradeDialog(false);
+              setAddGradeProfessor("");
+              setAddGradeClass("");
+              setAddGradeSubject("");
+              setAddGradeStudent("");
+              setAddGradeMidterm(0);
+              setAddGradeFinal(0);
+            }} disabled={!addGradeProfessor || !addGradeClass || !addGradeSubject || !addGradeStudent}>Add Grade</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Grade Management</h1>
           <p className="text-muted-foreground">Registrar: Manage student grades by teacher and class sections</p>
         </div>
-        <Button className="flex items-center gap-2" onClick={() => setShowConfirmDialog(true)}>
-          <Save className="h-4 w-4" />
-          Save All Grades
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button className="flex items-center gap-2" onClick={() => setShowConfirmDialog(true)}>
+            <Save className="h-4 w-4" />
+            Save All Grades
+          </Button>
+          {/* Only keep this Add Grade button in the header */}
+          <Button variant="outline" className="flex items-center gap-2" onClick={() => setShowAddGradeDialog(true)}>
+            <Save className="h-4 w-4" />
+            Add Grade
+          </Button>
+        </div>
       </div>
 
       {/* Teacher Selector */}
@@ -359,11 +571,24 @@ export default function TeacherGradeManagement() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Classes</CardTitle>
+            <CardTitle className="text-sm font-medium">Average Midterm Grade</CardTitle>
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{classOptions.length}</div>
+            <div className="text-2xl font-bold">
+              {filteredGrades.length > 0 ? Math.round(filteredGrades.reduce((a, b) => a + b.midterm, 0) / filteredGrades.length) : 0}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Average Final Grade</CardTitle>
+            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {filteredGrades.length > 0 ? Math.round(filteredGrades.reduce((a, b) => a + b.final, 0) / filteredGrades.length) : 0}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -374,17 +599,6 @@ export default function TeacherGradeManagement() {
           <CardContent>
             <div className="text-2xl font-bold">
               {filteredAverageGrade}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Excellent (90+)</CardTitle>
-            <Badge className="h-4 w-4 bg-green-100" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {filteredExcellentCount}
             </div>
           </CardContent>
         </Card>
